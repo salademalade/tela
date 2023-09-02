@@ -1,5 +1,5 @@
-#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#include <cstring>
 #include "error/error.hpp"
 
 TEST_CASE("Error class tests", "[error]")
