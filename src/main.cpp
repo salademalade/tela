@@ -1,8 +1,18 @@
 #include <cstdio>
 #include <cstdlib>
+#include "error/error.hpp"
 
 int main(int argc, char **argv)
 {
-  fprintf(stdout, "Hello world!\n");
+  try
+  {
+    fprintf(stdout, "Hello world!\n");
+  }
+  catch (Error e)
+  {
+    fprintf(stderr, e.what());
+    return EXIT_FAILURE;
+  }
+
   return EXIT_SUCCESS;
 }

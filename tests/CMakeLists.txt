@@ -1,4 +1,5 @@
 TARGET_SOURCES(tltests
   PRIVATE
-  main.test.cpp
+  ../src/error/error.cpp
+  error.test.cpp
 )
