@@ -4,4 +4,7 @@ TARGET_SOURCES(tela
   error/error.cpp
   token/token.cpp
   lexer/lexer.cpp
+  ast-node/ast-node.cpp
+  ast-node/leaf-ast-node.cpp
+  ast-node/binary-ast-node.cpp
 )
