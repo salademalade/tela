@@ -3,4 +3,5 @@ TARGET_SOURCES(tela
   main.cpp
   error/error.cpp
   token/token.cpp
+  lexer/lexer.cpp
 )

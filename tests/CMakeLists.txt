@@ -2,7 +2,9 @@ TARGET_SOURCES(tltests
   PRIVATE
   ../src/error/error.cpp
   ../src/token/token.cpp
+  ../src/lexer/lexer.cpp
   main.test.cpp
   error.test.cpp
   token.test.cpp
+  lexer.test.cpp
 )
