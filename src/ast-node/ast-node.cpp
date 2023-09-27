@@ -1,5 +1,8 @@
 #include "ast-node.hpp"
 
-ASTNode::ASTNode(Type type) : type(type) {}
+ASTNode::ASTNode(Type type)
+{
+  this->type = type;
+}
 
 ASTNode::~ASTNode() {}

@@ -13,7 +13,10 @@ bool char_is_in(char c, const char *list)
   return false;
 }
 
-Lexer::Lexer(std::string input) : input(input) {}
+Lexer::Lexer(std::string input)
+{
+  this->input = input;
+}
 
 std::vector<Token> Lexer::tokenize()
 {
