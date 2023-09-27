@@ -3,9 +3,9 @@
 
 TEST_CASE("Lexer tests", "[lexer]")
 {
-  SECTION("Individual tokens", "[int]")
+  SECTION("Individual tokens")
   {
-    SECTION("Integers")
+    SECTION("Integers", "[int]")
     {
       SECTION("Single-digit integer")
       {
