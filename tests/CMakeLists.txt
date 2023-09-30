@@ -6,9 +6,11 @@ TARGET_SOURCES(tltests
   ../src/ast-node/ast-node.cpp
   ../src/ast-node/leaf-ast-node.cpp
   ../src/ast-node/binary-ast-node.cpp
+  ../src/parser/parser.cpp
   main.test.cpp
   error.test.cpp
   token.test.cpp
   lexer.test.cpp
   node.test.cpp
+  parser.test.cpp
 )
