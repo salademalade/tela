@@ -12,7 +12,8 @@ public:
     N_ADD,
     N_SUB,
     N_MUL,
-    N_DIV
+    N_DIV,
+    N_NULL
   } type;
 
   ASTNode(Type type);
