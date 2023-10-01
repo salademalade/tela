@@ -30,7 +30,8 @@ ASTNode *Parser::parse_expression()
       ASTNode *right = parse_term();
       term = new BinaryASTNode(ASTNode::Type::N_SUB, left, right);
     }
-    else return term;
+    else if (i == input.end()) return term;
+    else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
 
@@ -53,7 +54,8 @@ ASTNode *Parser::parse_term()
       ASTNode *right = parse_factor();
       factor = new BinaryASTNode(ASTNode::Type::N_DIV, left, right);
     }
-    else return factor;
+    else if (i == input.end() || i->type == Token::Type::T_ADD || i->type == Token::Type::T_SUB) return factor;
+    else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
 
@@ -69,8 +71,5 @@ ASTNode *Parser::parse_factor()
     if (i->type != Token::Type::T_RPAREN) throw Error("Unclosed parenthesis.");
     return expr;
   }
-  else
-  {
-    throw Error("Unexpected token: %s", i->value.c_str());
-  }
+  else throw Error("Unexpected token: %s", i->value.c_str());
 }
