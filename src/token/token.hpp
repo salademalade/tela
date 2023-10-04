@@ -16,7 +16,8 @@ public:
     T_MUL,    // *
     T_DIV,    // /
     T_LPAREN, // (
-    T_RPAREN  // )
+    T_RPAREN, // )
+    T_ASSIGN  // =
   } type;
   std::string value;
 

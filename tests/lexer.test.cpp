@@ -121,7 +121,7 @@ TEST_CASE("Tokenization of addition operator", "[lexer][add]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_ADD, "+");
+  Token expected(Token::Type::T_ADD);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -134,7 +134,7 @@ TEST_CASE("Tokenization of subtraction operator", "[lexer][sub]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_SUB, "-");
+  Token expected(Token::Type::T_SUB);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -147,7 +147,7 @@ TEST_CASE("Tokenization of multiplication operator", "[lexer][mul]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_MUL, "*");
+  Token expected(Token::Type::T_MUL);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -160,7 +160,7 @@ TEST_CASE("Tokenization of division operator", "[lexer][div]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_DIV, "/");
+  Token expected(Token::Type::T_DIV);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -175,7 +175,7 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_LPAREN, "(");
+    Token expected(Token::Type::T_LPAREN);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -188,21 +188,36 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_RPAREN, ")");
+    Token expected(Token::Type::T_RPAREN);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
   }
 }
 
-TEST_CASE("General lexer tests", "[lexer]")
+TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
 {
-  Lexer lexer("1 + 23 - ( foo * bar / 4.5 )");
+  Lexer lexer("=");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 11);
+  REQUIRE(output.size() == 1);
+
+  Token expected(Token::Type::T_ASSIGN);
+  Token out_token = output[0];
+
+  REQUIRE(expected.type == out_token.type);
+}
+
+TEST_CASE("General lexer tests", "[lexer]")
+{
+  Lexer lexer("a = 1 + 23 - ( foo * bar / 4.5 )");
+  std::vector<Token> output = lexer.tokenize();
+
+  REQUIRE(output.size() == 13);
 
   std::vector<Token> expected = {
+    Token(Token::Type::T_ID, "a"),
+    Token(Token::Type::T_ASSIGN),
     Token(Token::Type::T_INT, "1"),
     Token(Token::Type::T_ADD),
     Token(Token::Type::T_INT, "23"),

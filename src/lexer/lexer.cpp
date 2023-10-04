@@ -81,6 +81,11 @@ std::vector<Token> Lexer::tokenize()
       output.push_back(Token(Token::Type::T_RPAREN));
       i++;
     }
+    else if (*i == '=')
+    {
+      output.push_back(Token(Token::Type::T_ASSIGN));
+      i++;
+    }
     else throw new Error("Unexpected token: %c", *i);
   }
 
