@@ -8,7 +8,19 @@ Parser::Parser(std::vector<Token> input)
 
 ASTNode *Parser::parse()
 {
-  return parse_expression();
+  return parse_statement();
+}
+
+ASTNode *Parser::parse_statement()
+{
+  if (i->type == Token::Type::T_ID && (i+1)->type == Token::Type::T_ASSIGN)
+  {
+    LeafASTNode *var = new LeafASTNode(ASTNode::Type::N_ID, i->value);
+    i += 2;
+    ASTNode *expr = parse_expression();
+    return new BinaryASTNode(ASTNode::Type::N_ASSIGN, var, expr);
+  }
+  else return parse_expression();
 }
 
 ASTNode *Parser::parse_expression()

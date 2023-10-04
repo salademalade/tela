@@ -13,6 +13,7 @@ public:
     N_SUB,
     N_MUL,
     N_DIV,
+    N_ASSIGN,
     N_NULL
   } type;
 

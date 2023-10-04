@@ -210,6 +210,23 @@ TEST_CASE("Parsing of division operator", "[parser][div]")
   }
 }
 
+TEST_CASE("Parsing of assignment operator", "[parser][assign]")
+{
+  std::vector<Token> input;
+  input.push_back(Token(Token::Type::T_ID, "foo"));
+  input.push_back(Token(Token::Type::T_ASSIGN));
+  input.push_back(Token(Token::Type::T_INT, "1"));
+
+  Parser parser(input);
+  BinaryASTNode *node = static_cast<BinaryASTNode *>(parser.parse());
+
+  REQUIRE(node->type == ASTNode::Type::N_ASSIGN);
+  REQUIRE(node->left->type == ASTNode::Type::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(node->left)->value == "foo");
+  REQUIRE(node->right->type == ASTNode::Type::N_INT);
+  REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "1");
+}
+
 TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
 {
   SECTION("Combination of addition and subtraction")
