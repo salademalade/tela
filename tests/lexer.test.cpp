@@ -208,12 +208,25 @@ TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
   REQUIRE(expected.type == out_token.type);
 }
 
-TEST_CASE("General lexer tests", "[lexer]")
+TEST_CASE("Tokenization of semicolon", "[lexer]")
 {
-  Lexer lexer("a = 1 + 23 - ( foo * bar / 4.5 )");
+  Lexer lexer(";");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 13);
+  REQUIRE(output.size() == 1);
+
+  Token expected(Token::Type::T_SEMICOLON);
+  Token out_token = output[0];
+
+  REQUIRE(expected.type == out_token.type);
+}
+
+TEST_CASE("General lexer tests", "[lexer]")
+{
+  Lexer lexer("a = 1 + 23 - ( foo * bar / 4.5 ) ;");
+  std::vector<Token> output = lexer.tokenize();
+
+  REQUIRE(output.size() == 14);
 
   std::vector<Token> expected = {
     Token(Token::Type::T_ID, "a"),
@@ -229,6 +242,7 @@ TEST_CASE("General lexer tests", "[lexer]")
     Token(Token::Type::T_DIV),
     Token(Token::Type::T_FLOAT, "4.5"),
     Token(Token::Type::T_RPAREN),
+    Token(Token::Type::T_SEMICOLON),
   };
 
   for (int i = 0; i < output.size(); i++)

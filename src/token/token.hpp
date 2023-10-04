@@ -11,13 +11,14 @@ public:
     T_INT,
     T_FLOAT,
     T_ID,
-    T_ADD,    // +
-    T_SUB,    // -
-    T_MUL,    // *
-    T_DIV,    // /
-    T_LPAREN, // (
-    T_RPAREN, // )
-    T_ASSIGN  // =
+    T_ADD,       // +
+    T_SUB,       // -
+    T_MUL,       // *
+    T_DIV,       // /
+    T_LPAREN,    // (
+    T_RPAREN,    // )
+    T_ASSIGN,    // =
+    T_SEMICOLON  // ;
   } type;
   std::string value;
 
