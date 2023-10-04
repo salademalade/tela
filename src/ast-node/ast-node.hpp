@@ -14,7 +14,8 @@ public:
     N_MUL,
     N_DIV,
     N_ASSIGN,
-    N_NULL
+    N_STMT_SEQ,
+    N_NULL,
   } type;
 
   ASTNode(Type type);
