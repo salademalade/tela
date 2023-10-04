@@ -7,6 +7,7 @@
 #include "ast-node/ast-node.hpp"
 #include "ast-node/leaf-ast-node.hpp"
 #include "ast-node/binary-ast-node.hpp"
+#include "ast-node/stmt-seq-ast-node.hpp"
 #include "ast-node/null-ast-node.hpp"
 
 class Parser
@@ -18,6 +19,7 @@ public:
 
   ASTNode *parse();
 private:
+  ASTNode *parse_block();
   ASTNode *parse_statement();
   ASTNode *parse_expression();
   ASTNode *parse_term();

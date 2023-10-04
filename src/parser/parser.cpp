@@ -8,7 +8,24 @@ Parser::Parser(std::vector<Token> input)
 
 ASTNode *Parser::parse()
 {
-  return parse_statement();
+  return parse_block();
+}
+
+ASTNode *Parser::parse_block()
+{
+  StmtSeqASTNode *seq = new StmtSeqASTNode();
+  while (i != input.end())
+  {
+    ASTNode *stmt = parse_statement();
+    if (i->type != Token::Type::T_SEMICOLON)
+    {
+      throw Error("Expected semicolon.");
+    }
+    seq->statements.push_back(stmt);
+    i++;
+  }
+
+  return seq;
 }
 
 ASTNode *Parser::parse_statement()
@@ -42,7 +59,7 @@ ASTNode *Parser::parse_expression()
       ASTNode *right = parse_term();
       term = new BinaryASTNode(ASTNode::Type::N_SUB, left, right);
     }
-    else if (i == input.end()) return term;
+    else if (i == input.end() || i->type == Token::Type::T_SEMICOLON) return term;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
@@ -66,7 +83,7 @@ ASTNode *Parser::parse_term()
       ASTNode *right = parse_factor();
       factor = new BinaryASTNode(ASTNode::Type::N_DIV, left, right);
     }
-    else if (i == input.end() || i->type == Token::Type::T_ADD || i->type == Token::Type::T_SUB) return factor;
+    else if (i == input.end() || i->type == Token::Type::T_ADD || i->type == Token::Type::T_SUB || i->type == Token::Type::T_SEMICOLON) return factor;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
