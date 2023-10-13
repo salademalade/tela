@@ -18,6 +18,7 @@ public:
     T_LPAREN,    // (
     T_RPAREN,    // )
     T_ASSIGN,    // =
+    T_COLON,     // :
     T_SEMICOLON  // ;
   } type;
   std::string value;

@@ -86,6 +86,11 @@ std::vector<Token> Lexer::tokenize()
       output.push_back(Token(Token::Type::T_ASSIGN));
       i++;
     }
+    else if (*i == ':')
+    {
+      output.push_back(Token(Token::Type::T_COLON));
+      i++;
+    }
     else if (*i == ';')
     {
       output.push_back(Token(Token::Type::T_SEMICOLON));
