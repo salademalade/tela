@@ -114,6 +114,48 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
   }
 }
 
+TEST_CASE("Tokenization of keywords", "[lexer]")
+{
+  SECTION("def")
+  {
+    Lexer lexer("def");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(Token::Type::T_KEY_DEF);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+
+  SECTION("int")
+  {
+    Lexer lexer("int");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(Token::Type::T_KEY_INT);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+
+  SECTION("float")
+  {
+    Lexer lexer("float");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(Token::Type::T_KEY_FLOAT);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+}
+
 TEST_CASE("Tokenization of addition operator", "[lexer][add]")
 {
   Lexer lexer("+");

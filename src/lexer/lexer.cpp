@@ -49,7 +49,22 @@ std::vector<Token> Lexer::tokenize()
       {
         id.push_back(*i++);
       }
-      output.push_back(Token(Token::Type::T_ID, id));
+      if (id == "def")
+      {
+        output.push_back(Token(Token::Type::T_KEY_DEF));
+      }
+      else if (id == "int")
+      {
+        output.push_back(Token(Token::Type::T_KEY_INT));
+      }
+      else if (id == "float")
+      {
+        output.push_back(Token(Token::Type::T_KEY_FLOAT));
+      }
+      else
+      {
+        output.push_back(Token(Token::Type::T_ID, id));
+      }
     }
     else if (*i == '+')
     {
