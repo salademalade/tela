@@ -86,16 +86,6 @@ std::vector<Token> Lexer::tokenize()
       output.push_back(Token(Token::Type::T_DIV));
       i++;
     }
-    else if (*i == '(')
-    {
-      output.push_back(Token(Token::Type::T_LPAREN));
-      i++;
-    }
-    else if (*i == ')')
-    {
-      output.push_back(Token(Token::Type::T_RPAREN));
-      i++;
-    }
     else if (*i == '=')
     {
       output.push_back(Token(Token::Type::T_ASSIGN));
@@ -109,6 +99,26 @@ std::vector<Token> Lexer::tokenize()
     else if (*i == ';')
     {
       output.push_back(Token(Token::Type::T_SEMICOLON));
+      i++;
+    }
+    else if (*i == '(')
+    {
+      output.push_back(Token(Token::Type::T_LPAREN));
+      i++;
+    }
+    else if (*i == ')')
+    {
+      output.push_back(Token(Token::Type::T_RPAREN));
+      i++;
+    }
+    else if (*i == '{')
+    {
+      output.push_back(Token(Token::Type::T_LCURLY));
+      i++;
+    }
+    else if (*i == '}')
+    {
+      output.push_back(Token(Token::Type::T_RCURLY));
       i++;
     }
     else throw new Error("Unexpected token: %c", *i);

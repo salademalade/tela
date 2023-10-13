@@ -20,11 +20,15 @@ public:
     T_SUB,       // -
     T_MUL,       // *
     T_DIV,       // /
+    T_ASSIGN,    // =
+
+    T_COLON,     // :
+    T_SEMICOLON, // ;
+
     T_LPAREN,    // (
     T_RPAREN,    // )
-    T_ASSIGN,    // =
-    T_COLON,     // :
-    T_SEMICOLON  // ;
+    T_LCURLY,    // {
+    T_RCURLY,    // }
   } type;
   std::string value;
 
