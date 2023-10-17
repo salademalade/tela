@@ -14,6 +14,8 @@ public:
     N_MUL,
     N_DIV,
     N_ASSIGN,
+    N_FUNC_DEF,
+    N_FUNC_CALL,
     N_STMT_SEQ,
     N_NULL,
   } type;
