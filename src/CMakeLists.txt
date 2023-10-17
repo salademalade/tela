@@ -7,6 +7,7 @@ TARGET_SOURCES(tela
   ast-node/ast-node.cpp
   ast-node/leaf-ast-node.cpp
   ast-node/binary-ast-node.cpp
+  ast-node/func-def-ast-node.cpp
   ast-node/stmt-seq-ast-node.cpp
   ast-node/null-ast-node.cpp
   parser/parser.cpp

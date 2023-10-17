@@ -6,6 +6,7 @@ TARGET_SOURCES(tltests
   ../src/ast-node/ast-node.cpp
   ../src/ast-node/leaf-ast-node.cpp
   ../src/ast-node/binary-ast-node.cpp
+  ../src/ast-node/func-def-ast-node.cpp
   ../src/ast-node/stmt-seq-ast-node.cpp
   ../src/ast-node/null-ast-node.cpp
   ../src/parser/parser.cpp
