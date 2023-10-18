@@ -10,7 +10,7 @@ TEST_CASE("Tokenization of integer", "[lexer][int]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_INT, "1");
+    Token expected(TokenType::T_INT, "1");
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -24,7 +24,7 @@ TEST_CASE("Tokenization of integer", "[lexer][int]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_INT, "1234");
+    Token expected(TokenType::T_INT, "1234");
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -41,7 +41,7 @@ TEST_CASE("Tokenization of float", "[lexer][float]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_FLOAT, "1.2");
+    Token expected(TokenType::T_FLOAT, "1.2");
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -64,7 +64,7 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_ID, "a");
+    Token expected(TokenType::T_ID, "a");
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -78,7 +78,7 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_ID, "a1");
+    Token expected(TokenType::T_ID, "a1");
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -92,7 +92,7 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_ID, "_");
+    Token expected(TokenType::T_ID, "_");
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -106,7 +106,7 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_ID, "_a");
+    Token expected(TokenType::T_ID, "_a");
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -121,7 +121,7 @@ TEST_CASE("Tokenization of addition operator", "[lexer][add]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_ADD);
+  Token expected(TokenType::T_ADD);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -134,7 +134,7 @@ TEST_CASE("Tokenization of subtraction operator", "[lexer][sub]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_SUB);
+  Token expected(TokenType::T_SUB);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -147,7 +147,7 @@ TEST_CASE("Tokenization of multiplication operator", "[lexer][mul]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_MUL);
+  Token expected(TokenType::T_MUL);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -160,7 +160,7 @@ TEST_CASE("Tokenization of division operator", "[lexer][div]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_DIV);
+  Token expected(TokenType::T_DIV);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -175,7 +175,7 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_LPAREN);
+    Token expected(TokenType::T_LPAREN);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -188,7 +188,7 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_RPAREN);
+    Token expected(TokenType::T_RPAREN);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -202,7 +202,7 @@ TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_ASSIGN);
+  Token expected(TokenType::T_ASSIGN);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -215,7 +215,7 @@ TEST_CASE("Tokenization of semicolon", "[lexer]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_SEMICOLON);
+  Token expected(TokenType::T_SEMICOLON);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -229,20 +229,20 @@ TEST_CASE("General lexer tests", "[lexer]")
   REQUIRE(output.size() == 14);
 
   std::vector<Token> expected = {
-    Token(Token::Type::T_ID, "a"),
-    Token(Token::Type::T_ASSIGN),
-    Token(Token::Type::T_INT, "1"),
-    Token(Token::Type::T_ADD),
-    Token(Token::Type::T_INT, "23"),
-    Token(Token::Type::T_SUB),
-    Token(Token::Type::T_LPAREN),
-    Token(Token::Type::T_ID, "foo"),
-    Token(Token::Type::T_MUL),
-    Token(Token::Type::T_ID, "bar"),
-    Token(Token::Type::T_DIV),
-    Token(Token::Type::T_FLOAT, "4.5"),
-    Token(Token::Type::T_RPAREN),
-    Token(Token::Type::T_SEMICOLON),
+    Token(TokenType::T_ID, "a"),
+    Token(TokenType::T_ASSIGN),
+    Token(TokenType::T_INT, "1"),
+    Token(TokenType::T_ADD),
+    Token(TokenType::T_INT, "23"),
+    Token(TokenType::T_SUB),
+    Token(TokenType::T_LPAREN),
+    Token(TokenType::T_ID, "foo"),
+    Token(TokenType::T_MUL),
+    Token(TokenType::T_ID, "bar"),
+    Token(TokenType::T_DIV),
+    Token(TokenType::T_FLOAT, "4.5"),
+    Token(TokenType::T_RPAREN),
+    Token(TokenType::T_SEMICOLON),
   };
 
   for (int i = 0; i < output.size(); i++)

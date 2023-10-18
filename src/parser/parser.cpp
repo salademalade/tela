@@ -17,7 +17,7 @@ ASTNode *Parser::parse_block()
   while (i != input.end())
   {
     ASTNode *stmt = parse_statement();
-    if (i->type != Token::Type::T_SEMICOLON)
+    if (i->type != TokenType::T_SEMICOLON)
     {
       throw Error("Expected semicolon.");
     }
@@ -30,12 +30,12 @@ ASTNode *Parser::parse_block()
 
 ASTNode *Parser::parse_statement()
 {
-  if (i->type == Token::Type::T_ID && (i+1)->type == Token::Type::T_ASSIGN)
+  if (i->type == TokenType::T_ID && (i+1)->type == TokenType::T_ASSIGN)
   {
-    LeafASTNode *var = new LeafASTNode(ASTNode::Type::N_ID, i->value);
+    LeafASTNode *var = new LeafASTNode(NodeType::N_ID, i->value);
     i += 2;
     ASTNode *expr = parse_expression();
-    return new BinaryASTNode(ASTNode::Type::N_ASSIGN, var, expr);
+    return new BinaryASTNode(NodeType::N_ASSIGN, var, expr);
   }
   else return parse_expression();
 }
@@ -45,21 +45,21 @@ ASTNode *Parser::parse_expression()
   ASTNode *term = parse_term();
   while (true)
   {
-    if (i->type == Token::Type::T_ADD)
+    if (i->type == TokenType::T_ADD)
     {
       i++;
       ASTNode *left = term;
       ASTNode *right = parse_term();
-      term = new BinaryASTNode(ASTNode::Type::N_ADD, left, right);
+      term = new BinaryASTNode(NodeType::N_ADD, left, right);
     }
-    else if (i->type == Token::Type::T_SUB)
+    else if (i->type == TokenType::T_SUB)
     {
       i++;
       ASTNode *left = term;
       ASTNode *right = parse_term();
-      term = new BinaryASTNode(ASTNode::Type::N_SUB, left, right);
+      term = new BinaryASTNode(NodeType::N_SUB, left, right);
     }
-    else if (i == input.end() || i->type == Token::Type::T_SEMICOLON) return term;
+    else if (i == input.end() || i->type == TokenType::T_SEMICOLON) return term;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
@@ -69,35 +69,35 @@ ASTNode *Parser::parse_term()
   ASTNode *factor = parse_factor();
   while (true)
   {
-    if (i->type == Token::Type::T_MUL)
+    if (i->type == TokenType::T_MUL)
     {
       i++;
       ASTNode *left = factor;
       ASTNode *right = parse_factor();
-      factor = new BinaryASTNode(ASTNode::Type::N_MUL, left, right);
+      factor = new BinaryASTNode(NodeType::N_MUL, left, right);
     }
-    else if (i->type == Token::Type::T_DIV)
+    else if (i->type == TokenType::T_DIV)
     {
       i++;
       ASTNode *left = factor;
       ASTNode *right = parse_factor();
-      factor = new BinaryASTNode(ASTNode::Type::N_DIV, left, right);
+      factor = new BinaryASTNode(NodeType::N_DIV, left, right);
     }
-    else if (i == input.end() || i->type == Token::Type::T_ADD || i->type == Token::Type::T_SUB || i->type == Token::Type::T_SEMICOLON) return factor;
+    else if (i == input.end() || i->type == TokenType::T_ADD || i->type == TokenType::T_SUB || i->type == TokenType::T_SEMICOLON) return factor;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
 
 ASTNode *Parser::parse_factor()
 {
-  if (i->type == Token::Type::T_INT) return new LeafASTNode(ASTNode::Type::N_INT, (i++)->value);
-  else if (i->type == Token::Type::T_FLOAT) return new LeafASTNode(ASTNode::Type::N_FLOAT, (i++)->value);
-  else if (i->type == Token::Type::T_ID) return new LeafASTNode(ASTNode::Type::N_ID, (i++)->value);
-  else if (i->type == Token::Type::T_LPAREN)
+  if (i->type == TokenType::T_INT) return new LeafASTNode(NodeType::N_INT, (i++)->value);
+  else if (i->type == TokenType::T_FLOAT) return new LeafASTNode(NodeType::N_FLOAT, (i++)->value);
+  else if (i->type == TokenType::T_ID) return new LeafASTNode(NodeType::N_ID, (i++)->value);
+  else if (i->type == TokenType::T_LPAREN)
   {
     i++;
     ASTNode *expr = parse_expression();
-    if (i->type != Token::Type::T_RPAREN) throw Error("Unclosed parenthesis.");
+    if (i->type != TokenType::T_RPAREN) throw Error("Unclosed parenthesis.");
     return expr;
   }
   else if (i == input.end()) return new NullASTNode();

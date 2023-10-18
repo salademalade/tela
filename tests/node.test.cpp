@@ -7,20 +7,20 @@
 
 TEST_CASE("Leaf AST Node tests", "[ast]")
 {
-  ASTNode *node = new LeafASTNode(ASTNode::Type::N_INT, "1");
+  ASTNode *node = new LeafASTNode(NodeType::N_INT, "1");
 
-  REQUIRE(node->type == ASTNode::Type::N_INT);
+  REQUIRE(node->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(node)->value == "1");
 }
 
 TEST_CASE("Binary AST Node tests", "[ast]")
 {
-  ASTNode *left = new LeafASTNode(ASTNode::Type::N_ID, "foo");
-  ASTNode *right = new LeafASTNode(ASTNode::Type::N_ID, "bar");
+  ASTNode *left = new LeafASTNode(NodeType::N_ID, "foo");
+  ASTNode *right = new LeafASTNode(NodeType::N_ID, "bar");
 
-  ASTNode *node = new BinaryASTNode(ASTNode::Type::N_ADD, left, right);
+  ASTNode *node = new BinaryASTNode(NodeType::N_ADD, left, right);
 
-  REQUIRE(node->type == ASTNode::Type::N_ADD);
+  REQUIRE(node->type == NodeType::N_ADD);
   REQUIRE(static_cast<BinaryASTNode *>(node)->left == left);
   REQUIRE(static_cast<BinaryASTNode *>(node)->right == right);
 }
@@ -29,7 +29,7 @@ TEST_CASE("Statement Sequence Node tests", "[ast]")
 {
   StmtSeqASTNode *seq = new StmtSeqASTNode();
 
-  ASTNode *el = new LeafASTNode(ASTNode::Type::N_ID, "foo");
+  ASTNode *el = new LeafASTNode(NodeType::N_ID, "foo");
 
   seq->statements.push_back(el);
   REQUIRE(seq->statements[0] == el);

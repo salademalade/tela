@@ -39,8 +39,8 @@ std::vector<Token> Lexer::tokenize()
         }
         num.push_back(*i++);
       }
-      if (has_p) output.push_back(Token(Token::Type::T_FLOAT, num));
-      else output.push_back(Token(Token::Type::T_INT, num));
+      if (has_p) output.push_back(Token(TokenType::T_FLOAT, num));
+      else output.push_back(Token(TokenType::T_INT, num));
     }
     else if (char_is_in(*i, LETTERS) || *i == '_')
     {
@@ -49,46 +49,46 @@ std::vector<Token> Lexer::tokenize()
       {
         id.push_back(*i++);
       }
-      output.push_back(Token(Token::Type::T_ID, id));
+      output.push_back(Token(TokenType::T_ID, id));
     }
     else if (*i == '+')
     {
-      output.push_back(Token(Token::Type::T_ADD));
+      output.push_back(Token(TokenType::T_ADD));
       i++;
     }
     else if (*i == '-')
     {
-      output.push_back(Token(Token::Type::T_SUB));
+      output.push_back(Token(TokenType::T_SUB));
       i++;
     }
     else if (*i == '*')
     {
-      output.push_back(Token(Token::Type::T_MUL));
+      output.push_back(Token(TokenType::T_MUL));
       i++;
     }
     else if (*i == '/')
     {
-      output.push_back(Token(Token::Type::T_DIV));
+      output.push_back(Token(TokenType::T_DIV));
       i++;
     }
     else if (*i == '(')
     {
-      output.push_back(Token(Token::Type::T_LPAREN));
+      output.push_back(Token(TokenType::T_LPAREN));
       i++;
     }
     else if (*i == ')')
     {
-      output.push_back(Token(Token::Type::T_RPAREN));
+      output.push_back(Token(TokenType::T_RPAREN));
       i++;
     }
     else if (*i == '=')
     {
-      output.push_back(Token(Token::Type::T_ASSIGN));
+      output.push_back(Token(TokenType::T_ASSIGN));
       i++;
     }
     else if (*i == ';')
     {
-      output.push_back(Token(Token::Type::T_SEMICOLON));
+      output.push_back(Token(TokenType::T_SEMICOLON));
       i++;
     }
     else throw new Error("Unexpected token: %c", *i);
