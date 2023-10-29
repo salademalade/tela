@@ -22,6 +22,7 @@ public:
     T_DIV,       // /
     T_ASSIGN,    // =
 
+    T_COMMA,     // ,
     T_COLON,     // :
     T_SEMICOLON, // ;
 

@@ -221,6 +221,19 @@ TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
   REQUIRE(expected.type == out_token.type);
 }
 
+TEST_CASE("Tokenization of comma", "[lexer]")
+{
+  Lexer lexer(",");
+  std::vector<Token> output = lexer.tokenize();
+
+  REQUIRE(output.size() == 1);
+
+  Token expected(Token::Type::T_COMMA);
+  Token out_token = output[0];
+
+  REQUIRE(expected.type == out_token.type);
+}
+
 TEST_CASE("Tokenization of colon", "[lexer]")
 {
   Lexer lexer(":");
