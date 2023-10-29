@@ -59,7 +59,7 @@ ASTNode *Parser::parse_expression()
       ASTNode *right = parse_term();
       term = new BinaryASTNode(ASTNode::Type::N_SUB, left, right);
     }
-    else if (i == input.end() || i->type == Token::Type::T_SEMICOLON) return term;
+    else if (check_next({Token::Type::T_SEMICOLON})) return term;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
@@ -83,7 +83,7 @@ ASTNode *Parser::parse_term()
       ASTNode *right = parse_factor();
       factor = new BinaryASTNode(ASTNode::Type::N_DIV, left, right);
     }
-    else if (i == input.end() || i->type == Token::Type::T_ADD || i->type == Token::Type::T_SUB || i->type == Token::Type::T_SEMICOLON) return factor;
+    else if (check_next({Token::Type::T_ADD, Token::Type::T_SUB, Token::Type::T_SEMICOLON})) return factor;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
@@ -102,4 +102,16 @@ ASTNode *Parser::parse_factor()
   }
   else if (i == input.end()) return new NullASTNode();
   else throw Error("Unexpected token: %s", i->value.c_str());
+}
+
+bool Parser::check_next(std::vector<Token::Type> types)
+{
+  if (i == input.end()) return true;
+
+  for (auto type : types)
+  {
+    if (i->type == type) return true;
+  }
+
+  return false;
 }

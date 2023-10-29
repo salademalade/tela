@@ -24,6 +24,8 @@ private:
   ASTNode *parse_expression();
   ASTNode *parse_term();
   ASTNode *parse_factor();
+
+  bool check_next(std::vector<Token::Type> types);
 };
 
 #endif
