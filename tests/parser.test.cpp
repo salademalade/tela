@@ -5,6 +5,8 @@
 #include "ast-node/ast-node.hpp"
 #include "ast-node/leaf-ast-node.hpp"
 #include "ast-node/binary-ast-node.hpp"
+#include "ast-node/func-def-ast-node.hpp"
+#include "ast-node/func-call-ast-node.hpp"
 #include "ast-node/stmt-seq-ast-node.hpp"
 
 TEST_CASE("Parsing of integer", "[parser][int]")
@@ -287,6 +289,34 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
     REQUIRE(static_cast<BinaryASTNode *>(node->right)->right->type == ASTNode::Type::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->right)->right)->value == "baz");
   }
+}
+
+TEST_CASE("Parsing of function call", "[parser][func]")
+{
+  std::vector<Token> input;
+  input.push_back(Token(Token::Type::T_ID, "func"));
+  input.push_back(Token(Token::Type::T_LPAREN));
+  input.push_back(Token(Token::Type::T_ID, "foo"));
+  input.push_back(Token(Token::Type::T_COMMA));
+  input.push_back(Token(Token::Type::T_INT, "1"));
+  input.push_back(Token(Token::Type::T_ADD));
+  input.push_back(Token(Token::Type::T_FLOAT, "2.3"));
+  input.push_back(Token(Token::Type::T_RPAREN));
+  input.push_back(Token(Token::Type::T_SEMICOLON));
+
+  Parser parser(input);
+  FuncCallASTNode *node = static_cast<FuncCallASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
+
+  REQUIRE(node->type == ASTNode::Type::N_FUNC_CALL);
+  REQUIRE(node->name->type == ASTNode::Type::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
+  REQUIRE(node->args[0]->type == ASTNode::Type::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(node->args[0])->value == "foo");
+  REQUIRE(node->args[1]->type == ASTNode::Type::N_ADD);
+  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->left->type == ASTNode::Type::N_INT);
+  REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->args[1])->left)->value == "1");
+  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->right->type == ASTNode::Type::N_FLOAT);
+  REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->args[1])->right)->value == "2.3");
 }
 
 TEST_CASE("Parsing of statement sequences", "[parser]")
