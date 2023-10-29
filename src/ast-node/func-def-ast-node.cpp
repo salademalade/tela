@@ -9,6 +9,8 @@ FuncDefASTNode::FuncDefASTNode(ASTNode *name, ReturnType ret_type): ASTNode(ASTN
 
 FuncDefASTNode::~FuncDefASTNode()
 {
+  delete name;
+  delete body;
 }
 
 void FuncDefASTNode::add_arg(std::string id, ReturnType type)
