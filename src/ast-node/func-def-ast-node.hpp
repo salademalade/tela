@@ -13,12 +13,12 @@ public:
   {
     R_INT,
     R_FLOAT,
-  } ret_type;
+  };
   LeafASTNode *name;
   std::map<std::string, ReturnType> args;
   ASTNode *body;
 
-  FuncDefASTNode(ASTNode *name, ReturnType ret_type);
+  FuncDefASTNode(ASTNode *name);
   ~FuncDefASTNode();
 
   void add_arg(std::string id, ReturnType type);

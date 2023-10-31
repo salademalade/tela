@@ -3,6 +3,7 @@
 #include "ast-node/ast-node.hpp"
 #include "ast-node/leaf-ast-node.hpp"
 #include "ast-node/binary-ast-node.hpp"
+#include "ast-node/unary-ast-node.hpp"
 #include "ast-node/func-def-ast-node.hpp"
 #include "ast-node/func-call-ast-node.hpp"
 #include "ast-node/stmt-seq-ast-node.hpp"
@@ -41,7 +42,7 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
 {
   ASTNode *name = new LeafASTNode(ASTNode::Type::N_ID, "func");
   ASTNode *body = new LeafASTNode(ASTNode::Type::N_INT, "1");
-  FuncDefASTNode *func = new FuncDefASTNode(name, FuncRetType::R_INT);
+  FuncDefASTNode *func = new FuncDefASTNode(name);
 
   func->body = body;
 
@@ -55,7 +56,6 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
   func->add_arg(a_name2, a_type2);
 
   REQUIRE(func->type == ASTNode::Type::N_FUNC_DEF);
-  REQUIRE(func->ret_type == FuncRetType::R_INT);
 
   REQUIRE(static_cast<LeafASTNode *>(func->name)->type == ASTNode::Type::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(func->name)->value == "func");
