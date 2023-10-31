@@ -27,6 +27,16 @@ TEST_CASE("Binary AST Node tests", "[ast]")
   REQUIRE(static_cast<BinaryASTNode *>(node)->right == right);
 }
 
+TEST_CASE("Unary AST Node tests", "[ast]")
+{
+  ASTNode *child = new LeafASTNode(ASTNode::Type::N_ID, "foo");
+
+  ASTNode *node = new UnaryASTNode(ASTNode::Type::N_ADD, child);
+
+  REQUIRE(node->type == ASTNode::Type::N_ADD);
+  REQUIRE(static_cast<UnaryASTNode *>(node)->child == child);
+}
+
 TEST_CASE("Function Definition Node tests", "[ast][func]")
 {
   ASTNode *name = new LeafASTNode(ASTNode::Type::N_ID, "func");
