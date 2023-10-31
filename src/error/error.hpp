@@ -10,7 +10,7 @@ class Error
 public:
   Error(const char *format, ...);
 
-  const char *what();
+  const char *what() const;
 };
 
 #endif

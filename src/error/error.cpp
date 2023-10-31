@@ -8,7 +8,7 @@ Error::Error(const char *format, ...)
   va_end(args);
 }
 
-const char *Error::what()
+const char *Error::what() const
 {
   return msg;
 }
