@@ -331,7 +331,7 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
   REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right->type == ASTNode::Type::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right)->value == "arg2");
   REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[1]->type == ASTNode::Type::N_RET);
-  REQUIRE(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child->type == ASTNode::Type::N_ID);
+  REQUIRE(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child->type == ASTNode::Type::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child)->value == "1");
 }
 

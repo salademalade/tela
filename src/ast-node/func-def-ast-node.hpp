@@ -13,7 +13,7 @@ public:
   {
     R_INT,
     R_FLOAT,
-  };
+  } ret_type;
   LeafASTNode *name;
   std::map<std::string, ReturnType> args;
   ASTNode *body;

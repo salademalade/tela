@@ -14,14 +14,57 @@ ASTNode *Parser::parse()
 ASTNode *Parser::parse_block()
 {
   StmtSeqASTNode *seq = new StmtSeqASTNode();
-  while (i != input.end())
+  while (!check_next({Token::Type::T_RCURLY}))
   {
-    ASTNode *stmt = parse_statement();
-    if (i->type != Token::Type::T_SEMICOLON)
+    if (i->type == Token::Type::T_KEY_DEF)
     {
-      throw Error("Expected semicolon.");
+      ASTNode *name = new LeafASTNode(ASTNode::Type::N_ID, (++i)->value);
+      FuncDefASTNode *func = new FuncDefASTNode(name);
+
+      if ((++i)->type != Token::Type::T_LPAREN) throw Error("Expected parenthesis.");
+
+      while (i->type != Token::Type::T_RPAREN)
+      {
+        if ((++i)->type != Token::Type::T_ID) throw Error("Expected identifier.");
+        std::string a_name = i->value;
+
+        if ((++i)->type != Token::Type::T_COLON) throw Error("Expected colon.");
+
+        FuncDefASTNode::ReturnType a_type;
+        switch ((++i)->type)
+        {
+        case Token::Type::T_KEY_INT:
+          a_type = FuncDefASTNode::ReturnType::R_INT;
+          break;
+        case Token::Type::T_KEY_FLOAT:
+          a_type = FuncDefASTNode::ReturnType::R_FLOAT;
+          break;
+        default:
+          throw Error("Expected type specifier.");
+        }
+
+        func->add_arg(a_name, a_type);
+
+        i++;
+        if (i->type != Token::Type::T_COMMA && i->type != Token::Type::T_RPAREN) throw Error("Expected comma.");
+      }
+
+      if ((++i)->type != Token::Type::T_LCURLY) throw Error("Expected bracket.");
+
+      i++;
+      func->body = parse_block();
+
+      seq->statements.push_back(func);
     }
-    seq->statements.push_back(stmt);
+    else
+    {
+      ASTNode *stmt = parse_statement();
+      if (i->type != Token::Type::T_SEMICOLON)
+      {
+        throw Error("Expected semicolon.");
+      }
+      seq->statements.push_back(stmt);
+    }
     i++;
   }
 
@@ -36,6 +79,12 @@ ASTNode *Parser::parse_statement()
     i += 2;
     ASTNode *expr = parse_expression();
     return new BinaryASTNode(ASTNode::Type::N_ASSIGN, var, expr);
+  }
+  else if (i->type == Token::Type::T_KEY_RETURN)
+  {
+    i++;
+    ASTNode *expr = parse_expression();
+    return new UnaryASTNode(ASTNode::Type::N_RET, expr);
   }
   else return parse_expression();
 }
