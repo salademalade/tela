@@ -114,6 +114,61 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
   }
 }
 
+TEST_CASE("Tokenization of keywords", "[lexer]")
+{
+  SECTION("def")
+  {
+    Lexer lexer("def");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(Token::Type::T_KEY_DEF);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+
+  SECTION("int")
+  {
+    Lexer lexer("int");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(Token::Type::T_KEY_INT);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+
+  SECTION("float")
+  {
+    Lexer lexer("float");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(Token::Type::T_KEY_FLOAT);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+
+  SECTION("return")
+  {
+    Lexer lexer("return");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(Token::Type::T_KEY_RETURN);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+}
+
 TEST_CASE("Tokenization of addition operator", "[lexer][add]")
 {
   Lexer lexer("+");
@@ -166,6 +221,58 @@ TEST_CASE("Tokenization of division operator", "[lexer][div]")
   REQUIRE(expected.type == out_token.type);
 }
 
+TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
+{
+  Lexer lexer("=");
+  std::vector<Token> output = lexer.tokenize();
+
+  REQUIRE(output.size() == 1);
+
+  Token expected(Token::Type::T_ASSIGN);
+  Token out_token = output[0];
+
+  REQUIRE(expected.type == out_token.type);
+}
+
+TEST_CASE("Tokenization of comma", "[lexer]")
+{
+  Lexer lexer(",");
+  std::vector<Token> output = lexer.tokenize();
+
+  REQUIRE(output.size() == 1);
+
+  Token expected(Token::Type::T_COMMA);
+  Token out_token = output[0];
+
+  REQUIRE(expected.type == out_token.type);
+}
+
+TEST_CASE("Tokenization of colon", "[lexer]")
+{
+  Lexer lexer(":");
+  std::vector<Token> output = lexer.tokenize();
+
+  REQUIRE(output.size() == 1);
+
+  Token expected(Token::Type::T_COLON);
+  Token out_token = output[0];
+
+  REQUIRE(expected.type == out_token.type);
+}
+
+TEST_CASE("Tokenization of semicolon", "[lexer]")
+{
+  Lexer lexer(";");
+  std::vector<Token> output = lexer.tokenize();
+
+  REQUIRE(output.size() == 1);
+
+  Token expected(Token::Type::T_SEMICOLON);
+  Token out_token = output[0];
+
+  REQUIRE(expected.type == out_token.type);
+}
+
 TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
 {
   SECTION("Left parenthesis")
@@ -195,30 +302,33 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
   }
 }
 
-TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
+TEST_CASE("Tokenization of curly brackets", "[lexer]")
 {
-  Lexer lexer("=");
-  std::vector<Token> output = lexer.tokenize();
+  SECTION("Left bracket")
+  {
+    Lexer lexer("{");
+    std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_ASSIGN);
-  Token out_token = output[0];
+    Token expected(Token::Type::T_LCURLY);
+    Token out_token = output[0];
 
-  REQUIRE(expected.type == out_token.type);
-}
+    REQUIRE(expected.type == out_token.type);
+  }
 
-TEST_CASE("Tokenization of semicolon", "[lexer]")
-{
-  Lexer lexer(";");
-  std::vector<Token> output = lexer.tokenize();
+  SECTION("Right bracket")
+  {
+    Lexer lexer("}");
+    std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_SEMICOLON);
-  Token out_token = output[0];
+    Token expected(Token::Type::T_RCURLY);
+    Token out_token = output[0];
 
-  REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.type == out_token.type);
+  }
 }
 
 TEST_CASE("General lexer tests", "[lexer]")

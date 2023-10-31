@@ -7,6 +7,9 @@
 #include "ast-node/ast-node.hpp"
 #include "ast-node/leaf-ast-node.hpp"
 #include "ast-node/binary-ast-node.hpp"
+#include "ast-node/unary-ast-node.hpp"
+#include "ast-node/func-def-ast-node.hpp"
+#include "ast-node/func-call-ast-node.hpp"
 #include "ast-node/stmt-seq-ast-node.hpp"
 #include "ast-node/null-ast-node.hpp"
 
@@ -24,6 +27,8 @@ private:
   ASTNode *parse_expression();
   ASTNode *parse_term();
   ASTNode *parse_factor();
+
+  bool check_next(std::vector<Token::Type> types);
 };
 
 #endif

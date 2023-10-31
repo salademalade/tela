@@ -11,14 +11,26 @@ public:
     T_INT,
     T_FLOAT,
     T_ID,
-    T_ADD,       // +
-    T_SUB,       // -
-    T_MUL,       // *
-    T_DIV,       // /
-    T_LPAREN,    // (
-    T_RPAREN,    // )
-    T_ASSIGN,    // =
-    T_SEMICOLON  // ;
+
+    T_KEY_DEF,    // def
+    T_KEY_INT,    // int
+    T_KEY_FLOAT,  // float
+    T_KEY_RETURN, // return
+
+    T_ADD,        // +
+    T_SUB,        // -
+    T_MUL,        // *
+    T_DIV,        // /
+    T_ASSIGN,     // =
+
+    T_COMMA,      // ,
+    T_COLON,      // :
+    T_SEMICOLON,  // ;
+
+    T_LPAREN,     // (
+    T_RPAREN,     // )
+    T_LCURLY,     // {
+    T_RCURLY,     // }
   } type;
   std::string value;
 
