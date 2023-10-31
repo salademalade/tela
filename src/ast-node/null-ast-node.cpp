@@ -1,5 +1,5 @@
 #include "null-ast-node.hpp"
 
-NullASTNode::NullASTNode(): ASTNode(ASTNode::Type::N_NULL) {}
+NullASTNode::NullASTNode(): ASTNode(NodeType::N_NULL) {}
 
 NullASTNode::~NullASTNode() {}

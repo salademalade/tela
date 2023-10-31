@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   }
   catch (Error e)
   {
-    fprintf(stderr, e.what());
+    fprintf(stderr, "%s", e.what());
     return EXIT_FAILURE;
   }
 

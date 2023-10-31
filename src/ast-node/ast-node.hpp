@@ -25,4 +25,6 @@ public:
   virtual ~ASTNode() = 0;
 };
 
+typedef ASTNode::Type NodeType;
+
 #endif

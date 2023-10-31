@@ -38,4 +38,6 @@ public:
   Token(Type type, std::string value);
 };
 
+typedef Token::Type TokenType;
+
 #endif
