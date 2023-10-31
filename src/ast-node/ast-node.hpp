@@ -16,6 +16,7 @@ public:
     N_ASSIGN,
     N_FUNC_DEF,
     N_FUNC_CALL,
+    N_RET,
     N_STMT_SEQ,
     N_NULL,
   } type;
