@@ -1,7 +1,7 @@
 #ifndef BINARY_AST_NODE_HPP
 #define BINARY_AST_NODE_HPP
 
-#include "ast-node.hpp"
+#include "../ast-node.hpp"
 
 class BinaryASTNode: public ASTNode
 {

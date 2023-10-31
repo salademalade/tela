@@ -2,7 +2,7 @@
 #define LEAF_AST_NODE_HPP
 
 #include <string>
-#include "ast-node.hpp"
+#include "../ast-node.hpp"
 
 class LeafASTNode: public ASTNode
 {

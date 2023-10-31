@@ -1,12 +1,13 @@
 #include <catch2/catch.hpp>
 #include <memory>
 #include "ast-node/ast-node.hpp"
-#include "ast-node/leaf-ast-node.hpp"
-#include "ast-node/binary-ast-node.hpp"
-#include "ast-node/unary-ast-node.hpp"
-#include "ast-node/func-def-ast-node.hpp"
-#include "ast-node/func-call-ast-node.hpp"
-#include "ast-node/stmt-seq-ast-node.hpp"
+#include "ast-node/leaf/leaf-ast-node.hpp"
+#include "ast-node/binary/binary-ast-node.hpp"
+#include "ast-node/unary/unary-ast-node.hpp"
+#include "ast-node/func-def/func-def-ast-node.hpp"
+#include "ast-node/func-call/func-call-ast-node.hpp"
+#include "ast-node/stmt-seq/stmt-seq-ast-node.hpp"
+#include "ast-node/null/null-ast-node.hpp"
 
 TEST_CASE("Leaf AST Node tests", "[ast]")
 {

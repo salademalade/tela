@@ -3,8 +3,8 @@
 
 #include <map>
 #include "error/error.hpp"
-#include "ast-node.hpp"
-#include "leaf-ast-node.hpp"
+#include "../ast-node.hpp"
+#include "../leaf/leaf-ast-node.hpp"
 
 class FuncDefASTNode: public ASTNode
 {

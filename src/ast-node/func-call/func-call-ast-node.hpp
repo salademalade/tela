@@ -3,8 +3,8 @@
 
 #include <vector>
 #include "error/error.hpp"
-#include "ast-node.hpp"
-#include "leaf-ast-node.hpp"
+#include "../ast-node.hpp"
+#include "../leaf/leaf-ast-node.hpp"
 
 class FuncCallASTNode: public ASTNode
 {

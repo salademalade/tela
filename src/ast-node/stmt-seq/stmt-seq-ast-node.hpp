@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <memory>
-#include "ast-node.hpp"
+#include "../ast-node.hpp"
 
 class StmtSeqASTNode: public ASTNode
 {

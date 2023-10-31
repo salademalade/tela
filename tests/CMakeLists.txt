@@ -4,13 +4,13 @@ TARGET_SOURCES(tltests
   ../src/token/token.cpp
   ../src/lexer/lexer.cpp
   ../src/ast-node/ast-node.cpp
-  ../src/ast-node/leaf-ast-node.cpp
-  ../src/ast-node/binary-ast-node.cpp
-  ../src/ast-node/unary-ast-node.cpp
-  ../src/ast-node/func-def-ast-node.cpp
-  ../src/ast-node/func-call-ast-node.cpp
-  ../src/ast-node/stmt-seq-ast-node.cpp
-  ../src/ast-node/null-ast-node.cpp
+  ../src/ast-node/leaf/leaf-ast-node.cpp
+  ../src/ast-node/binary/binary-ast-node.cpp
+  ../src/ast-node/unary/unary-ast-node.cpp
+  ../src/ast-node/func-def/func-def-ast-node.cpp
+  ../src/ast-node/func-call/func-call-ast-node.cpp
+  ../src/ast-node/stmt-seq/stmt-seq-ast-node.cpp
+  ../src/ast-node/null/null-ast-node.cpp
   ../src/parser/parser.cpp
   main.test.cpp
   error.test.cpp

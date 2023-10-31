@@ -5,12 +5,12 @@ TARGET_SOURCES(tela
   token/token.cpp
   lexer/lexer.cpp
   ast-node/ast-node.cpp
-  ast-node/leaf-ast-node.cpp
-  ast-node/binary-ast-node.cpp
-  ast-node/unary-ast-node.cpp
-  ast-node/func-def-ast-node.cpp
-  ast-node/func-call-ast-node.cpp
-  ast-node/stmt-seq-ast-node.cpp
-  ast-node/null-ast-node.cpp
+  ast-node/leaf/leaf-ast-node.cpp
+  ast-node/binary/binary-ast-node.cpp
+  ast-node/unary/unary-ast-node.cpp
+  ast-node/func-def/func-def-ast-node.cpp
+  ast-node/func-call/func-call-ast-node.cpp
+  ast-node/stmt-seq/stmt-seq-ast-node.cpp
+  ast-node/null/null-ast-node.cpp
   parser/parser.cpp
 )
