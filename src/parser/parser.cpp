@@ -49,6 +49,20 @@ ASTNode *Parser::parse_block()
         if (i->type != Token::Type::T_COMMA && i->type != Token::Type::T_RPAREN) throw Error("Expected comma.");
       }
 
+      if ((++i)->type != Token::Type::T_COLON) throw Error("Expected colon.");
+
+      switch ((++i)->type)
+      {
+      case Token::Type::T_KEY_INT:
+        func->ret_type = FuncDefASTNode::ReturnType::R_INT;
+        break;
+      case Token::Type::T_KEY_FLOAT:
+        func->ret_type = FuncDefASTNode::ReturnType::R_FLOAT;
+        break;
+      default:
+        throw Error("Expected type specifier.");
+      }
+
       if ((++i)->type != Token::Type::T_LCURLY) throw Error("Expected bracket.");
 
       i++;

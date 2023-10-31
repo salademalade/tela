@@ -306,6 +306,8 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
   input.push_back(Token(Token::Type::T_COLON));
   input.push_back(Token(Token::Type::T_KEY_FLOAT));
   input.push_back(Token(Token::Type::T_RPAREN));
+  input.push_back(Token(Token::Type::T_COLON));
+  input.push_back(Token(Token::Type::T_KEY_INT));
   input.push_back(Token(Token::Type::T_LCURLY));
   input.push_back(Token(Token::Type::T_ID, "arg1"));
   input.push_back(Token(Token::Type::T_ADD));
@@ -324,6 +326,7 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
   REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
   REQUIRE(node->args["arg1"] == FuncDefASTNode::ReturnType::R_INT);
   REQUIRE(node->args["arg2"] == FuncDefASTNode::ReturnType::R_FLOAT);
+  REQUIRE(node->ret_type == FuncDefASTNode::ReturnType::R_INT);
   REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements.size() == 2);
   REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[0]->type == ASTNode::Type::N_ADD);
   REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left->type == ASTNode::Type::N_ID);
