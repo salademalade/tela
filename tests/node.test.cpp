@@ -30,18 +30,18 @@ TEST_CASE("Binary AST Node tests", "[ast]")
 
 TEST_CASE("Unary AST Node tests", "[ast]")
 {
-  ASTNode *child = new LeafASTNode(ASTNode::Type::N_ID, "foo");
+  ASTNode *child = new LeafASTNode(NodeType::N_ID, "foo");
 
-  ASTNode *node = new UnaryASTNode(ASTNode::Type::N_ADD, child);
+  ASTNode *node = new UnaryASTNode(NodeType::N_ADD, child);
 
-  REQUIRE(node->type == ASTNode::Type::N_ADD);
+  REQUIRE(node->type == NodeType::N_ADD);
   REQUIRE(static_cast<UnaryASTNode *>(node)->child == child);
 }
 
 TEST_CASE("Function Definition Node tests", "[ast][func]")
 {
-  ASTNode *name = new LeafASTNode(ASTNode::Type::N_ID, "func");
-  ASTNode *body = new LeafASTNode(ASTNode::Type::N_INT, "1");
+  ASTNode *name = new LeafASTNode(NodeType::N_ID, "func");
+  ASTNode *body = new LeafASTNode(NodeType::N_INT, "1");
   FuncDefASTNode *func = new FuncDefASTNode(name);
 
   func->body = body;
@@ -55,45 +55,45 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
   func->add_arg(a_name1, a_type1);
   func->add_arg(a_name2, a_type2);
 
-  REQUIRE(func->type == ASTNode::Type::N_FUNC_DEF);
+  REQUIRE(func->type == NodeType::N_FUNC_DEF);
 
-  REQUIRE(static_cast<LeafASTNode *>(func->name)->type == ASTNode::Type::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(func->name)->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(func->name)->value == "func");
 
   REQUIRE(func->args["foo"] == FuncRetType::R_INT);
   REQUIRE(func->args["bar"] == FuncRetType::R_FLOAT);
 
-  REQUIRE(static_cast<LeafASTNode *>(func->body)->type == ASTNode::Type::N_INT);
+  REQUIRE(static_cast<LeafASTNode *>(func->body)->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(func->body)->value == "1");
 }
 
 TEST_CASE("Function Call Node tests", "[ast][func]")
 {
-  ASTNode *name = new LeafASTNode(ASTNode::Type::N_ID, "func");
+  ASTNode *name = new LeafASTNode(NodeType::N_ID, "func");
 
   FuncCallASTNode *func = new FuncCallASTNode(name);
 
-  ASTNode *arg1 = new LeafASTNode(ASTNode::Type::N_INT, "1");
+  ASTNode *arg1 = new LeafASTNode(NodeType::N_INT, "1");
 
-  ASTNode *arg2_l = new LeafASTNode(ASTNode::Type::N_ID, "foo");
-  ASTNode *arg2_r = new LeafASTNode(ASTNode::Type::N_FLOAT, "1.2");
-  ASTNode *arg2 = new BinaryASTNode(ASTNode::Type::N_ADD, arg2_l, arg2_r);
+  ASTNode *arg2_l = new LeafASTNode(NodeType::N_ID, "foo");
+  ASTNode *arg2_r = new LeafASTNode(NodeType::N_FLOAT, "1.2");
+  ASTNode *arg2 = new BinaryASTNode(NodeType::N_ADD, arg2_l, arg2_r);
 
   func->add_arg(arg1);
   func->add_arg(arg2);
 
-  REQUIRE(func->type == ASTNode::Type::N_FUNC_CALL);
+  REQUIRE(func->type == NodeType::N_FUNC_CALL);
 
-  REQUIRE(static_cast<LeafASTNode *>(func->name)->type == ASTNode::Type::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(func->name)->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(func->name)->value == "func");
 
-  REQUIRE(func->args[0]->type == ASTNode::Type::N_INT);
+  REQUIRE(func->args[0]->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(func->args[0])->value == "1");
 
-  REQUIRE(func->args[1]->type == ASTNode::Type::N_ADD);
-  REQUIRE(static_cast<BinaryASTNode *>(func->args[1])->left->type == ASTNode::Type::N_ID);
+  REQUIRE(func->args[1]->type == NodeType::N_ADD);
+  REQUIRE(static_cast<BinaryASTNode *>(func->args[1])->left->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(func->args[1])->left)->value == "foo");
-  REQUIRE(static_cast<BinaryASTNode *>(func->args[1])->right->type == ASTNode::Type::N_FLOAT);
+  REQUIRE(static_cast<BinaryASTNode *>(func->args[1])->right->type == NodeType::N_FLOAT);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(func->args[1])->right)->value == "1.2");
 }
 

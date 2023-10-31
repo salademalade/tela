@@ -51,23 +51,23 @@ std::vector<Token> Lexer::tokenize()
       }
       if (id == "def")
       {
-        output.push_back(Token(Token::Type::T_KEY_DEF));
+        output.push_back(Token(TokenType::T_KEY_DEF));
       }
       else if (id == "int")
       {
-        output.push_back(Token(Token::Type::T_KEY_INT));
+        output.push_back(Token(TokenType::T_KEY_INT));
       }
       else if (id == "float")
       {
-        output.push_back(Token(Token::Type::T_KEY_FLOAT));
+        output.push_back(Token(TokenType::T_KEY_FLOAT));
       }
       else if (id == "return")
       {
-        output.push_back(Token(Token::Type::T_KEY_RETURN));
+        output.push_back(Token(TokenType::T_KEY_RETURN));
       }
       else
       {
-        output.push_back(Token(Token::Type::T_ID, id));
+        output.push_back(Token(TokenType::T_ID, id));
       }
     }
     else if (*i == '+')
@@ -92,22 +92,22 @@ std::vector<Token> Lexer::tokenize()
     }
     else if (*i == '=')
     {
-      output.push_back(Token(Token::Type::T_ASSIGN));
+      output.push_back(Token(TokenType::T_ASSIGN));
       i++;
     }
     else if (*i == ',')
     {
-      output.push_back(Token(Token::Type::T_COMMA));
+      output.push_back(Token(TokenType::T_COMMA));
       i++;
     }
     else if (*i == ':')
     {
-      output.push_back(Token(Token::Type::T_COLON));
+      output.push_back(Token(TokenType::T_COLON));
       i++;
     }
     else if (*i == ';')
     {
-      output.push_back(Token(Token::Type::T_SEMICOLON));
+      output.push_back(Token(TokenType::T_SEMICOLON));
       i++;
     }
     else if (*i == '(')
@@ -122,12 +122,12 @@ std::vector<Token> Lexer::tokenize()
     }
     else if (*i == '{')
     {
-      output.push_back(Token(Token::Type::T_LCURLY));
+      output.push_back(Token(TokenType::T_LCURLY));
       i++;
     }
     else if (*i == '}')
     {
-      output.push_back(Token(Token::Type::T_RCURLY));
+      output.push_back(Token(TokenType::T_RCURLY));
       i++;
     }
     else throw new Error("Unexpected token: %c", *i);

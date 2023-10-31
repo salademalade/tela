@@ -295,74 +295,74 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
 TEST_CASE("Parsing of function definition", "[parser][func]")
 {
   std::vector<Token> input;
-  input.push_back(Token(Token::Type::T_KEY_DEF));
-  input.push_back(Token(Token::Type::T_ID, "func"));
-  input.push_back(Token(Token::Type::T_LPAREN));
-  input.push_back(Token(Token::Type::T_ID, "arg1"));
-  input.push_back(Token(Token::Type::T_COLON));
-  input.push_back(Token(Token::Type::T_KEY_INT));
-  input.push_back(Token(Token::Type::T_COMMA));
-  input.push_back(Token(Token::Type::T_ID, "arg2"));
-  input.push_back(Token(Token::Type::T_COLON));
-  input.push_back(Token(Token::Type::T_KEY_FLOAT));
-  input.push_back(Token(Token::Type::T_RPAREN));
-  input.push_back(Token(Token::Type::T_COLON));
-  input.push_back(Token(Token::Type::T_KEY_INT));
-  input.push_back(Token(Token::Type::T_LCURLY));
-  input.push_back(Token(Token::Type::T_ID, "arg1"));
-  input.push_back(Token(Token::Type::T_ADD));
-  input.push_back(Token(Token::Type::T_ID, "arg2"));
-  input.push_back(Token(Token::Type::T_SEMICOLON));
-  input.push_back(Token(Token::Type::T_KEY_RETURN));
-  input.push_back(Token(Token::Type::T_INT, "1"));
-  input.push_back(Token(Token::Type::T_SEMICOLON));
-  input.push_back(Token(Token::Type::T_RCURLY));
+  input.push_back(Token(TokenType::T_KEY_DEF));
+  input.push_back(Token(TokenType::T_ID, "func"));
+  input.push_back(Token(TokenType::T_LPAREN));
+  input.push_back(Token(TokenType::T_ID, "arg1"));
+  input.push_back(Token(TokenType::T_COLON));
+  input.push_back(Token(TokenType::T_KEY_INT));
+  input.push_back(Token(TokenType::T_COMMA));
+  input.push_back(Token(TokenType::T_ID, "arg2"));
+  input.push_back(Token(TokenType::T_COLON));
+  input.push_back(Token(TokenType::T_KEY_FLOAT));
+  input.push_back(Token(TokenType::T_RPAREN));
+  input.push_back(Token(TokenType::T_COLON));
+  input.push_back(Token(TokenType::T_KEY_INT));
+  input.push_back(Token(TokenType::T_LCURLY));
+  input.push_back(Token(TokenType::T_ID, "arg1"));
+  input.push_back(Token(TokenType::T_ADD));
+  input.push_back(Token(TokenType::T_ID, "arg2"));
+  input.push_back(Token(TokenType::T_SEMICOLON));
+  input.push_back(Token(TokenType::T_KEY_RETURN));
+  input.push_back(Token(TokenType::T_INT, "1"));
+  input.push_back(Token(TokenType::T_SEMICOLON));
+  input.push_back(Token(TokenType::T_RCURLY));
 
   Parser parser(input);
   FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
-  REQUIRE(node->type == ASTNode::Type::N_FUNC_DEF);
-  REQUIRE(node->name->type == ASTNode::Type::N_ID);
+  REQUIRE(node->type == NodeType::N_FUNC_DEF);
+  REQUIRE(node->name->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
-  REQUIRE(node->args["arg1"] == FuncDefASTNode::ReturnType::R_INT);
-  REQUIRE(node->args["arg2"] == FuncDefASTNode::ReturnType::R_FLOAT);
-  REQUIRE(node->ret_type == FuncDefASTNode::ReturnType::R_INT);
+  REQUIRE(node->args["arg1"] == FuncRetType::R_INT);
+  REQUIRE(node->args["arg2"] == FuncRetType::R_FLOAT);
+  REQUIRE(node->ret_type == FuncRetType::R_INT);
   REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements.size() == 2);
-  REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[0]->type == ASTNode::Type::N_ADD);
-  REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left->type == ASTNode::Type::N_ID);
+  REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[0]->type == NodeType::N_ADD);
+  REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left)->value == "arg1");
-  REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right->type == ASTNode::Type::N_ID);
+  REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right)->value == "arg2");
-  REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[1]->type == ASTNode::Type::N_RET);
-  REQUIRE(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child->type == ASTNode::Type::N_INT);
+  REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[1]->type == NodeType::N_RET);
+  REQUIRE(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child)->value == "1");
 }
 
 TEST_CASE("Parsing of function call", "[parser][func]")
 {
   std::vector<Token> input;
-  input.push_back(Token(Token::Type::T_ID, "func"));
-  input.push_back(Token(Token::Type::T_LPAREN));
-  input.push_back(Token(Token::Type::T_ID, "foo"));
-  input.push_back(Token(Token::Type::T_COMMA));
-  input.push_back(Token(Token::Type::T_INT, "1"));
-  input.push_back(Token(Token::Type::T_ADD));
-  input.push_back(Token(Token::Type::T_FLOAT, "2.3"));
-  input.push_back(Token(Token::Type::T_RPAREN));
-  input.push_back(Token(Token::Type::T_SEMICOLON));
+  input.push_back(Token(TokenType::T_ID, "func"));
+  input.push_back(Token(TokenType::T_LPAREN));
+  input.push_back(Token(TokenType::T_ID, "foo"));
+  input.push_back(Token(TokenType::T_COMMA));
+  input.push_back(Token(TokenType::T_INT, "1"));
+  input.push_back(Token(TokenType::T_ADD));
+  input.push_back(Token(TokenType::T_FLOAT, "2.3"));
+  input.push_back(Token(TokenType::T_RPAREN));
+  input.push_back(Token(TokenType::T_SEMICOLON));
 
   Parser parser(input);
   FuncCallASTNode *node = static_cast<FuncCallASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
-  REQUIRE(node->type == ASTNode::Type::N_FUNC_CALL);
-  REQUIRE(node->name->type == ASTNode::Type::N_ID);
+  REQUIRE(node->type == NodeType::N_FUNC_CALL);
+  REQUIRE(node->name->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
-  REQUIRE(node->args[0]->type == ASTNode::Type::N_ID);
+  REQUIRE(node->args[0]->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(node->args[0])->value == "foo");
-  REQUIRE(node->args[1]->type == ASTNode::Type::N_ADD);
-  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->left->type == ASTNode::Type::N_INT);
+  REQUIRE(node->args[1]->type == NodeType::N_ADD);
+  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->left->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->args[1])->left)->value == "1");
-  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->right->type == ASTNode::Type::N_FLOAT);
+  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->right->type == NodeType::N_FLOAT);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->args[1])->right)->value == "2.3");
 }
 

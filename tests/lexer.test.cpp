@@ -123,7 +123,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_KEY_DEF);
+    Token expected(TokenType::T_KEY_DEF);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -136,7 +136,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_KEY_INT);
+    Token expected(TokenType::T_KEY_INT);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -149,7 +149,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_KEY_FLOAT);
+    Token expected(TokenType::T_KEY_FLOAT);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -162,7 +162,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_KEY_RETURN);
+    Token expected(TokenType::T_KEY_RETURN);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -228,7 +228,7 @@ TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_ASSIGN);
+  Token expected(TokenType::T_ASSIGN);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -241,7 +241,7 @@ TEST_CASE("Tokenization of comma", "[lexer]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_COMMA);
+  Token expected(TokenType::T_COMMA);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -254,7 +254,7 @@ TEST_CASE("Tokenization of colon", "[lexer]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_COLON);
+  Token expected(TokenType::T_COLON);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -267,7 +267,7 @@ TEST_CASE("Tokenization of semicolon", "[lexer]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(Token::Type::T_SEMICOLON);
+  Token expected(TokenType::T_SEMICOLON);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
@@ -311,7 +311,7 @@ TEST_CASE("Tokenization of curly brackets", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_LCURLY);
+    Token expected(TokenType::T_LCURLY);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
@@ -324,7 +324,7 @@ TEST_CASE("Tokenization of curly brackets", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(Token::Type::T_RCURLY);
+    Token expected(TokenType::T_RCURLY);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
