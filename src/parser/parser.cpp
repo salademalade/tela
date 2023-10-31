@@ -59,7 +59,7 @@ ASTNode *Parser::parse_expression()
       ASTNode *right = parse_term();
       term = new BinaryASTNode(ASTNode::Type::N_SUB, left, right);
     }
-    else if (check_next({Token::Type::T_SEMICOLON})) return term;
+    else if (check_next({Token::Type::T_SEMICOLON, Token::Type::T_COMMA, Token::Type::T_RPAREN})) return term;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
@@ -83,7 +83,7 @@ ASTNode *Parser::parse_term()
       ASTNode *right = parse_factor();
       factor = new BinaryASTNode(ASTNode::Type::N_DIV, left, right);
     }
-    else if (check_next({Token::Type::T_ADD, Token::Type::T_SUB, Token::Type::T_SEMICOLON})) return factor;
+    else if (check_next({Token::Type::T_ADD, Token::Type::T_SUB, Token::Type::T_SEMICOLON, Token::Type::T_COMMA, Token::Type::T_RPAREN})) return factor;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
@@ -92,7 +92,25 @@ ASTNode *Parser::parse_factor()
 {
   if (i->type == Token::Type::T_INT) return new LeafASTNode(ASTNode::Type::N_INT, (i++)->value);
   else if (i->type == Token::Type::T_FLOAT) return new LeafASTNode(ASTNode::Type::N_FLOAT, (i++)->value);
-  else if (i->type == Token::Type::T_ID) return new LeafASTNode(ASTNode::Type::N_ID, (i++)->value);
+  else if (i->type == Token::Type::T_ID)
+  {
+    ASTNode *id = new LeafASTNode(ASTNode::Type::N_ID, (i++)->value);
+
+    if ((i)->type != Token::Type::T_LPAREN) return id;
+
+    FuncCallASTNode *func = new FuncCallASTNode(id);
+
+    while (i->type != Token::Type::T_RPAREN)
+    {
+      i++;
+      ASTNode *arg = parse_expression();
+      func->add_arg(arg);
+    }
+
+    i++;
+
+    return func;
+  }
   else if (i->type == Token::Type::T_LPAREN)
   {
     i++;
