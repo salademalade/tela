@@ -154,6 +154,19 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(expected.type == out_token.type);
   }
+
+  SECTION("return")
+  {
+    Lexer lexer("return");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(Token::Type::T_KEY_RETURN);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
 }
 
 TEST_CASE("Tokenization of addition operator", "[lexer][add]")
@@ -259,8 +272,6 @@ TEST_CASE("Tokenization of semicolon", "[lexer]")
 
   REQUIRE(expected.type == out_token.type);
 }
-
-
 
 TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
 {

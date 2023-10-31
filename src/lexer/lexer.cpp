@@ -61,6 +61,10 @@ std::vector<Token> Lexer::tokenize()
       {
         output.push_back(Token(Token::Type::T_KEY_FLOAT));
       }
+      else if (id == "return")
+      {
+        output.push_back(Token(Token::Type::T_KEY_RETURN));
+      }
       else
       {
         output.push_back(Token(Token::Type::T_ID, id));
