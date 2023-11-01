@@ -30,14 +30,14 @@ ASTNode *Parser::parse_block()
 
         if ((++i)->type != TokenType::T_COLON) throw Error("Expected colon.");
 
-        FuncRetType a_type;
+        std::string a_type;
         switch ((++i)->type)
         {
         case TokenType::T_KEY_INT:
-          a_type = FuncRetType::R_INT;
+          a_type = "int";
           break;
         case TokenType::T_KEY_FLOAT:
-          a_type = FuncRetType::R_FLOAT;
+          a_type = "float";
           break;
         default:
           throw Error("Expected type specifier.");
@@ -54,10 +54,10 @@ ASTNode *Parser::parse_block()
       switch ((++i)->type)
       {
       case TokenType::T_KEY_INT:
-        func->ret_type = FuncRetType::R_INT;
+        func->ret_type = new LeafASTNode(NodeType::N_TYPE, "int");
         break;
       case TokenType::T_KEY_FLOAT:
-        func->ret_type = FuncRetType::R_FLOAT;
+        func->ret_type = new LeafASTNode(NodeType::N_TYPE, "float");
         break;
       default:
         throw Error("Expected type specifier.");
@@ -87,20 +87,66 @@ ASTNode *Parser::parse_block()
 
 ASTNode *Parser::parse_statement()
 {
-  if (i->type == TokenType::T_ID && (i+1)->type == TokenType::T_ASSIGN)
+  NodeType n_type;
+  switch (i->type)
   {
-    LeafASTNode *var = new LeafASTNode(NodeType::N_ID, i->value);
-    i += 2;
-    ASTNode *expr = parse_expression();
-    return new BinaryASTNode(NodeType::N_ASSIGN, var, expr);
+  case TokenType::T_KEY_LET:
+    n_type = NodeType::N_DECL;
+    break;
+  case TokenType::T_KEY_CONST:
+    n_type = NodeType::N_DECL_CONST;
+    break;
+  case TokenType::T_KEY_RETURN:
+    n_type = NodeType::N_RET;
+    break;
+  default:
+    return parse_assignment();
   }
-  else if (i->type == TokenType::T_KEY_RETURN)
+
+  i++;
+  ASTNode *expr = parse_typedecl();
+
+  return new UnaryASTNode(n_type, expr);
+}
+
+ASTNode *Parser::parse_typedecl()
+{
+  ASTNode *ass = parse_assignment();
+  if (i->type != TokenType::T_COLON) return ass;
+  LeafASTNode *type = new LeafASTNode(NodeType::N_TYPE, "");
+  i++;
+  switch (i->type)
   {
-    i++;
-    ASTNode *expr = parse_expression();
-    return new UnaryASTNode(NodeType::N_RET, expr);
+  case TokenType::T_KEY_INT:
+    type->value = "int";
+    break;
+  case TokenType::T_KEY_FLOAT:
+    type->value = "float";
+    break;
+  default:
+    throw Error("Invalid type.");
   }
-  else return parse_expression();
+
+  i++;
+  return new BinaryASTNode(NodeType::N_TYPE_DECL, ass, type);
+}
+
+ASTNode *Parser::parse_assignment()
+{
+  ASTNode *expr = parse_expression();
+  while (true)
+  {
+    if (i->type == TokenType::T_ASSIGN)
+    {
+      i++;
+      if (expr->type != NodeType::N_ID) throw Error("Cannot assign value to expression.");
+      ASTNode *left = expr;
+      ASTNode *right = parse_expression();
+      expr = new BinaryASTNode(NodeType::N_ASSIGN, left, right);
+    }
+    else if (check_next({TokenType::T_SEMICOLON, TokenType::T_COLON})) return expr;
+    else throw Error("Unexpected token: %s", i->value.c_str());
+  }
 }
 
 ASTNode *Parser::parse_expression()
@@ -122,7 +168,7 @@ ASTNode *Parser::parse_expression()
       ASTNode *right = parse_term();
       term = new BinaryASTNode(NodeType::N_SUB, left, right);
     }
-    else if (check_next({TokenType::T_SEMICOLON, TokenType::T_COMMA, TokenType::T_RPAREN})) return term;
+    else if (check_next({TokenType::T_ASSIGN, TokenType::T_SEMICOLON, TokenType::T_COLON, TokenType::T_COMMA, TokenType::T_RPAREN})) return term;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }
@@ -146,7 +192,7 @@ ASTNode *Parser::parse_term()
       ASTNode *right = parse_factor();
       factor = new BinaryASTNode(NodeType::N_DIV, left, right);
     }
-    else if (check_next({TokenType::T_ADD, TokenType::T_SUB, TokenType::T_SEMICOLON, TokenType::T_COMMA, TokenType::T_RPAREN})) return factor;
+    else if (check_next({TokenType::T_ADD, TokenType::T_SUB, TokenType::T_ASSIGN, TokenType::T_SEMICOLON, TokenType::T_COLON, TokenType::T_COMMA, TokenType::T_RPAREN})) return factor;
     else throw Error("Unexpected token: %s", i->value.c_str());
   }
 }

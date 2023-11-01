@@ -9,21 +9,15 @@
 class FuncDefASTNode: public ASTNode
 {
 public:
-  enum class ReturnType
-  {
-    R_INT,
-    R_FLOAT,
-  } ret_type;
   LeafASTNode *name;
-  std::map<std::string, ReturnType> args;
+  LeafASTNode *ret_type;
+  std::map<std::string, LeafASTNode *> args;
   ASTNode *body;
 
   FuncDefASTNode(ASTNode *name);
   ~FuncDefASTNode();
 
-  void add_arg(std::string id, ReturnType type);
+  void add_arg(std::string id, std::string type);
 };
-
-typedef FuncDefASTNode::ReturnType FuncRetType;
 
 #endif
