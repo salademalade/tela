@@ -13,6 +13,8 @@ public:
     N_SUB,
     N_MUL,
     N_DIV,
+    N_DECL,
+    N_DECL_CONST,
     N_ASSIGN,
     N_FUNC_DEF,
     N_FUNC_CALL,
