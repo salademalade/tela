@@ -22,9 +22,16 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   case NodeType::N_MUL:
   case NodeType::N_DIV:
     return visit_binary(static_cast<BinaryASTNode *>(node));
+  case NodeType::N_DECL:
+  case NodeType::N_DECL_CONST:
+  case NodeType::N_TYPE:
+  case NodeType::N_TYPE_DECL:
   case NodeType::N_ASSIGN:
+    break;
   case NodeType::N_FUNC_DEF:
+    return visit_fdef(static_cast<FuncDefASTNode *>(node));
   case NodeType::N_FUNC_CALL:
+    return visit_fcall(static_cast<FuncCallASTNode *>(node));
   case NodeType::N_RET:
   case NodeType::N_STMT_SEQ:
   case NodeType::N_NULL:
@@ -59,4 +66,22 @@ llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
   default:
     return nullptr;
   }
+}
+
+llvm::Value *IRVisitor::visit_fcall(FuncCallASTNode *node)
+{
+  std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
+  llvm::Function *callee = module->getFunction(f_name);
+  if (!callee) throw Error("Undefined reference to function: %s.", f_name);
+
+  if (callee->arg_size() != node->args.size()) throw Error("Invalid arguments for function: %s", f_name);
+
+  std::vector<llvm::Value *> args;
+  for (auto i : node->args)
+  {
+    args.push_back(visit(i));
+    if (args.back()) return nullptr;
+  }
+
+  return builder->CreateCall(callee, args, "calltmp");
 }
