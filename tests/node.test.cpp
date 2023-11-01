@@ -43,15 +43,16 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
 {
   ASTNode *name = new LeafASTNode(NodeType::N_ID, "func");
   ASTNode *body = new LeafASTNode(NodeType::N_INT, "1");
+  ASTNode *ret_type = new LeafASTNode(NodeType::N_TYPE, "int");
   FuncDefASTNode *func = new FuncDefASTNode(name);
 
   func->body = body;
 
   std::string a_name1 = "foo";
-  FuncRetType a_type1 = FuncRetType::R_INT;
+  std::string a_type1 = "int";
 
   std::string a_name2 = "bar";
-  FuncRetType a_type2 = FuncRetType::R_FLOAT;
+  std::string a_type2 = "float";
 
   func->add_arg(a_name1, a_type1);
   func->add_arg(a_name2, a_type2);
@@ -61,8 +62,10 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
   REQUIRE(static_cast<LeafASTNode *>(func->name)->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(func->name)->value == "func");
 
-  REQUIRE(func->args["foo"] == FuncRetType::R_INT);
-  REQUIRE(func->args["bar"] == FuncRetType::R_FLOAT);
+  REQUIRE(func->args["foo"]->type == NodeType::N_TYPE);
+  REQUIRE(func->args["foo"]->value == "int");
+  REQUIRE(func->args["bar"]->type == NodeType::N_TYPE);
+  REQUIRE(func->args["bar"]->value == "float");
 
   REQUIRE(static_cast<LeafASTNode *>(func->body)->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(func->body)->value == "1");

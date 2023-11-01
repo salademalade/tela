@@ -30,14 +30,14 @@ ASTNode *Parser::parse_block()
 
         if ((++i)->type != TokenType::T_COLON) throw Error("Expected colon.");
 
-        FuncRetType a_type;
+        std::string a_type;
         switch ((++i)->type)
         {
         case TokenType::T_KEY_INT:
-          a_type = FuncRetType::R_INT;
+          a_type = "int";
           break;
         case TokenType::T_KEY_FLOAT:
-          a_type = FuncRetType::R_FLOAT;
+          a_type = "float";
           break;
         default:
           throw Error("Expected type specifier.");
@@ -54,10 +54,10 @@ ASTNode *Parser::parse_block()
       switch ((++i)->type)
       {
       case TokenType::T_KEY_INT:
-        func->ret_type = FuncRetType::R_INT;
+        func->ret_type = new LeafASTNode(NodeType::N_TYPE, "int");
         break;
       case TokenType::T_KEY_FLOAT:
-        func->ret_type = FuncRetType::R_FLOAT;
+        func->ret_type = new LeafASTNode(NodeType::N_TYPE, "float");
         break;
       default:
         throw Error("Expected type specifier.");
