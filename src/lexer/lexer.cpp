@@ -53,6 +53,14 @@ std::vector<Token> Lexer::tokenize()
       {
         output.push_back(Token(TokenType::T_KEY_DEF));
       }
+      else if (id == "let")
+      {
+        output.push_back(Token(TokenType::T_KEY_LET));
+      }
+      else if (id == "const")
+      {
+        output.push_back(Token(TokenType::T_KEY_CONST));
+      }
       else if (id == "int")
       {
         output.push_back(Token(TokenType::T_KEY_INT));
