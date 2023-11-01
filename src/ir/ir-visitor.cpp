@@ -70,7 +70,7 @@ llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
   }
 }
 
-void IRVisitor::visit_fdef(FuncDefASTNode *node)
+llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
 {
   std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
 
@@ -84,12 +84,15 @@ void IRVisitor::visit_fdef(FuncDefASTNode *node)
 
   llvm::FunctionType *f_type = llvm::FunctionType::get(f_ret_type, arg_types, false);
 
-  llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, module.get());
+  llvm::Function *func = llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, module.get());
 
-  llvm::Function *func = module->getFunction(f_name);
+  unsigned int i = 0;
+  for (auto &arg : func->args())
+  {
+    arg.setName(node->args[i++].first);
+  }
 
-  llvm::BasicBlock *basic_block = llvm::BasicBlock::Create(*context, "entry", func);
-  builder->SetInsertPoint(basic_block);
+  return func;
 }
 
 llvm::Value *IRVisitor::visit_fcall(FuncCallASTNode *node)
