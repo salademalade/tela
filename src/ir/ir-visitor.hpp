@@ -8,6 +8,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Value.h>
+#include <llvm/IR/Type.h>
 #include <memory>
 #include <string>
 #include <map>
@@ -32,6 +33,8 @@ public:
   IRVisitor(std::string mod_name);
 
   llvm::Value *visit(ASTNode *node);
+private:
+  llvm::Value *visit_binary(BinaryASTNode *node);
 };
 
 #endif
