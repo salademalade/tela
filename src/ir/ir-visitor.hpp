@@ -8,6 +8,15 @@
 #include <memory>
 #include <string>
 #include <map>
+#include "error/error.hpp"
+#include "ast-node/ast-node.hpp"
+#include "ast-node/leaf/leaf-ast-node.hpp"
+#include "ast-node/binary/binary-ast-node.hpp"
+#include "ast-node/unary/unary-ast-node.hpp"
+#include "ast-node/func-def/func-def-ast-node.hpp"
+#include "ast-node/func-call/func-call-ast-node.hpp"
+#include "ast-node/stmt-seq/stmt-seq-ast-node.hpp"
+#include "ast-node/null/null-ast-node.hpp"
 
 class IRVisitor
 {
@@ -18,6 +27,8 @@ public:
   std::map<std::string, llvm::Value *> sym_table;
 
   IRVisitor(std::string mod_name);
+
+  llvm::Value *visit(ASTNode *node);
 };
 
 #endif
