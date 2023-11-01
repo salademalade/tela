@@ -14,5 +14,5 @@ FuncDefASTNode::~FuncDefASTNode()
 
 void FuncDefASTNode::add_arg(std::string id, std::string type)
 {
-  args[id] = new LeafASTNode(NodeType::N_TYPE, type);
+  args.push_back(std::pair<std::string, LeafASTNode *>(id, new LeafASTNode(NodeType::N_TYPE, type)));
 }

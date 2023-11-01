@@ -36,8 +36,10 @@ public:
   llvm::Value *visit(ASTNode *node);
 private:
   llvm::Value *visit_binary(BinaryASTNode *node);
-  llvm::Value *visit_fdef(FuncDefASTNode *node);
+  void visit_fdef(FuncDefASTNode *node);
   llvm::Value *visit_fcall(FuncCallASTNode *node);
+
+  llvm::Type *get_type(LeafASTNode *node);
 };
 
 #endif

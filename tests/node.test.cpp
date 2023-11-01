@@ -62,10 +62,12 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
   REQUIRE(static_cast<LeafASTNode *>(func->name)->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(func->name)->value == "func");
 
-  REQUIRE(func->args["foo"]->type == NodeType::N_TYPE);
-  REQUIRE(func->args["foo"]->value == "int");
-  REQUIRE(func->args["bar"]->type == NodeType::N_TYPE);
-  REQUIRE(func->args["bar"]->value == "float");
+  REQUIRE(func->args[0].first == "foo");
+  REQUIRE(func->args[0].second->type == NodeType::N_TYPE);
+  REQUIRE(func->args[0].second->value == "int");
+  REQUIRE(func->args[1].first == "bar");
+  REQUIRE(func->args[1].second->type == NodeType::N_TYPE);
+  REQUIRE(func->args[1].second->value == "float");
 
   REQUIRE(static_cast<LeafASTNode *>(func->body)->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(func->body)->value == "1");

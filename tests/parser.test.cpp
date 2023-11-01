@@ -393,10 +393,12 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
   REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
   REQUIRE(node->ret_type->type == NodeType::N_TYPE);
   REQUIRE(static_cast<LeafASTNode *>(node->ret_type)->value == "int");
-  REQUIRE(node->args["arg1"]->type == NodeType::N_TYPE);
-  REQUIRE(node->args["arg1"]->value == "int");
-  REQUIRE(node->args["arg2"]->type == NodeType::N_TYPE);
-  REQUIRE(node->args["arg2"]->value == "float");
+  REQUIRE(node->args[0].first == "arg1");
+  REQUIRE(node->args[0].second->type == NodeType::N_TYPE);
+  REQUIRE(node->args[0].second->value == "int");
+  REQUIRE(node->args[1].first == "arg2");
+  REQUIRE(node->args[1].second->type == NodeType::N_TYPE);
+  REQUIRE(node->args[1].second->value == "float");
   REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements.size() == 2);
   REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[0]->type == NodeType::N_ADD);
   REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left->type == NodeType::N_ID);

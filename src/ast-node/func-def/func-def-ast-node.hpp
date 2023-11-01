@@ -1,6 +1,8 @@
 #ifndef FUNC_DEF_AST_NODE_HPP
 #define FUNC_DEF_AST_NODE_HPP
 
+#include <utility>
+#include <vector>
 #include <map>
 #include "error/error.hpp"
 #include "../ast-node.hpp"
@@ -11,7 +13,7 @@ class FuncDefASTNode: public ASTNode
 public:
   LeafASTNode *name;
   LeafASTNode *ret_type;
-  std::map<std::string, LeafASTNode *> args;
+  std::vector<std::pair<std::string, LeafASTNode *>> args;
   ASTNode *body;
 
   FuncDefASTNode(ASTNode *name);
