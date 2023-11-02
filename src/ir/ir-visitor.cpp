@@ -16,7 +16,7 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   case NodeType::N_FLOAT:
     return llvm::ConstantFP::get(*context, llvm::APFloat(std::stof(static_cast<LeafASTNode *>(node)->value)));
   case NodeType::N_ID:
-    break;
+    return nullptr;
   case NodeType::N_ADD:
   case NodeType::N_SUB:
   case NodeType::N_MUL:
@@ -28,14 +28,17 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
     return nullptr;
   case NodeType::N_TYPE_DECL:
   case NodeType::N_ASSIGN:
-    break;
+    return nullptr;
   case NodeType::N_FUNC_DEF:
     visit_fdef(static_cast<FuncDefASTNode *>(node));
     return nullptr;
   case NodeType::N_FUNC_CALL:
     return visit_fcall(static_cast<FuncCallASTNode *>(node));
   case NodeType::N_RET:
+    return visit_ret(static_cast<UnaryASTNode *>(node));
   case NodeType::N_STMT_SEQ:
+    visit_seq(static_cast<StmtSeqASTNode *>(node));
+    return nullptr;
   case NodeType::N_NULL:
   default:
     return nullptr;
@@ -71,6 +74,25 @@ llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
 }
 
 llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
+{
+  llvm::Function *func = module->getFunction(static_cast<LeafASTNode *>(node->name)->value);
+
+  if (!func) func = create_fproto(node);
+
+  llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
+  builder->SetInsertPoint(block);
+
+  sym_table.clear();
+  for (auto &arg : func->args()) sym_table[std::string(arg.getName())] = &arg;
+
+  visit(node->body);
+
+  llvm::verifyFunction(*func);
+
+  return func;
+}
+
+llvm::Function *IRVisitor::create_fproto(FuncDefASTNode *node)
 {
   std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
 
@@ -111,6 +133,20 @@ llvm::Value *IRVisitor::visit_fcall(FuncCallASTNode *node)
   }
 
   return builder->CreateCall(callee, args, "calltmp");
+}
+
+llvm::Value *IRVisitor::visit_ret(UnaryASTNode *node)
+{
+  llvm::Value *child = visit(node->child);
+  return builder->CreateRet(child);
+}
+
+void IRVisitor::visit_seq(StmtSeqASTNode *node)
+{
+  for (auto i : node->statements)
+  {
+    visit(i);
+  }
 }
 
 llvm::Type *IRVisitor::get_type(LeafASTNode *node)

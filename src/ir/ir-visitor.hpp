@@ -11,8 +11,11 @@
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Type.h>
+#include <llvm/IR/Verifier.h>
+#include <utility>
 #include <memory>
 #include <string>
+#include <stack>
 #include <map>
 #include "error/error.hpp"
 #include "ast-node/ast-node.hpp"
@@ -31,6 +34,7 @@ public:
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> module;
   std::map<std::string, llvm::Value *> sym_table;
+  std::stack<std::string> fstack;
 
   IRVisitor(std::string mod_name);
 
@@ -39,7 +43,10 @@ private:
   llvm::Value *visit_binary(BinaryASTNode *node);
   llvm::Value *visit_fdef(FuncDefASTNode *node);
   llvm::Value *visit_fcall(FuncCallASTNode *node);
+  llvm::Value *visit_ret(UnaryASTNode *node);
+  void visit_seq(StmtSeqASTNode *node);
 
+  llvm::Function *create_fproto(FuncDefASTNode *node);
   llvm::Type *get_type(LeafASTNode *node);
 };
 
