@@ -110,7 +110,7 @@ llvm::Value *IRVisitor::visit_fcall(FuncCallASTNode *node)
   for (auto i : node->args)
   {
     args.push_back(visit(i));
-    if (args.back()) return nullptr;
+    if (!args.back()) return nullptr;
   }
 
   return builder->CreateCall(callee, args, "calltmp");
