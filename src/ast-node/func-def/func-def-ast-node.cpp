@@ -12,7 +12,7 @@ FuncDefASTNode::~FuncDefASTNode()
   delete body;
 }
 
-void FuncDefASTNode::add_arg(std::string id, std::string type)
+void FuncDefASTNode::add_arg(BinaryASTNode *node)
 {
-  args.push_back(std::pair<std::string, LeafASTNode *>(id, new LeafASTNode(NodeType::N_TYPE, type)));
+  args.push_back(node);
 }

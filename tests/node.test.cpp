@@ -48,26 +48,30 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
 
   func->body = body;
 
-  std::string a_name1 = "foo";
-  std::string a_type1 = "int";
+  LeafASTNode *a_name1 = new LeafASTNode(NodeType::N_ID, "foo");
+  LeafASTNode *a_type1 = new LeafASTNode(NodeType::N_TYPE, "int");
+  BinaryASTNode *arg1 = new BinaryASTNode(NodeType::N_TYPE_DECL, a_name1, a_type1);
 
-  std::string a_name2 = "bar";
-  std::string a_type2 = "float";
+  LeafASTNode *a_name2 = new LeafASTNode(NodeType::N_ID, "bar");
+  LeafASTNode *a_type2 = new LeafASTNode(NodeType::N_TYPE, "float");
+  BinaryASTNode *arg2 = new BinaryASTNode(NodeType::N_TYPE_DECL, a_name2, a_type2);
 
-  func->add_arg(a_name1, a_type1);
-  func->add_arg(a_name2, a_type2);
+  func->add_arg(arg1);
+  func->add_arg(arg2);
 
   REQUIRE(func->type == NodeType::N_FUNC_DEF);
 
   REQUIRE(static_cast<LeafASTNode *>(func->name)->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(func->name)->value == "func");
 
-  REQUIRE(func->args[0].first == "foo");
-  REQUIRE(func->args[0].second->type == NodeType::N_TYPE);
-  REQUIRE(func->args[0].second->value == "int");
-  REQUIRE(func->args[1].first == "bar");
-  REQUIRE(func->args[1].second->type == NodeType::N_TYPE);
-  REQUIRE(func->args[1].second->value == "float");
+  REQUIRE(func->args[0]->left->type == NodeType::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(func->args[0]->left)->value == "foo");
+  REQUIRE(func->args[0]->right->type == NodeType::N_TYPE);
+  REQUIRE(static_cast<LeafASTNode *>(func->args[0]->right)->value == "int");
+  REQUIRE(func->args[1]->left->type == NodeType::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(func->args[1]->left)->value == "bar");
+  REQUIRE(func->args[1]->right->type == NodeType::N_TYPE);
+  REQUIRE(static_cast<LeafASTNode *>(func->args[1]->right)->value == "float");
 
   REQUIRE(static_cast<LeafASTNode *>(func->body)->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(func->body)->value == "1");

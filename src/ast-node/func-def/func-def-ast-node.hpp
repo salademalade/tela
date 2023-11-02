@@ -7,19 +7,20 @@
 #include "error/error.hpp"
 #include "../ast-node.hpp"
 #include "../leaf/leaf-ast-node.hpp"
+#include "../binary/binary-ast-node.hpp"
 
 class FuncDefASTNode: public ASTNode
 {
 public:
   LeafASTNode *name;
   LeafASTNode *ret_type;
-  std::vector<std::pair<std::string, LeafASTNode *>> args;
+  std::vector<BinaryASTNode *> args;
   ASTNode *body;
 
   FuncDefASTNode(ASTNode *name);
   ~FuncDefASTNode();
 
-  void add_arg(std::string id, std::string type);
+  void add_arg(BinaryASTNode *node);
 };
 
 #endif

@@ -99,7 +99,7 @@ llvm::Function *IRVisitor::create_fproto(FuncDefASTNode *node)
   std::vector<llvm::Type *> arg_types;
   for (auto i : node->args)
   {
-    arg_types.push_back(get_type(i.second));
+    arg_types.push_back(get_type(static_cast<LeafASTNode *>(i->right)));
   }
 
   llvm::Type *f_ret_type = get_type(static_cast<LeafASTNode *>(node->ret_type));
@@ -111,7 +111,7 @@ llvm::Function *IRVisitor::create_fproto(FuncDefASTNode *node)
   unsigned int i = 0;
   for (auto &arg : func->args())
   {
-    arg.setName(node->args[i++].first);
+    arg.setName(static_cast<LeafASTNode *>(node->args[i++]->left)->value);
   }
 
   return func;

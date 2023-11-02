@@ -21,37 +21,29 @@ ASTNode *Parser::parse_block()
       ASTNode *name = new LeafASTNode(NodeType::N_ID, (++i)->value);
       FuncDefASTNode *func = new FuncDefASTNode(name);
 
-      if ((++i)->type != TokenType::T_LPAREN) throw Error("Expected parenthesis.");
+      i++;
+      if (i->type != TokenType::T_LPAREN) throw Error("Expected parenthesis.");
 
-      while (i->type != TokenType::T_RPAREN)
+      i++;
+      if (i->type != TokenType::T_RPAREN)
       {
-        if ((++i)->type != TokenType::T_ID) throw Error("Expected identifier.");
-        std::string a_name = i->value;
-
-        if ((++i)->type != TokenType::T_COLON) throw Error("Expected colon.");
-
-        std::string a_type;
-        switch ((++i)->type)
+        while (true)
         {
-        case TokenType::T_KEY_INT:
-          a_type = "int";
-          break;
-        case TokenType::T_KEY_FLOAT:
-          a_type = "float";
-          break;
-        default:
-          throw Error("Expected type specifier.");
+          BinaryASTNode *arg = static_cast<BinaryASTNode *>(parse_typedecl());
+          func->add_arg(arg);
+
+          if (i->type == TokenType::T_RPAREN) break;
+          if (i->type != TokenType::T_COMMA) throw Error("Expected comma.");
+
+          i++;
         }
-
-        func->add_arg(a_name, a_type);
-
-        i++;
-        if (i->type != TokenType::T_COMMA && i->type != TokenType::T_RPAREN) throw Error("Expected comma.");
       }
 
-      if ((++i)->type != TokenType::T_COLON) throw Error("Expected colon.");
+      i++;
+      if (i->type != TokenType::T_COLON) throw Error("Expected colon.");
 
-      switch ((++i)->type)
+      i++;
+      switch (i->type)
       {
       case TokenType::T_KEY_INT:
         func->ret_type = new LeafASTNode(NodeType::N_TYPE, "int");
@@ -63,7 +55,8 @@ ASTNode *Parser::parse_block()
         throw Error("Expected type specifier.");
       }
 
-      if ((++i)->type != TokenType::T_LCURLY) throw Error("Expected bracket.");
+      i++;
+      if (i->type != TokenType::T_LCURLY) throw Error("Expected bracket.");
 
       i++;
       func->body = parse_block();
