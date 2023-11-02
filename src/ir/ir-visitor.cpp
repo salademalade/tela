@@ -16,7 +16,7 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   case NodeType::N_FLOAT:
     return llvm::ConstantFP::get(*context, llvm::APFloat(std::stof(static_cast<LeafASTNode *>(node)->value)));
   case NodeType::N_ID:
-    return nullptr;
+    return visit_identifier(static_cast<LeafASTNode *>(node));
   case NodeType::N_ADD:
   case NodeType::N_SUB:
   case NodeType::N_MUL:
@@ -43,6 +43,12 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   default:
     return nullptr;
   }
+}
+
+llvm::Value *IRVisitor::visit_identifier(LeafASTNode *node)
+{
+  llvm::Value *id = sym_table[node->value];
+  return id;
 }
 
 llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
@@ -79,40 +85,15 @@ llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
 
   if (!func) func = create_fproto(node);
 
-  llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
-  builder->SetInsertPoint(block);
-
   sym_table.clear();
   for (auto &arg : func->args()) sym_table[std::string(arg.getName())] = &arg;
+
+  llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
+  builder->SetInsertPoint(block);
 
   visit(node->body);
 
   llvm::verifyFunction(*func);
-
-  return func;
-}
-
-llvm::Function *IRVisitor::create_fproto(FuncDefASTNode *node)
-{
-  std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
-
-  std::vector<llvm::Type *> arg_types;
-  for (auto i : node->args)
-  {
-    arg_types.push_back(get_type(static_cast<LeafASTNode *>(i->right)));
-  }
-
-  llvm::Type *f_ret_type = get_type(static_cast<LeafASTNode *>(node->ret_type));
-
-  llvm::FunctionType *f_type = llvm::FunctionType::get(f_ret_type, arg_types, false);
-
-  llvm::Function *func = llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, module.get());
-
-  unsigned int i = 0;
-  for (auto &arg : func->args())
-  {
-    arg.setName(static_cast<LeafASTNode *>(node->args[i++]->left)->value);
-  }
 
   return func;
 }
@@ -147,6 +128,31 @@ void IRVisitor::visit_seq(StmtSeqASTNode *node)
   {
     visit(i);
   }
+}
+
+llvm::Function *IRVisitor::create_fproto(FuncDefASTNode *node)
+{
+  std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
+
+  std::vector<llvm::Type *> arg_types;
+  for (auto i : node->args)
+  {
+    arg_types.push_back(get_type(static_cast<LeafASTNode *>(i->right)));
+  }
+
+  llvm::Type *f_ret_type = get_type(static_cast<LeafASTNode *>(node->ret_type));
+
+  llvm::FunctionType *f_type = llvm::FunctionType::get(f_ret_type, arg_types, false);
+
+  llvm::Function *func = llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, module.get());
+
+  unsigned int i = 0;
+  for (auto &arg : func->args())
+  {
+    arg.setName(static_cast<LeafASTNode *>(node->args[i++]->left)->value);
+  }
+
+  return func;
 }
 
 llvm::Type *IRVisitor::get_type(LeafASTNode *node)
