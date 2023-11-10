@@ -33,7 +33,7 @@ public:
   std::unique_ptr<llvm::LLVMContext> context;
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> module;
-  std::map<std::string, llvm::Value *> sym_table;
+  std::map<std::string, llvm::AllocaInst *> sym_table;
   std::stack<std::string> fstack;
 
   IRVisitor(std::string mod_name);
@@ -42,6 +42,8 @@ public:
 private:
   llvm::Value *visit_identifier(LeafASTNode *node);
   llvm::Value *visit_binary(BinaryASTNode *node);
+  llvm::Value *visit_decl(UnaryASTNode *node);
+  llvm::Value *visit_assignment(BinaryASTNode *node);
   llvm::Value *visit_fdef(FuncDefASTNode *node);
   llvm::Value *visit_fcall(FuncCallASTNode *node);
   llvm::Value *visit_ret(UnaryASTNode *node);

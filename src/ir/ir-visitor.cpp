@@ -24,11 +24,13 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
     return visit_binary(static_cast<BinaryASTNode *>(node));
   case NodeType::N_DECL:
   case NodeType::N_DECL_CONST:
+    return visit_decl(static_cast<UnaryASTNode *>(node));
   case NodeType::N_TYPE:
     return nullptr;
   case NodeType::N_TYPE_DECL:
-  case NodeType::N_ASSIGN:
     return nullptr;
+  case NodeType::N_ASSIGN:
+    return visit_assignment(static_cast<BinaryASTNode *>(node));
   case NodeType::N_FUNC_DEF:
     visit_fdef(static_cast<FuncDefASTNode *>(node));
     return nullptr;
@@ -47,8 +49,10 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
 
 llvm::Value *IRVisitor::visit_identifier(LeafASTNode *node)
 {
-  llvm::Value *id = sym_table[node->value];
-  return id;
+  llvm::AllocaInst *alloca = sym_table[node->value];
+  if (!alloca) throw Error("Undefined reference to variable: %s.", node->value.c_str());
+
+  return builder->CreateLoad(alloca->getAllocatedType(), alloca, node->value.c_str());
 }
 
 llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
@@ -79,6 +83,55 @@ llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
   }
 }
 
+llvm::Value *IRVisitor::visit_decl(UnaryASTNode *node)
+{
+  std::string name;
+  llvm::Type *type = nullptr;
+  llvm::Value *value = visit(node->child);
+  if (node->child->type == NodeType::N_ASSIGN)
+  {
+    name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
+    type = value->getType();
+  }
+  else if (node->child->type == NodeType::N_TYPE_DECL)
+  {
+    BinaryASTNode *tnode = static_cast<BinaryASTNode *>(node->child);
+    if (tnode->left->type == NodeType::N_ASSIGN)
+    {
+      name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(tnode->left)->left)->value;
+    }
+    else
+    {
+      name = static_cast<LeafASTNode *>(tnode->left)->value;
+    }
+    type = get_type(static_cast<LeafASTNode *>(tnode->right));
+  }
+
+  sym_table[name] = builder->CreateAlloca(type, nullptr, name);
+
+  return sym_table[name];
+}
+
+llvm::Value *IRVisitor::visit_assignment(BinaryASTNode *node)
+{
+  llvm::Value *right = visit(node->right);
+  std::string name = static_cast<LeafASTNode *>(node->left)->value;
+
+  llvm::AllocaInst *alloca;
+
+  try
+  {
+    alloca = sym_table[name];
+    builder->CreateStore(right, alloca);
+  }
+  catch(const std::exception& e)
+  {
+    throw Error(e.what());
+  }
+
+  return alloca;
+}
+
 llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
 {
   llvm::Function *func = module->getFunction(static_cast<LeafASTNode *>(node->name)->value);
@@ -86,7 +139,12 @@ llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
   if (!func) func = create_fproto(node);
 
   sym_table.clear();
-  for (auto &arg : func->args()) sym_table[std::string(arg.getName())] = &arg;
+  for (auto &arg : func->args())
+  {
+    llvm::AllocaInst *alloca = builder->CreateAlloca(arg.getType(), nullptr, arg.getName());
+    builder->CreateStore(&arg, alloca);
+    sym_table[std::string(arg.getName())] = alloca;
+  }
 
   llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
   builder->SetInsertPoint(block);
