@@ -79,6 +79,6 @@
     "typeindex": "cpp",
     "csignal": "cpp"
   },
-  "C_Cpp.default.compilerPath": "/usr/bin/clang++",
+  "C_Cpp.default.compilerPath": "/usr/bin/g++",
   "cmake.configureOnOpen": false
 }
