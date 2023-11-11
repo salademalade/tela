@@ -120,7 +120,7 @@ llvm::Value *IRVisitor::visit_assignment(BinaryASTNode *node)
   llvm::AllocaInst *alloca;
 
   alloca = sym_table[name];
-  if (!alloca) throw Error("Undefined reference to variable: %s.", name);
+  if (!alloca) throw Error("Undefined reference to variable: %s.", name.c_str());
 
   builder->CreateStore(right, alloca);
 
