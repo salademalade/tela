@@ -10,11 +10,13 @@ TEST_CASE("Tokenization of integer", "[lexer][int]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_INT, "1");
+    Token expected(TokenType::T_INT, "1", 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
     REQUIRE(expected.value == out_token.value);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("Multi-digit integer")
@@ -24,11 +26,13 @@ TEST_CASE("Tokenization of integer", "[lexer][int]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_INT, "1234");
+    Token expected(TokenType::T_INT, "1234", 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
     REQUIRE(expected.value == out_token.value);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 }
 
@@ -41,11 +45,13 @@ TEST_CASE("Tokenization of float", "[lexer][float]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_FLOAT, "1.2");
+    Token expected(TokenType::T_FLOAT, "1.2", 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
     REQUIRE(expected.value == out_token.value);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("Invalid float")
@@ -64,11 +70,13 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_ID, "a");
+    Token expected(TokenType::T_ID, "a", 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
     REQUIRE(expected.value == out_token.value);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("Identifier with letter and number")
@@ -78,11 +86,13 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_ID, "a1");
+    Token expected(TokenType::T_ID, "a1", 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
     REQUIRE(expected.value == out_token.value);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("Identifier with underscore")
@@ -92,11 +102,13 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_ID, "_");
+    Token expected(TokenType::T_ID, "_", 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
     REQUIRE(expected.value == out_token.value);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("Identifier with underscore and letter")
@@ -106,11 +118,13 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_ID, "_a");
+    Token expected(TokenType::T_ID, "_a", 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
     REQUIRE(expected.value == out_token.value);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 }
 
@@ -123,10 +137,12 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_KEY_DEF);
+    Token expected(TokenType::T_KEY_DEF, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("let")
@@ -136,10 +152,12 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_KEY_LET);
+    Token expected(TokenType::T_KEY_LET, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("const")
@@ -149,10 +167,12 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_KEY_CONST);
+    Token expected(TokenType::T_KEY_CONST, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("int")
@@ -162,10 +182,12 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_KEY_INT);
+    Token expected(TokenType::T_KEY_INT, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("float")
@@ -175,10 +197,12 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_KEY_FLOAT);
+    Token expected(TokenType::T_KEY_FLOAT, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("return")
@@ -188,10 +212,12 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_KEY_RETURN);
+    Token expected(TokenType::T_KEY_RETURN, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 }
 
@@ -202,10 +228,12 @@ TEST_CASE("Tokenization of addition operator", "[lexer][add]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_ADD);
+  Token expected(TokenType::T_ADD, 1, 1);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
+  REQUIRE(expected.row == 1);
+  REQUIRE(expected.col == 1);
 }
 
 TEST_CASE("Tokenization of subtraction operator", "[lexer][sub]")
@@ -215,10 +243,12 @@ TEST_CASE("Tokenization of subtraction operator", "[lexer][sub]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_SUB);
+  Token expected(TokenType::T_SUB, 1, 1);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
+  REQUIRE(expected.row == 1);
+  REQUIRE(expected.col == 1);
 }
 
 TEST_CASE("Tokenization of multiplication operator", "[lexer][mul]")
@@ -228,10 +258,12 @@ TEST_CASE("Tokenization of multiplication operator", "[lexer][mul]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_MUL);
+  Token expected(TokenType::T_MUL, 1, 1);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
+  REQUIRE(expected.row == 1);
+  REQUIRE(expected.col == 1);
 }
 
 TEST_CASE("Tokenization of division operator", "[lexer][div]")
@@ -241,10 +273,12 @@ TEST_CASE("Tokenization of division operator", "[lexer][div]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_DIV);
+  Token expected(TokenType::T_DIV, 1, 1);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
+  REQUIRE(expected.row == 1);
+  REQUIRE(expected.col == 1);
 }
 
 TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
@@ -254,10 +288,12 @@ TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_ASSIGN);
+  Token expected(TokenType::T_ASSIGN, 1, 1);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
+  REQUIRE(expected.row == 1);
+  REQUIRE(expected.col == 1);
 }
 
 TEST_CASE("Tokenization of comma", "[lexer]")
@@ -267,10 +303,12 @@ TEST_CASE("Tokenization of comma", "[lexer]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_COMMA);
+  Token expected(TokenType::T_COMMA, 1, 1);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
+  REQUIRE(expected.row == 1);
+  REQUIRE(expected.col == 1);
 }
 
 TEST_CASE("Tokenization of colon", "[lexer]")
@@ -280,10 +318,12 @@ TEST_CASE("Tokenization of colon", "[lexer]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_COLON);
+  Token expected(TokenType::T_COLON, 1, 1);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
+  REQUIRE(expected.row == 1);
+  REQUIRE(expected.col == 1);
 }
 
 TEST_CASE("Tokenization of semicolon", "[lexer]")
@@ -293,10 +333,12 @@ TEST_CASE("Tokenization of semicolon", "[lexer]")
 
   REQUIRE(output.size() == 1);
 
-  Token expected(TokenType::T_SEMICOLON);
+  Token expected(TokenType::T_SEMICOLON, 1, 1);
   Token out_token = output[0];
 
   REQUIRE(expected.type == out_token.type);
+  REQUIRE(expected.row == 1);
+  REQUIRE(expected.col == 1);
 }
 
 TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
@@ -308,10 +350,12 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_LPAREN);
+    Token expected(TokenType::T_LPAREN, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("Right parenthesis")
@@ -321,10 +365,12 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_RPAREN);
+    Token expected(TokenType::T_RPAREN, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 }
 
@@ -337,10 +383,12 @@ TEST_CASE("Tokenization of curly brackets", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_LCURLY);
+    Token expected(TokenType::T_LCURLY, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 
   SECTION("Right bracket")
@@ -350,10 +398,12 @@ TEST_CASE("Tokenization of curly brackets", "[lexer]")
 
     REQUIRE(output.size() == 1);
 
-    Token expected(TokenType::T_RCURLY);
+    Token expected(TokenType::T_RCURLY, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
   }
 }
 
@@ -365,25 +415,27 @@ TEST_CASE("General lexer tests", "[lexer]")
   REQUIRE(output.size() == 14);
 
   std::vector<Token> expected = {
-    Token(TokenType::T_ID, "a"),
-    Token(TokenType::T_ASSIGN),
-    Token(TokenType::T_INT, "1"),
-    Token(TokenType::T_ADD),
-    Token(TokenType::T_INT, "23"),
-    Token(TokenType::T_SUB),
-    Token(TokenType::T_LPAREN),
-    Token(TokenType::T_ID, "foo"),
-    Token(TokenType::T_MUL),
-    Token(TokenType::T_ID, "bar"),
-    Token(TokenType::T_DIV),
-    Token(TokenType::T_FLOAT, "4.5"),
-    Token(TokenType::T_RPAREN),
-    Token(TokenType::T_SEMICOLON),
+    Token(TokenType::T_ID, "a", 1, 1),
+    Token(TokenType::T_ASSIGN, 1, 3),
+    Token(TokenType::T_INT, "1", 1, 5),
+    Token(TokenType::T_ADD, 1, 7),
+    Token(TokenType::T_INT, "23", 1, 9),
+    Token(TokenType::T_SUB, 1, 12),
+    Token(TokenType::T_LPAREN, 1, 14),
+    Token(TokenType::T_ID, "foo", 1, 16),
+    Token(TokenType::T_MUL, 1, 20),
+    Token(TokenType::T_ID, "bar", 1, 22),
+    Token(TokenType::T_DIV, 1, 26),
+    Token(TokenType::T_FLOAT, "4.5", 1, 28),
+    Token(TokenType::T_RPAREN, 1, 32),
+    Token(TokenType::T_SEMICOLON, 1, 34),
   };
 
   for (int i = 0; i < output.size(); i++)
   {
     REQUIRE(expected[i].type == output[i].type);
     REQUIRE(expected[i].value == output[i].value);
+    REQUIRE(expected[i].row == output[i].row);
+    REQUIRE(expected[i].col == output[i].col);
   }
 }
