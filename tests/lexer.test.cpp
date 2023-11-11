@@ -129,6 +129,32 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     REQUIRE(expected.type == out_token.type);
   }
 
+  SECTION("let")
+  {
+    Lexer lexer("let");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(TokenType::T_KEY_LET);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+
+  SECTION("const")
+  {
+    Lexer lexer("const");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 1);
+
+    Token expected(TokenType::T_KEY_CONST);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+  }
+
   SECTION("int")
   {
     Lexer lexer("int");

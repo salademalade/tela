@@ -13,6 +13,8 @@ public:
     T_ID,
 
     T_KEY_DEF,    // def
+    T_KEY_LET,    // let
+    T_KEY_CONST,  // const
     T_KEY_INT,    // int
     T_KEY_FLOAT,  // float
     T_KEY_RETURN, // return

@@ -1,29 +1,26 @@
 #ifndef FUNC_DEF_AST_NODE_HPP
 #define FUNC_DEF_AST_NODE_HPP
 
+#include <utility>
+#include <vector>
 #include <map>
 #include "error/error.hpp"
 #include "../ast-node.hpp"
 #include "../leaf/leaf-ast-node.hpp"
+#include "../binary/binary-ast-node.hpp"
 
 class FuncDefASTNode: public ASTNode
 {
 public:
-  enum class ReturnType
-  {
-    R_INT,
-    R_FLOAT,
-  } ret_type;
   LeafASTNode *name;
-  std::map<std::string, ReturnType> args;
+  LeafASTNode *ret_type;
+  std::vector<BinaryASTNode *> args;
   ASTNode *body;
 
   FuncDefASTNode(ASTNode *name);
   ~FuncDefASTNode();
 
-  void add_arg(std::string id, ReturnType type);
+  void add_arg(BinaryASTNode *node);
 };
-
-typedef FuncDefASTNode::ReturnType FuncRetType;
 
 #endif

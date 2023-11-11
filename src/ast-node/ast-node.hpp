@@ -8,15 +8,24 @@ public:
   {
     N_INT,
     N_FLOAT,
+
     N_ID,
+
     N_ADD,
     N_SUB,
     N_MUL,
     N_DIV,
+
+    N_DECL,
+    N_DECL_CONST,
+    N_TYPE,
+    N_TYPE_DECL,
     N_ASSIGN,
+
     N_FUNC_DEF,
     N_FUNC_CALL,
     N_RET,
+
     N_STMT_SEQ,
     N_NULL,
   } type;

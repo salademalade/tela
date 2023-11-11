@@ -43,26 +43,35 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
 {
   ASTNode *name = new LeafASTNode(NodeType::N_ID, "func");
   ASTNode *body = new LeafASTNode(NodeType::N_INT, "1");
+  ASTNode *ret_type = new LeafASTNode(NodeType::N_TYPE, "int");
   FuncDefASTNode *func = new FuncDefASTNode(name);
 
   func->body = body;
 
-  std::string a_name1 = "foo";
-  FuncRetType a_type1 = FuncRetType::R_INT;
+  LeafASTNode *a_name1 = new LeafASTNode(NodeType::N_ID, "foo");
+  LeafASTNode *a_type1 = new LeafASTNode(NodeType::N_TYPE, "int");
+  BinaryASTNode *arg1 = new BinaryASTNode(NodeType::N_TYPE_DECL, a_name1, a_type1);
 
-  std::string a_name2 = "bar";
-  FuncRetType a_type2 = FuncRetType::R_FLOAT;
+  LeafASTNode *a_name2 = new LeafASTNode(NodeType::N_ID, "bar");
+  LeafASTNode *a_type2 = new LeafASTNode(NodeType::N_TYPE, "float");
+  BinaryASTNode *arg2 = new BinaryASTNode(NodeType::N_TYPE_DECL, a_name2, a_type2);
 
-  func->add_arg(a_name1, a_type1);
-  func->add_arg(a_name2, a_type2);
+  func->add_arg(arg1);
+  func->add_arg(arg2);
 
   REQUIRE(func->type == NodeType::N_FUNC_DEF);
 
   REQUIRE(static_cast<LeafASTNode *>(func->name)->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(func->name)->value == "func");
 
-  REQUIRE(func->args["foo"] == FuncRetType::R_INT);
-  REQUIRE(func->args["bar"] == FuncRetType::R_FLOAT);
+  REQUIRE(func->args[0]->left->type == NodeType::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(func->args[0]->left)->value == "foo");
+  REQUIRE(func->args[0]->right->type == NodeType::N_TYPE);
+  REQUIRE(static_cast<LeafASTNode *>(func->args[0]->right)->value == "int");
+  REQUIRE(func->args[1]->left->type == NodeType::N_ID);
+  REQUIRE(static_cast<LeafASTNode *>(func->args[1]->left)->value == "bar");
+  REQUIRE(func->args[1]->right->type == NodeType::N_TYPE);
+  REQUIRE(static_cast<LeafASTNode *>(func->args[1]->right)->value == "float");
 
   REQUIRE(static_cast<LeafASTNode *>(func->body)->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(func->body)->value == "1");
