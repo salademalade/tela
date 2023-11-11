@@ -36,8 +36,11 @@ public:
   } type;
   std::string value;
 
-  Token(Type type);
-  Token(Type type, std::string value);
+  unsigned int row;
+  unsigned int col;
+
+  Token(Type type, unsigned int row, unsigned int col);
+  Token(Type type, std::string value, unsigned int row, unsigned int col);
 };
 
 typedef Token::Type TokenType;
