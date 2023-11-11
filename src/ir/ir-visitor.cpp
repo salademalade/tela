@@ -133,6 +133,9 @@ llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
 
   if (!func) func = create_fproto(node);
 
+  llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
+  builder->SetInsertPoint(block);
+
   sym_table.clear();
   for (auto &arg : func->args())
   {
@@ -140,9 +143,6 @@ llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
     builder->CreateStore(&arg, alloca);
     sym_table[std::string(arg.getName())] = alloca;
   }
-
-  llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
-  builder->SetInsertPoint(block);
 
   visit(node->body);
 
