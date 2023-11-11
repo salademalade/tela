@@ -25,10 +25,6 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   case NodeType::N_DECL:
   case NodeType::N_DECL_CONST:
     return visit_decl(static_cast<UnaryASTNode *>(node));
-  case NodeType::N_TYPE:
-    return nullptr;
-  case NodeType::N_TYPE_DECL:
-    return nullptr;
   case NodeType::N_ASSIGN:
     return visit_assignment(static_cast<BinaryASTNode *>(node));
   case NodeType::N_FUNC_DEF:
@@ -41,6 +37,9 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   case NodeType::N_STMT_SEQ:
     visit_seq(static_cast<StmtSeqASTNode *>(node));
     return nullptr;
+
+  case NodeType::N_TYPE:
+  case NodeType::N_TYPE_DECL:
   case NodeType::N_NULL:
   default:
     return nullptr;
