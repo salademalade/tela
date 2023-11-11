@@ -119,17 +119,12 @@ llvm::Value *IRVisitor::visit_assignment(BinaryASTNode *node)
 
   llvm::AllocaInst *alloca;
 
-  try
-  {
-    alloca = sym_table[name];
-    builder->CreateStore(right, alloca);
-  }
-  catch(const std::exception& e)
-  {
-    throw Error(e.what());
-  }
+  alloca = sym_table[name];
+  if (!alloca) throw Error("Undefined reference to variable: %s.", name);
 
-  return alloca;
+  builder->CreateStore(right, alloca);
+
+  return right;
 }
 
 llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
