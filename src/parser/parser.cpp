@@ -219,15 +219,22 @@ ASTNode *Parser::parse_factor()
     ASTNode *id = new LeafASTNode(NodeType::N_ID, i->value, i->row, i->col);
     i++;
 
-    if ((i)->type != TokenType::T_LPAREN) return id;
+    if (i->type != TokenType::T_LPAREN) return id;
 
     FuncCallASTNode *func = new FuncCallASTNode(id);
 
-    while (i->type != TokenType::T_RPAREN)
+    i++;
+    if (i->type != TokenType::T_RPAREN)
     {
-      i++;
-      ASTNode *arg = parse_expression();
-      func->add_arg(arg);
+      while (true)
+      {
+        ASTNode *arg = parse_expression();
+        func->add_arg(arg);
+
+        if (i->type == TokenType::T_RPAREN) break;
+
+        i++;
+      }
     }
 
     i++;
