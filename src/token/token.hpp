@@ -41,6 +41,8 @@ public:
 
   Token(Type type, unsigned int row, unsigned int col);
   Token(Type type, std::string value, unsigned int row, unsigned int col);
+
+  const char *str();
 };
 
 typedef Token::Type TokenType;
