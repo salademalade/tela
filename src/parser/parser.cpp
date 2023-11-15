@@ -241,7 +241,7 @@ ASTNode *Parser::parse_factor()
     if (i->type != TokenType::T_RPAREN) throw Error("Unclosed parenthesis.");
     return expr;
   }
-  else if (i == input.end()) return new NullASTNode((i-1)->row+1, 1);
+  else if (i == input.end()) return new NullASTNode(input.back().row+1, 1);
   else throw Error("Unexpected token: %s", i->value.c_str());
 }
 
