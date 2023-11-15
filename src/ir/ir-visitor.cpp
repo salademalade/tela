@@ -49,7 +49,7 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
 llvm::Value *IRVisitor::visit_identifier(LeafASTNode *node)
 {
   llvm::AllocaInst *alloca = sym_table[node->value];
-  if (!alloca) throw Error("Undefined reference to variable: %s.", node->value.c_str());
+  if (!alloca) throw Error(node->row, node->col, "Undefined reference to variable: %s.", node->value.c_str());
 
   return builder->CreateLoad(alloca->getAllocatedType(), alloca, node->value.c_str());
 }
@@ -119,7 +119,7 @@ llvm::Value *IRVisitor::visit_assignment(BinaryASTNode *node)
   llvm::AllocaInst *alloca;
 
   alloca = sym_table[name];
-  if (!alloca) throw Error("Undefined reference to variable: %s.", name.c_str());
+  if (!alloca) throw Error(node->row, node->col, "Undefined reference to variable: %s.", name.c_str());
 
   builder->CreateStore(right, alloca);
 
@@ -154,9 +154,9 @@ llvm::Value *IRVisitor::visit_fcall(FuncCallASTNode *node)
 {
   std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
   llvm::Function *callee = module->getFunction(f_name);
-  if (!callee) throw Error("Undefined reference to function: %s.", f_name.c_str());
+  if (!callee) throw Error(node->row, node->col, "Undefined reference to function: %s.", f_name.c_str());
 
-  if (callee->arg_size() != node->args.size()) throw Error("Invalid arguments for function: %s", f_name.c_str());
+  if (callee->arg_size() != node->args.size()) throw Error(node->row, node->col, "Invalid arguments for function: %s", f_name.c_str());
 
   std::vector<llvm::Value *> args;
   for (auto i : node->args)
