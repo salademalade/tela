@@ -47,7 +47,7 @@ std::vector<Token> Lexer::tokenize()
       {
         if (*i == '.')
         {
-          if (has_p) throw Error("Unexpected token: '.'");
+          if (has_p) throw Error(row, col, "Unexpected token: '.'");
           else has_p = true;
         }
         num.push_back(*i++);
@@ -145,7 +145,7 @@ std::vector<Token> Lexer::tokenize()
       i++;
       col++;
     }
-    else throw new Error("Unexpected token: %c", *i);
+    else throw Error(row, col, "Unexpected token: %c", *i);
   }
 
   return output;
