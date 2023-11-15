@@ -8,7 +8,7 @@ TEST_CASE("Tokenization of integer", "[lexer][int]")
     Lexer lexer("1");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_INT, "1", 1, 1);
     Token out_token = output[0];
@@ -24,7 +24,7 @@ TEST_CASE("Tokenization of integer", "[lexer][int]")
     Lexer lexer("1234");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_INT, "1234", 1, 1);
     Token out_token = output[0];
@@ -43,7 +43,7 @@ TEST_CASE("Tokenization of float", "[lexer][float]")
     Lexer lexer("1.2");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_FLOAT, "1.2", 1, 1);
     Token out_token = output[0];
@@ -68,7 +68,7 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
     Lexer lexer("a");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_ID, "a", 1, 1);
     Token out_token = output[0];
@@ -84,7 +84,7 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
     Lexer lexer("a1");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_ID, "a1", 1, 1);
     Token out_token = output[0];
@@ -100,7 +100,7 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
     Lexer lexer("_");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_ID, "_", 1, 1);
     Token out_token = output[0];
@@ -116,7 +116,7 @@ TEST_CASE("Tokenization of identifier", "[lexer][id]")
     Lexer lexer("_a");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_ID, "_a", 1, 1);
     Token out_token = output[0];
@@ -135,7 +135,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     Lexer lexer("def");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_KEY_DEF, 1, 1);
     Token out_token = output[0];
@@ -150,7 +150,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     Lexer lexer("let");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_KEY_LET, 1, 1);
     Token out_token = output[0];
@@ -165,7 +165,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     Lexer lexer("const");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_KEY_CONST, 1, 1);
     Token out_token = output[0];
@@ -180,7 +180,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     Lexer lexer("int");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_KEY_INT, 1, 1);
     Token out_token = output[0];
@@ -195,7 +195,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     Lexer lexer("float");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_KEY_FLOAT, 1, 1);
     Token out_token = output[0];
@@ -210,7 +210,7 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     Lexer lexer("return");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_KEY_RETURN, 1, 1);
     Token out_token = output[0];
@@ -226,7 +226,7 @@ TEST_CASE("Tokenization of addition operator", "[lexer][add]")
   Lexer lexer("+");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+  REQUIRE(output.size() == 2);
 
   Token expected(TokenType::T_ADD, 1, 1);
   Token out_token = output[0];
@@ -241,7 +241,7 @@ TEST_CASE("Tokenization of subtraction operator", "[lexer][sub]")
   Lexer lexer("-");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+  REQUIRE(output.size() == 2);
 
   Token expected(TokenType::T_SUB, 1, 1);
   Token out_token = output[0];
@@ -256,7 +256,7 @@ TEST_CASE("Tokenization of multiplication operator", "[lexer][mul]")
   Lexer lexer("*");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+  REQUIRE(output.size() == 2);
 
   Token expected(TokenType::T_MUL, 1, 1);
   Token out_token = output[0];
@@ -271,7 +271,7 @@ TEST_CASE("Tokenization of division operator", "[lexer][div]")
   Lexer lexer("/");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+  REQUIRE(output.size() == 2);
 
   Token expected(TokenType::T_DIV, 1, 1);
   Token out_token = output[0];
@@ -286,7 +286,7 @@ TEST_CASE("Tokenization of assignment operator", "[lexer][assign]")
   Lexer lexer("=");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+  REQUIRE(output.size() == 2);
 
   Token expected(TokenType::T_ASSIGN, 1, 1);
   Token out_token = output[0];
@@ -301,7 +301,7 @@ TEST_CASE("Tokenization of comma", "[lexer]")
   Lexer lexer(",");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+  REQUIRE(output.size() == 2);
 
   Token expected(TokenType::T_COMMA, 1, 1);
   Token out_token = output[0];
@@ -316,7 +316,7 @@ TEST_CASE("Tokenization of colon", "[lexer]")
   Lexer lexer(":");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+  REQUIRE(output.size() == 2);
 
   Token expected(TokenType::T_COLON, 1, 1);
   Token out_token = output[0];
@@ -331,7 +331,7 @@ TEST_CASE("Tokenization of semicolon", "[lexer]")
   Lexer lexer(";");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 1);
+  REQUIRE(output.size() == 2);
 
   Token expected(TokenType::T_SEMICOLON, 1, 1);
   Token out_token = output[0];
@@ -348,7 +348,7 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
     Lexer lexer("(");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_LPAREN, 1, 1);
     Token out_token = output[0];
@@ -363,7 +363,7 @@ TEST_CASE("Tokenization of parentheses", "[lexer][paren]")
     Lexer lexer(")");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_RPAREN, 1, 1);
     Token out_token = output[0];
@@ -381,7 +381,7 @@ TEST_CASE("Tokenization of curly brackets", "[lexer]")
     Lexer lexer("{");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_LCURLY, 1, 1);
     Token out_token = output[0];
@@ -396,7 +396,7 @@ TEST_CASE("Tokenization of curly brackets", "[lexer]")
     Lexer lexer("}");
     std::vector<Token> output = lexer.tokenize();
 
-    REQUIRE(output.size() == 1);
+    REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_RCURLY, 1, 1);
     Token out_token = output[0];
@@ -412,7 +412,7 @@ TEST_CASE("General lexer tests", "[lexer]")
   Lexer lexer("a = 1 + 23 - ( foo * bar / 4.5 ) ;");
   std::vector<Token> output = lexer.tokenize();
 
-  REQUIRE(output.size() == 14);
+  REQUIRE(output.size() == 15);
 
   std::vector<Token> expected = {
     Token(TokenType::T_ID, "a", 1, 1),
@@ -431,7 +431,7 @@ TEST_CASE("General lexer tests", "[lexer]")
     Token(TokenType::T_SEMICOLON, 1, 34),
   };
 
-  for (int i = 0; i < output.size(); i++)
+  for (int i = 0; i < output.size() - 1; i++)
   {
     CHECK(expected[i].type == output[i].type);
     CHECK(expected[i].value == output[i].value);

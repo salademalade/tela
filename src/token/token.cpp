@@ -62,6 +62,8 @@ const char *Token::str()
     return "{";
   case Type::T_RCURLY:
     return "}";
+  case Type::T_EOF:
+    return "EOF";
   default:
     return "";
   }

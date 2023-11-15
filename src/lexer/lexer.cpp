@@ -148,5 +148,7 @@ std::vector<Token> Lexer::tokenize()
     else throw Error(row, col, "Unexpected token: %c", *i);
   }
 
+  output.push_back(Token(TokenType::T_EOF, row, col));
+
   return output;
 }

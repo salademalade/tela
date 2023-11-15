@@ -33,6 +33,8 @@ public:
     T_RPAREN,     // )
     T_LCURLY,     // {
     T_RCURLY,     // }
+
+    T_EOF,
   } type;
   std::string value;
 
