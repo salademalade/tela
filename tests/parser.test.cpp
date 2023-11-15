@@ -14,8 +14,8 @@
 TEST_CASE("Parsing of integer", "[parser][int]")
 {
   std::vector<Token> input;
-  input.push_back(Token(TokenType::T_INT, "1"));
-  input.push_back(Token(TokenType::T_SEMICOLON));
+  input.push_back(Token(TokenType::T_INT, "1", 1, 1));
+  input.push_back(Token(TokenType::T_SEMICOLON, 1, 2));
 
   Parser parser(input);
   ASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse())->statements[0];
@@ -27,8 +27,8 @@ TEST_CASE("Parsing of integer", "[parser][int]")
 TEST_CASE("Parsing of float", "[parser][float]")
 {
   std::vector<Token> input;
-  input.push_back(Token(TokenType::T_FLOAT, "2.3"));
-  input.push_back(Token(TokenType::T_SEMICOLON));
+  input.push_back(Token(TokenType::T_FLOAT, "2.3", 1, 1));
+  input.push_back(Token(TokenType::T_SEMICOLON, 1, 4));
 
   Parser parser(input);
   ASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse())->statements[0];
@@ -42,8 +42,8 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
   SECTION("Single identifier")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 4));
 
     Parser parser(input);
     LeafASTNode *node = static_cast<LeafASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -57,11 +57,11 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
     SECTION("Declaration of variable without value assignment")
     {
       std::vector<Token> input;
-      input.push_back(Token(TokenType::T_KEY_LET));
-      input.push_back(Token(TokenType::T_ID, "foo"));
-      input.push_back(Token(TokenType::T_COLON));
-      input.push_back(Token(TokenType::T_KEY_INT));
-      input.push_back(Token(TokenType::T_SEMICOLON));
+      input.push_back(Token(TokenType::T_KEY_LET, 1, 1));
+      input.push_back(Token(TokenType::T_ID, "foo", 1, 5));
+      input.push_back(Token(TokenType::T_COLON, 1, 8));
+      input.push_back(Token(TokenType::T_KEY_INT, 1, 10));
+      input.push_back(Token(TokenType::T_SEMICOLON, 1, 13));
 
       Parser parser(input);
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -77,11 +77,11 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
     SECTION("Declaration of variable with value assignment")
     {
       std::vector<Token> input;
-      input.push_back(Token(TokenType::T_KEY_LET));
-      input.push_back(Token(TokenType::T_ID, "foo"));
-      input.push_back(Token(TokenType::T_ASSIGN));
-      input.push_back(Token(TokenType::T_INT, "1"));
-      input.push_back(Token(TokenType::T_SEMICOLON));
+      input.push_back(Token(TokenType::T_KEY_LET, 1, 1));
+      input.push_back(Token(TokenType::T_ID, "foo", 1, 5));
+      input.push_back(Token(TokenType::T_ASSIGN, 1, 9));
+      input.push_back(Token(TokenType::T_INT, "1", 1, 11));
+      input.push_back(Token(TokenType::T_SEMICOLON, 1, 12));
 
       Parser parser(input);
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -97,11 +97,11 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
     SECTION("Declaration of constant with value assignment")
     {
       std::vector<Token> input;
-      input.push_back(Token(TokenType::T_KEY_CONST));
-      input.push_back(Token(TokenType::T_ID, "foo"));
-      input.push_back(Token(TokenType::T_ASSIGN));
-      input.push_back(Token(TokenType::T_INT, "1"));
-      input.push_back(Token(TokenType::T_SEMICOLON));
+      input.push_back(Token(TokenType::T_KEY_CONST, 1, 1));
+      input.push_back(Token(TokenType::T_ID, "foo", 1, 7));
+      input.push_back(Token(TokenType::T_ASSIGN, 1, 11));
+      input.push_back(Token(TokenType::T_INT, "1", 1, 13));
+      input.push_back(Token(TokenType::T_SEMICOLON, 1, 14));
 
       Parser parser(input);
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -118,10 +118,10 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
   SECTION("Value assignment without declaration")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_ASSIGN));
-    input.push_back(Token(TokenType::T_INT, "1"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_ASSIGN, 1, 5));
+    input.push_back(Token(TokenType::T_INT, "1", 1, 7));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 8));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -139,10 +139,10 @@ TEST_CASE("Parsing of addition operator", "[parser][add]")
   SECTION("Single operator")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_ADD));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_ADD, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 10));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -157,12 +157,12 @@ TEST_CASE("Parsing of addition operator", "[parser][add]")
   SECTION("Chain of operators")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_ADD));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_ADD));
-    input.push_back(Token(TokenType::T_ID, "baz"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_ADD, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_ADD, 1, 11));
+    input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -183,10 +183,10 @@ TEST_CASE("Parsing of subtraction operator", "[parser][sub]")
   SECTION("Single operator")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_SUB));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_SUB, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 10));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -201,12 +201,12 @@ TEST_CASE("Parsing of subtraction operator", "[parser][sub]")
   SECTION("Chain of operators")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_SUB));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_SUB));
-    input.push_back(Token(TokenType::T_ID, "baz"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_SUB, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_SUB, 1, 11));
+    input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -227,10 +227,10 @@ TEST_CASE("Parsing of multiplication operator", "[parser][mul]")
   SECTION("Single operator")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_MUL));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_MUL, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 10));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -245,12 +245,12 @@ TEST_CASE("Parsing of multiplication operator", "[parser][mul]")
   SECTION("Chain of operators")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_MUL));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_MUL));
-    input.push_back(Token(TokenType::T_ID, "baz"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_MUL, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_MUL, 1, 11));
+    input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -271,10 +271,10 @@ TEST_CASE("Parsing of division operator", "[parser][div]")
   SECTION("Single operator")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_DIV));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_DIV, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 10));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -289,12 +289,12 @@ TEST_CASE("Parsing of division operator", "[parser][div]")
   SECTION("Chain of operators")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_DIV));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_DIV));
-    input.push_back(Token(TokenType::T_ID, "baz"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_DIV, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_DIV, 1, 11));
+    input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -315,12 +315,12 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
   SECTION("Combination of addition and subtraction")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_ADD));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_SUB));
-    input.push_back(Token(TokenType::T_ID, "baz"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_ADD, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_SUB, 1, 11));
+    input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -338,12 +338,12 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
   SECTION("Combination of addition and multiplication")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_ADD));
-    input.push_back(Token(TokenType::T_ID, "bar"));
-    input.push_back(Token(TokenType::T_MUL));
-    input.push_back(Token(TokenType::T_ID, "baz"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_ADD, 1, 5));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
+    input.push_back(Token(TokenType::T_MUL, 1, 11));
+    input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -364,17 +364,17 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
   SECTION("Function without arguments")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_KEY_DEF));
-    input.push_back(Token(TokenType::T_ID, "func"));
-    input.push_back(Token(TokenType::T_LPAREN));
-    input.push_back(Token(TokenType::T_RPAREN));
-    input.push_back(Token(TokenType::T_COLON));
-    input.push_back(Token(TokenType::T_KEY_INT));
-    input.push_back(Token(TokenType::T_LCURLY));
-    input.push_back(Token(TokenType::T_KEY_RETURN));
-    input.push_back(Token(TokenType::T_INT, "0"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
-    input.push_back(Token(TokenType::T_RCURLY));
+    input.push_back(Token(TokenType::T_KEY_DEF, 1, 1));
+    input.push_back(Token(TokenType::T_ID, "func", 1, 5));
+    input.push_back(Token(TokenType::T_LPAREN, 1, 9));
+    input.push_back(Token(TokenType::T_RPAREN, 1, 10));
+    input.push_back(Token(TokenType::T_COLON, 1, 11));
+    input.push_back(Token(TokenType::T_KEY_INT, 1, 13));
+    input.push_back(Token(TokenType::T_LCURLY, 1, 17));
+    input.push_back(Token(TokenType::T_KEY_RETURN, 2, 2));
+    input.push_back(Token(TokenType::T_INT, "0", 2, 9));
+    input.push_back(Token(TokenType::T_SEMICOLON, 2, 10));
+    input.push_back(Token(TokenType::T_RCURLY, 3, 1));
 
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -390,24 +390,24 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
   SECTION("Function with arguments")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_KEY_DEF));
-    input.push_back(Token(TokenType::T_ID, "func"));
-    input.push_back(Token(TokenType::T_LPAREN));
-    input.push_back(Token(TokenType::T_ID, "arg1"));
-    input.push_back(Token(TokenType::T_COLON));
-    input.push_back(Token(TokenType::T_KEY_INT));
-    input.push_back(Token(TokenType::T_COMMA));
-    input.push_back(Token(TokenType::T_ID, "arg2"));
-    input.push_back(Token(TokenType::T_COLON));
-    input.push_back(Token(TokenType::T_KEY_FLOAT));
-    input.push_back(Token(TokenType::T_RPAREN));
-    input.push_back(Token(TokenType::T_COLON));
-    input.push_back(Token(TokenType::T_KEY_INT));
-    input.push_back(Token(TokenType::T_LCURLY));
-    input.push_back(Token(TokenType::T_KEY_RETURN));
-    input.push_back(Token(TokenType::T_INT, "1"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
-    input.push_back(Token(TokenType::T_RCURLY));
+    input.push_back(Token(TokenType::T_KEY_DEF, 1, 1));
+    input.push_back(Token(TokenType::T_ID, "func", 1, 5));
+    input.push_back(Token(TokenType::T_LPAREN, 1, 9));
+    input.push_back(Token(TokenType::T_ID, "arg1", 1, 10));
+    input.push_back(Token(TokenType::T_COLON, 1, 14));
+    input.push_back(Token(TokenType::T_KEY_INT, 1, 16));
+    input.push_back(Token(TokenType::T_COMMA, 1, 19));
+    input.push_back(Token(TokenType::T_ID, "arg2", 1, 21));
+    input.push_back(Token(TokenType::T_COLON, 1, 25));
+    input.push_back(Token(TokenType::T_KEY_FLOAT, 1, 27));
+    input.push_back(Token(TokenType::T_RPAREN, 1, 32));
+    input.push_back(Token(TokenType::T_COLON, 1, 33));
+    input.push_back(Token(TokenType::T_KEY_INT, 1, 35));
+    input.push_back(Token(TokenType::T_LCURLY, 1, 39));
+    input.push_back(Token(TokenType::T_KEY_RETURN, 2, 2));
+    input.push_back(Token(TokenType::T_INT, "1", 2, 9));
+    input.push_back(Token(TokenType::T_SEMICOLON, 2, 10));
+    input.push_back(Token(TokenType::T_RCURLY, 3, 1));
 
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -435,28 +435,28 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
   SECTION("Function body")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_KEY_DEF));
-    input.push_back(Token(TokenType::T_ID, "func"));
-    input.push_back(Token(TokenType::T_LPAREN));
-    input.push_back(Token(TokenType::T_ID, "arg1"));
-    input.push_back(Token(TokenType::T_COLON));
-    input.push_back(Token(TokenType::T_KEY_INT));
-    input.push_back(Token(TokenType::T_COMMA));
-    input.push_back(Token(TokenType::T_ID, "arg2"));
-    input.push_back(Token(TokenType::T_COLON));
-    input.push_back(Token(TokenType::T_KEY_FLOAT));
-    input.push_back(Token(TokenType::T_RPAREN));
-    input.push_back(Token(TokenType::T_COLON));
-    input.push_back(Token(TokenType::T_KEY_INT));
-    input.push_back(Token(TokenType::T_LCURLY));
-    input.push_back(Token(TokenType::T_ID, "arg1"));
-    input.push_back(Token(TokenType::T_ADD));
-    input.push_back(Token(TokenType::T_ID, "arg2"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
-    input.push_back(Token(TokenType::T_KEY_RETURN));
-    input.push_back(Token(TokenType::T_INT, "1"));
-    input.push_back(Token(TokenType::T_SEMICOLON));
-    input.push_back(Token(TokenType::T_RCURLY));
+    input.push_back(Token(TokenType::T_KEY_DEF, 1, 1));
+    input.push_back(Token(TokenType::T_ID, "func", 1, 5));
+    input.push_back(Token(TokenType::T_LPAREN, 1, 9));
+    input.push_back(Token(TokenType::T_ID, "arg1", 1, 10));
+    input.push_back(Token(TokenType::T_COLON, 1, 14));
+    input.push_back(Token(TokenType::T_KEY_INT, 1, 16));
+    input.push_back(Token(TokenType::T_COMMA, 1, 19));
+    input.push_back(Token(TokenType::T_ID, "arg2", 1, 21));
+    input.push_back(Token(TokenType::T_COLON, 1, 25));
+    input.push_back(Token(TokenType::T_KEY_FLOAT, 1, 27));
+    input.push_back(Token(TokenType::T_RPAREN, 1, 32));
+    input.push_back(Token(TokenType::T_COLON, 1, 33));
+    input.push_back(Token(TokenType::T_KEY_INT, 1, 35));
+    input.push_back(Token(TokenType::T_LCURLY, 1, 39));
+    input.push_back(Token(TokenType::T_ID, "arg1", 2, 2));
+    input.push_back(Token(TokenType::T_ADD, 2, 7));
+    input.push_back(Token(TokenType::T_ID, "arg2", 2, 9));
+    input.push_back(Token(TokenType::T_SEMICOLON, 2, 13));
+    input.push_back(Token(TokenType::T_KEY_RETURN, 3, 2));
+    input.push_back(Token(TokenType::T_INT, "1", 3, 9));
+    input.push_back(Token(TokenType::T_SEMICOLON, 3, 10));
+    input.push_back(Token(TokenType::T_RCURLY, 4, 1));
 
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -481,15 +481,15 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
 TEST_CASE("Parsing of function call", "[parser][func]")
 {
   std::vector<Token> input;
-  input.push_back(Token(TokenType::T_ID, "func"));
-  input.push_back(Token(TokenType::T_LPAREN));
-  input.push_back(Token(TokenType::T_ID, "foo"));
-  input.push_back(Token(TokenType::T_COMMA));
-  input.push_back(Token(TokenType::T_INT, "1"));
-  input.push_back(Token(TokenType::T_ADD));
-  input.push_back(Token(TokenType::T_FLOAT, "2.3"));
-  input.push_back(Token(TokenType::T_RPAREN));
-  input.push_back(Token(TokenType::T_SEMICOLON));
+  input.push_back(Token(TokenType::T_ID, "func", 1, 1));
+  input.push_back(Token(TokenType::T_LPAREN, 1, 5));
+  input.push_back(Token(TokenType::T_ID, "foo", 1, 6));
+  input.push_back(Token(TokenType::T_COMMA, 1, 9));
+  input.push_back(Token(TokenType::T_INT, "1", 1, 11));
+  input.push_back(Token(TokenType::T_ADD, 1, 13));
+  input.push_back(Token(TokenType::T_FLOAT, "2.3", 1, 15));
+  input.push_back(Token(TokenType::T_RPAREN, 1, 18));
+  input.push_back(Token(TokenType::T_SEMICOLON, 1, 19));
 
   Parser parser(input);
   FuncCallASTNode *node = static_cast<FuncCallASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -509,10 +509,10 @@ TEST_CASE("Parsing of function call", "[parser][func]")
 TEST_CASE("Parsing of statement sequences", "[parser]")
 {
   std::vector<Token> input;
-  input.push_back(Token(TokenType::T_ID, "foo"));
-  input.push_back(Token(TokenType::T_SEMICOLON));
-  input.push_back(Token(TokenType::T_ID, "bar"));
-  input.push_back(Token(TokenType::T_SEMICOLON));
+  input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+  input.push_back(Token(TokenType::T_SEMICOLON, 1, 5));
+  input.push_back(Token(TokenType::T_ID, "bar", 2, 1));
+  input.push_back(Token(TokenType::T_SEMICOLON, 2, 5));
 
   Parser parser(input);
   StmtSeqASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse());
@@ -529,8 +529,8 @@ TEST_CASE("Parsing invalid inputs", "[parser]")
   SECTION("Unclosed parentheses")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_LPAREN));
-    input.push_back(Token(TokenType::T_ID, "foo"));
+    input.push_back(Token(TokenType::T_LPAREN, 1, 1));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 2));
 
     Parser parser(input);
     REQUIRE_THROWS_AS(parser.parse(), Error);
@@ -539,8 +539,8 @@ TEST_CASE("Parsing invalid inputs", "[parser]")
   SECTION("Unexpected factor")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ID, "foo"));
-    input.push_back(Token(TokenType::T_ID, "bar"));
+    input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
+    input.push_back(Token(TokenType::T_ID, "bar", 1, 5));
 
     Parser parser(input);
     REQUIRE_THROWS_AS(parser.parse(), Error);
@@ -549,8 +549,8 @@ TEST_CASE("Parsing invalid inputs", "[parser]")
   SECTION("Unexpected operator")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_ADD));
-    input.push_back(Token(TokenType::T_ADD));
+    input.push_back(Token(TokenType::T_ADD, 1, 1));
+    input.push_back(Token(TokenType::T_ADD, 1, 3));
 
     Parser parser(input);
     REQUIRE_THROWS_AS(parser.parse(), Error);
@@ -559,7 +559,7 @@ TEST_CASE("Parsing invalid inputs", "[parser]")
   SECTION("Unexpected EOF")
   {
     std::vector<Token> input;
-    input.push_back(Token(TokenType::T_LPAREN));
+    input.push_back(Token(TokenType::T_LPAREN, 1, 1));
 
     Parser parser(input);
     REQUIRE_THROWS_AS(parser.parse(), Error);
