@@ -29,6 +29,7 @@ std::vector<Token> Lexer::tokenize()
   {
     if (*i == '\n')
     {
+      i++;
       row++;
       col = 1;
     }
