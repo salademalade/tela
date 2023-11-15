@@ -10,7 +10,7 @@ class StmtSeqASTNode: public ASTNode
 public:
   std::vector<ASTNode *> statements;
 
-  StmtSeqASTNode();
+  StmtSeqASTNode(unsigned int row, unsigned int col);
   ~StmtSeqASTNode();
 };
 

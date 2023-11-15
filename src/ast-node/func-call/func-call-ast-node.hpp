@@ -12,7 +12,7 @@ public:
   LeafASTNode *name;
   std::vector<ASTNode *> args;
 
-  FuncCallASTNode(ASTNode *name);
+  FuncCallASTNode(ASTNode *name, unsigned int row, unsigned int col);
   ~FuncCallASTNode();
 
   void add_arg(ASTNode *arg);

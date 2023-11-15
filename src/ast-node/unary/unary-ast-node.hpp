@@ -8,7 +8,7 @@ class UnaryASTNode: public ASTNode
 public:
   ASTNode *child;
 
-  UnaryASTNode(Type type, ASTNode *child);
+  UnaryASTNode(Type type, ASTNode *child, unsigned int row, unsigned int col);
   ~UnaryASTNode();
 };
 

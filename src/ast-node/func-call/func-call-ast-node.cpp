@@ -1,6 +1,6 @@
 #include "func-call-ast-node.hpp"
 
-FuncCallASTNode::FuncCallASTNode(ASTNode *name): ASTNode(NodeType::N_FUNC_CALL)
+FuncCallASTNode::FuncCallASTNode(ASTNode *name, unsigned int row, unsigned int col): ASTNode(NodeType::N_FUNC_CALL, row, col)
 {
   if (name->type != NodeType::N_ID) throw Error("Invalid function name.");
   this->name = static_cast<LeafASTNode *>(name);

@@ -9,7 +9,7 @@ class LeafASTNode: public ASTNode
 public:
   std::string value;
 
-  LeafASTNode(Type type, std::string value);
+  LeafASTNode(Type type, std::string value, unsigned int row, unsigned int col);
   ~LeafASTNode();
 };
 
