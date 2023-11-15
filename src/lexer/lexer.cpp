@@ -41,6 +41,7 @@ std::vector<Token> Lexer::tokenize()
     else if (char_is_in(*i, DIGITS) || *i == '.')
     {
       std::string num("");
+      unsigned int pos = col;
       bool has_p = false;
       while (char_is_in(*i, DIGITS) || *i == '.')
       {
@@ -52,52 +53,25 @@ std::vector<Token> Lexer::tokenize()
         num.push_back(*i++);
         col++;
       }
-      if (has_p) output.push_back(Token(TokenType::T_FLOAT, num, row, col));
-      else output.push_back(Token(TokenType::T_INT, num, row, col));
+      if (has_p) output.push_back(Token(TokenType::T_FLOAT, num, row, pos));
+      else output.push_back(Token(TokenType::T_INT, num, row, pos));
     }
     else if (char_is_in(*i, LETTERS) || *i == '_')
     {
       std::string id("");
+      unsigned int pos = col;
       while (char_is_in(*i, LETTERS) || char_is_in(*i, DIGITS) || *i == '_')
       {
         id.push_back(*i++);
         col++;
       }
-      if (id == "def")
-      {
-        output.push_back(Token(TokenType::T_KEY_DEF, row, col));
-        col++;
-      }
-      else if (id == "let")
-      {
-        output.push_back(Token(TokenType::T_KEY_LET, row, col));
-        col++;
-      }
-      else if (id == "const")
-      {
-        output.push_back(Token(TokenType::T_KEY_CONST, row, col));
-        col++;
-      }
-      else if (id == "int")
-      {
-        output.push_back(Token(TokenType::T_KEY_INT, row, col));
-        col++;
-      }
-      else if (id == "float")
-      {
-        output.push_back(Token(TokenType::T_KEY_FLOAT, row, col));
-        col++;
-      }
-      else if (id == "return")
-      {
-        output.push_back(Token(TokenType::T_KEY_RETURN, row, col));
-        col++;
-      }
-      else
-      {
-        output.push_back(Token(TokenType::T_ID, id, row, col));
-        col++;
-      }
+      if (id == "def") output.push_back(Token(TokenType::T_KEY_DEF, row, pos));
+      else if (id == "let") output.push_back(Token(TokenType::T_KEY_LET, row, pos));
+      else if (id == "const") output.push_back(Token(TokenType::T_KEY_CONST, row, pos));
+      else if (id == "int") output.push_back(Token(TokenType::T_KEY_INT, row, pos));
+      else if (id == "float") output.push_back(Token(TokenType::T_KEY_FLOAT, row, pos));
+      else if (id == "return") output.push_back(Token(TokenType::T_KEY_RETURN, row, pos));
+      else output.push_back(Token(TokenType::T_ID, id, row, pos));
     }
     else if (*i == '+')
     {
