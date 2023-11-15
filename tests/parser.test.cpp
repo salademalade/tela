@@ -22,6 +22,8 @@ TEST_CASE("Parsing of integer", "[parser][int]")
 
   REQUIRE(node->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(node)->value == "1");
+  REQUIRE(node->row == 1);
+  REQUIRE(node->col == 1);
 }
 
 TEST_CASE("Parsing of float", "[parser][float]")
@@ -35,6 +37,8 @@ TEST_CASE("Parsing of float", "[parser][float]")
 
   REQUIRE(node->type == NodeType::N_FLOAT);
   REQUIRE(static_cast<LeafASTNode *>(node)->value == "2.3");
+  REQUIRE(node->row == 1);
+  REQUIRE(node->col == 1);
 }
 
 TEST_CASE("Parsing of identifier", "[parser][id]")
@@ -50,6 +54,8 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
 
     REQUIRE(node->type == NodeType::N_ID);
     REQUIRE(node->value == "foo");
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 1);
   }
 
   SECTION("Declaration of identifier")
@@ -67,11 +73,19 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
       REQUIRE(node->type == NodeType::N_DECL);
+      REQUIRE(node->row == 1);
+      REQUIRE(node->col == 1);
       REQUIRE(node->child->type == NodeType::N_TYPE_DECL);
+      REQUIRE(node->child->row == 1);
+      REQUIRE(node->child->col == 8);
       REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_ID);
       REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value == "foo");
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->col == 5);
       REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->type == NodeType::N_TYPE);
       REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->right)->value == "int");
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->col == 10);
     }
 
     SECTION("Declaration of variable with value assignment")
@@ -87,11 +101,19 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
       REQUIRE(node->type == NodeType::N_DECL);
+      REQUIRE(node->row == 1);
+      REQUIRE(node->col == 1);
       REQUIRE(node->child->type == NodeType::N_ASSIGN);
+      REQUIRE(node->child->row == 1);
+      REQUIRE(node->child->col == 9);
       REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_ID);
       REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value == "foo");
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->col == 5);
       REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->type == NodeType::N_INT);
       REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->right)->value == "1");
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->col == 11);
     }
 
     SECTION("Declaration of constant with value assignment")
@@ -107,11 +129,19 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
       REQUIRE(node->type == NodeType::N_DECL_CONST);
+      REQUIRE(node->row == 1);
+      REQUIRE(node->col == 1);
       REQUIRE(node->child->type == NodeType::N_ASSIGN);
+      REQUIRE(node->child->row == 1);
+      REQUIRE(node->child->col == 11);
       REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_ID);
       REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value == "foo");
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->col == 7);
       REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->type == NodeType::N_INT);
       REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->right)->value == "1");
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->col == 13);
     }
   }
 
@@ -127,10 +157,16 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_ASSIGN);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 5);
     REQUIRE(node->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->left)->value == "foo");
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 1);
     REQUIRE(node->right->type == NodeType::N_INT);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "1");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 7);
   }
 }
 
@@ -148,10 +184,16 @@ TEST_CASE("Parsing of addition operator", "[parser][add]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_ADD);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 5);
     REQUIRE(node->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->left)->value == "foo");
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 1);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "bar");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 7);
   }
 
   SECTION("Chain of operators")
@@ -168,13 +210,23 @@ TEST_CASE("Parsing of addition operator", "[parser][add]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_ADD);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 11);
     REQUIRE(node->left->type == NodeType::N_ADD);
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 5);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->left)->value == "foo");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->col == 1);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->right)->value == "bar");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->col == 7);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "baz");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 13);
   }
 }
 
@@ -192,10 +244,16 @@ TEST_CASE("Parsing of subtraction operator", "[parser][sub]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_SUB);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 5);
     REQUIRE(node->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->left)->value == "foo");
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 1);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "bar");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 7);
   }
 
   SECTION("Chain of operators")
@@ -212,13 +270,23 @@ TEST_CASE("Parsing of subtraction operator", "[parser][sub]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_SUB);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 11);
     REQUIRE(node->left->type == NodeType::N_SUB);
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 5);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->left)->value == "foo");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->col == 1);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->right)->value == "bar");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->col == 7);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "baz");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 13);
   }
 }
 
@@ -236,10 +304,16 @@ TEST_CASE("Parsing of multiplication operator", "[parser][mul]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_MUL);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 5);
     REQUIRE(node->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->left)->value == "foo");
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 1);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "bar");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 7);
   }
 
   SECTION("Chain of operators")
@@ -256,13 +330,23 @@ TEST_CASE("Parsing of multiplication operator", "[parser][mul]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_MUL);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 11);
     REQUIRE(node->left->type == NodeType::N_MUL);
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 5);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->left)->value == "foo");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->col == 1);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->right)->value == "bar");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->col == 7);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "baz");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 13);
   }
 }
 
@@ -280,10 +364,16 @@ TEST_CASE("Parsing of division operator", "[parser][div]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_DIV);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 5);
     REQUIRE(node->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->left)->value == "foo");
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 1);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "bar");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 7);
   }
 
   SECTION("Chain of operators")
@@ -300,13 +390,23 @@ TEST_CASE("Parsing of division operator", "[parser][div]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_DIV);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 11);
     REQUIRE(node->left->type == NodeType::N_DIV);
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 5);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->left)->value == "foo");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->col == 1);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->right)->value == "bar");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->col == 7);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "baz");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 13);
   }
 }
 
@@ -326,13 +426,23 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_SUB);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 11);
     REQUIRE(node->left->type == NodeType::N_ADD);
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 5);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->left)->value == "foo");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->left->col == 1);
     REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->right)->value == "bar");
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->left)->right->col == 7);
     REQUIRE(node->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->right)->value == "baz");
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 13);
   }
 
   SECTION("Combination of addition and multiplication")
@@ -349,13 +459,23 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_ADD);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 5);
     REQUIRE(node->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->left)->value == "foo");
+    REQUIRE(node->left->row == 1);
+    REQUIRE(node->left->col == 1);
     REQUIRE(node->right->type == NodeType::N_MUL);
+    REQUIRE(node->right->row == 1);
+    REQUIRE(node->right->col == 11);
     REQUIRE(static_cast<BinaryASTNode *>(node->right)->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->right)->left)->value == "bar");
+    REQUIRE(static_cast<BinaryASTNode *>(node->right)->left->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->right)->left->col == 7);
     REQUIRE(static_cast<BinaryASTNode *>(node->right)->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->right)->right)->value == "baz");
+    REQUIRE(static_cast<BinaryASTNode *>(node->right)->right->row == 1);
+    REQUIRE(static_cast<BinaryASTNode *>(node->right)->right->col == 13);
   }
 }
 
@@ -380,10 +500,16 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_FUNC_DEF);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 1);
     REQUIRE(node->name->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
+    REQUIRE(node->name->row == 1);
+    REQUIRE(node->name->col == 5);
     REQUIRE(node->ret_type->type == NodeType::N_TYPE);
     REQUIRE(static_cast<LeafASTNode *>(node->ret_type)->value == "int");
+    REQUIRE(node->ret_type->row == 1);
+    REQUIRE(node->ret_type->col == 13);
     REQUIRE(node->args.size() == 0);
   }
 
@@ -413,23 +539,33 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
     REQUIRE(node->type == NodeType::N_FUNC_DEF);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 1);
     REQUIRE(node->name->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
+    REQUIRE(node->name->row == 1);
+    REQUIRE(node->name->col == 5);
     REQUIRE(node->ret_type->type == NodeType::N_TYPE);
     REQUIRE(static_cast<LeafASTNode *>(node->ret_type)->value == "int");
+    REQUIRE(node->ret_type->row == 1);
+    REQUIRE(node->ret_type->col == 35);
     REQUIRE(node->args.size() == 2);
     REQUIRE(node->args[0]->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->args[0]->left)->value == "arg1");
+    REQUIRE(node->args[0]->left->row == 1);
+    REQUIRE(node->args[0]->left->col == 10);
     REQUIRE(node->args[0]->right->type == NodeType::N_TYPE);
     REQUIRE(static_cast<LeafASTNode *>(node->args[0]->right)->value == "int");
+    REQUIRE(node->args[0]->right->row == 1);
+    REQUIRE(node->args[0]->right->col == 16);
     REQUIRE(node->args[1]->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(node->args[1]->left)->value == "arg2");
+    REQUIRE(node->args[1]->left->row == 1);
+    REQUIRE(node->args[1]->left->col == 21);
     REQUIRE(node->args[1]->right->type == NodeType::N_TYPE);
     REQUIRE(static_cast<LeafASTNode *>(node->args[1]->right)->value == "float");
-    REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements.size() == 1);
-    REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[0]->type == NodeType::N_RET);
-    REQUIRE(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->child->type == NodeType::N_INT);
-    REQUIRE(static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->child)->value == "1");
+    REQUIRE(node->args[1]->right->row == 1);
+    REQUIRE(node->args[1]->right->col == 27);
   }
 
   SECTION("Function body")
@@ -461,20 +597,25 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
-    REQUIRE(node->type == NodeType::N_FUNC_DEF);
-    REQUIRE(node->name->type == NodeType::N_ID);
-    REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
-    REQUIRE(node->ret_type->type == NodeType::N_TYPE);
-    REQUIRE(static_cast<LeafASTNode *>(node->ret_type)->value == "int");
     REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements.size() == 2);
     REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[0]->type == NodeType::N_ADD);
+    REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[0]->row == 2);
+    REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[0]->col == 7);
     REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left)->value == "arg1");
+    REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left->row == 2);
+    REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->left->col == 2);
     REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right->type == NodeType::N_ID);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right)->value == "arg2");
+    REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right->row == 2);
+    REQUIRE(static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[0])->right->col == 9);
     REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[1]->type == NodeType::N_RET);
+    REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[1]->row == 3);
+    REQUIRE(static_cast<StmtSeqASTNode *>(node->body)->statements[1]->col == 2);
     REQUIRE(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child->type == NodeType::N_INT);
     REQUIRE(static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child)->value == "1");
+    REQUIRE(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child->row == 3);
+    REQUIRE(static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(node->body)->statements[1])->child->col == 9);
   }
 }
 
@@ -495,15 +636,27 @@ TEST_CASE("Parsing of function call", "[parser][func]")
   FuncCallASTNode *node = static_cast<FuncCallASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
 
   REQUIRE(node->type == NodeType::N_FUNC_CALL);
+  REQUIRE(node->row == 1);
+  REQUIRE(node->col == 1);
   REQUIRE(node->name->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(node->name)->value == "func");
+  REQUIRE(node->name->row == 1);
+  REQUIRE(node->name->col == 1);
   REQUIRE(node->args[0]->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(node->args[0])->value == "foo");
+  REQUIRE(node->args[0]->row == 1);
+  REQUIRE(node->args[0]->col == 6);
   REQUIRE(node->args[1]->type == NodeType::N_ADD);
+  REQUIRE(node->args[1]->row == 1);
+  REQUIRE(node->args[1]->col == 13);
   REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->left->type == NodeType::N_INT);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->args[1])->left)->value == "1");
+  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->left->row == 1);
+  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->left->col == 11);
   REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->right->type == NodeType::N_FLOAT);
   REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->args[1])->right)->value == "2.3");
+  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->right->row == 1);
+  REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->right->col == 15);
 }
 
 TEST_CASE("Parsing of statement sequences", "[parser]")
@@ -518,10 +671,16 @@ TEST_CASE("Parsing of statement sequences", "[parser]")
   StmtSeqASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse());
 
   REQUIRE(node->statements.size() == 2);
+  REQUIRE(node->row == 1);
+  REQUIRE(node->col == 1);
   REQUIRE(node->statements[0]->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(node->statements[0])->value == "foo");
+  REQUIRE(node->statements[0]->row == 1);
+  REQUIRE(node->statements[0]->col == 1);
   REQUIRE(node->statements[1]->type == NodeType::N_ID);
   REQUIRE(static_cast<LeafASTNode *>(node->statements[1])->value == "bar");
+  REQUIRE(node->statements[1]->row == 2);
+  REQUIRE(node->statements[1]->col == 1);
 }
 
 TEST_CASE("Parsing invalid inputs", "[parser]")
