@@ -433,9 +433,9 @@ TEST_CASE("General lexer tests", "[lexer]")
 
   for (int i = 0; i < output.size(); i++)
   {
-    REQUIRE(expected[i].type == output[i].type);
-    REQUIRE(expected[i].value == output[i].value);
-    REQUIRE(expected[i].row == output[i].row);
-    REQUIRE(expected[i].col == output[i].col);
+    CHECK(expected[i].type == output[i].type);
+    CHECK(expected[i].value == output[i].value);
+    CHECK(expected[i].row == output[i].row);
+    CHECK(expected[i].col == output[i].col);
   }
 }
