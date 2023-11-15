@@ -24,7 +24,7 @@ ASTNode *Parser::parse_block()
       FuncDefASTNode *func = new FuncDefASTNode(name, row, col);
 
       i++;
-      if (i->type != TokenType::T_LPAREN) throw Error("Expected parenthesis.");
+      if (i->type != TokenType::T_LPAREN) throw Error(i->row, i->col, "Expected '('.");
 
       i++;
       if (i->type != TokenType::T_RPAREN)
@@ -35,14 +35,14 @@ ASTNode *Parser::parse_block()
           func->add_arg(arg);
 
           if (i->type == TokenType::T_RPAREN) break;
-          if (i->type != TokenType::T_COMMA) throw Error("Expected comma.");
+          if (i->type != TokenType::T_COMMA) throw Error(i->row, i->col, "Expected ','.");
 
           i++;
         }
       }
 
       i++;
-      if (i->type != TokenType::T_COLON) throw Error("Expected colon.");
+      if (i->type != TokenType::T_COLON) throw Error("Expected ':'.");
 
       i++;
       switch (i->type)
@@ -54,11 +54,11 @@ ASTNode *Parser::parse_block()
         func->ret_type = new LeafASTNode(NodeType::N_TYPE, "float", i->row, i->col);
         break;
       default:
-        throw Error("Expected type specifier.");
+        throw Error(i->row, i->col, "Expected type specifier.");
       }
 
       i++;
-      if (i->type != TokenType::T_LCURLY) throw Error("Expected bracket.");
+      if (i->type != TokenType::T_LCURLY) throw Error(i->row, i->col, "Expected '{'.");
 
       i++;
       func->body = parse_block();
@@ -70,7 +70,7 @@ ASTNode *Parser::parse_block()
       ASTNode *stmt = parse_statement();
       if (i->type != TokenType::T_SEMICOLON)
       {
-        throw Error("Expected semicolon.");
+        throw Error(i->row, i->col, "Expected ';'.");
       }
       seq->statements.push_back(stmt);
     }
@@ -122,7 +122,7 @@ ASTNode *Parser::parse_typedecl()
     type->value = "float";
     break;
   default:
-    throw Error("Invalid type.");
+    throw Error(i->row, i->col, "Invalid type.");
   }
 
   i++;
@@ -138,13 +138,13 @@ ASTNode *Parser::parse_assignment()
     {
       unsigned int row = i->row, col = i->col;
       i++;
-      if (expr->type != NodeType::N_ID) throw Error("Cannot assign value to expression.");
+      if (expr->type != NodeType::N_ID) throw Error(i->row, i->col, "Cannot assign value to expression.");
       ASTNode *left = expr;
       ASTNode *right = parse_expression();
       expr = new BinaryASTNode(NodeType::N_ASSIGN, left, right, row, col);
     }
     else if (check_next({TokenType::T_SEMICOLON, TokenType::T_COLON})) return expr;
-    else throw Error("Unexpected token: %s", i->value.c_str());
+    else throw Error(i->row, i->col, "Unexpected token: %s", i->str());
   }
 }
 
@@ -170,7 +170,7 @@ ASTNode *Parser::parse_expression()
       term = new BinaryASTNode(NodeType::N_SUB, left, right, row, col);
     }
     else if (check_next({TokenType::T_ASSIGN, TokenType::T_SEMICOLON, TokenType::T_COLON, TokenType::T_COMMA, TokenType::T_RPAREN})) return term;
-    else throw Error("Unexpected token: %s", i->value.c_str());
+    else throw Error(i->row, i->col, "Unexpected token: %s", i->str());
   }
 }
 
@@ -196,7 +196,7 @@ ASTNode *Parser::parse_term()
       factor = new BinaryASTNode(NodeType::N_DIV, left, right, row, col);
     }
     else if (check_next({TokenType::T_ADD, TokenType::T_SUB, TokenType::T_ASSIGN, TokenType::T_SEMICOLON, TokenType::T_COLON, TokenType::T_COMMA, TokenType::T_RPAREN})) return factor;
-    else throw Error("Unexpected token: %s", i->value.c_str());
+    else throw Error(i->row, i->col, "Unexpected token: %s", i->str());
   }
 }
 
@@ -238,11 +238,11 @@ ASTNode *Parser::parse_factor()
   {
     i++;
     ASTNode *expr = parse_expression();
-    if (i->type != TokenType::T_RPAREN) throw Error("Unclosed parenthesis.");
+    if (i->type != TokenType::T_RPAREN) throw Error(i->row, i->col, "Unclosed parenthesis.");
     return expr;
   }
   else if (i == input.end()) return new NullASTNode(input.back().row+1, 1);
-  else throw Error("Unexpected token: %s", i->value.c_str());
+  else throw Error(i->row, i->col, "Unexpected token: %s", i->str());
 }
 
 bool Parser::check_next(std::vector<TokenType> types)
