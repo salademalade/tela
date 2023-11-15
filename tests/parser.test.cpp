@@ -16,6 +16,7 @@ TEST_CASE("Parsing of integer", "[parser][int]")
   std::vector<Token> input;
   input.push_back(Token(TokenType::T_INT, "1", 1, 1));
   input.push_back(Token(TokenType::T_SEMICOLON, 1, 2));
+  input.push_back(Token(TokenType::T_EOF, 2, 1));
 
   Parser parser(input);
   ASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse())->statements[0];
@@ -31,6 +32,7 @@ TEST_CASE("Parsing of float", "[parser][float]")
   std::vector<Token> input;
   input.push_back(Token(TokenType::T_FLOAT, "2.3", 1, 1));
   input.push_back(Token(TokenType::T_SEMICOLON, 1, 4));
+  input.push_back(Token(TokenType::T_EOF, 2, 1));
 
   Parser parser(input);
   ASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse())->statements[0];
@@ -48,6 +50,7 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
     std::vector<Token> input;
     input.push_back(Token(TokenType::T_ID, "foo", 1, 1));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 4));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     LeafASTNode *node = static_cast<LeafASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -68,6 +71,7 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
       input.push_back(Token(TokenType::T_COLON, 1, 8));
       input.push_back(Token(TokenType::T_KEY_INT, 1, 10));
       input.push_back(Token(TokenType::T_SEMICOLON, 1, 13));
+      input.push_back(Token(TokenType::T_EOF, 2, 1));
 
       Parser parser(input);
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -96,6 +100,7 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
       input.push_back(Token(TokenType::T_ASSIGN, 1, 9));
       input.push_back(Token(TokenType::T_INT, "1", 1, 11));
       input.push_back(Token(TokenType::T_SEMICOLON, 1, 12));
+      input.push_back(Token(TokenType::T_EOF, 2, 1));
 
       Parser parser(input);
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -124,6 +129,7 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
       input.push_back(Token(TokenType::T_ASSIGN, 1, 11));
       input.push_back(Token(TokenType::T_INT, "1", 1, 13));
       input.push_back(Token(TokenType::T_SEMICOLON, 1, 14));
+      input.push_back(Token(TokenType::T_EOF, 2, 1));
 
       Parser parser(input);
       UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -152,6 +158,7 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
     input.push_back(Token(TokenType::T_ASSIGN, 1, 5));
     input.push_back(Token(TokenType::T_INT, "1", 1, 7));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 8));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -179,6 +186,7 @@ TEST_CASE("Parsing of addition operator", "[parser][add]")
     input.push_back(Token(TokenType::T_ADD, 1, 5));
     input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 10));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -205,6 +213,7 @@ TEST_CASE("Parsing of addition operator", "[parser][add]")
     input.push_back(Token(TokenType::T_ADD, 1, 11));
     input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -239,6 +248,7 @@ TEST_CASE("Parsing of subtraction operator", "[parser][sub]")
     input.push_back(Token(TokenType::T_SUB, 1, 5));
     input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 10));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -265,6 +275,7 @@ TEST_CASE("Parsing of subtraction operator", "[parser][sub]")
     input.push_back(Token(TokenType::T_SUB, 1, 11));
     input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -299,6 +310,7 @@ TEST_CASE("Parsing of multiplication operator", "[parser][mul]")
     input.push_back(Token(TokenType::T_MUL, 1, 5));
     input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 10));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -325,6 +337,7 @@ TEST_CASE("Parsing of multiplication operator", "[parser][mul]")
     input.push_back(Token(TokenType::T_MUL, 1, 11));
     input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -359,6 +372,7 @@ TEST_CASE("Parsing of division operator", "[parser][div]")
     input.push_back(Token(TokenType::T_DIV, 1, 5));
     input.push_back(Token(TokenType::T_ID, "bar", 1, 7));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 10));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -385,6 +399,7 @@ TEST_CASE("Parsing of division operator", "[parser][div]")
     input.push_back(Token(TokenType::T_DIV, 1, 11));
     input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -421,6 +436,7 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
     input.push_back(Token(TokenType::T_SUB, 1, 11));
     input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -454,6 +470,7 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
     input.push_back(Token(TokenType::T_MUL, 1, 11));
     input.push_back(Token(TokenType::T_ID, "baz", 1, 13));
     input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     BinaryASTNode *node = static_cast<BinaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -495,6 +512,7 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     input.push_back(Token(TokenType::T_INT, "0", 2, 9));
     input.push_back(Token(TokenType::T_SEMICOLON, 2, 10));
     input.push_back(Token(TokenType::T_RCURLY, 3, 1));
+    input.push_back(Token(TokenType::T_EOF, 4, 1));
 
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -534,6 +552,7 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     input.push_back(Token(TokenType::T_INT, "1", 2, 9));
     input.push_back(Token(TokenType::T_SEMICOLON, 2, 10));
     input.push_back(Token(TokenType::T_RCURLY, 3, 1));
+    input.push_back(Token(TokenType::T_EOF, 4, 1));
 
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -593,6 +612,7 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     input.push_back(Token(TokenType::T_INT, "1", 3, 9));
     input.push_back(Token(TokenType::T_SEMICOLON, 3, 10));
     input.push_back(Token(TokenType::T_RCURLY, 4, 1));
+    input.push_back(Token(TokenType::T_EOF, 5, 1));
 
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -631,6 +651,7 @@ TEST_CASE("Parsing of function call", "[parser][func]")
   input.push_back(Token(TokenType::T_FLOAT, "2.3", 1, 15));
   input.push_back(Token(TokenType::T_RPAREN, 1, 18));
   input.push_back(Token(TokenType::T_SEMICOLON, 1, 19));
+  input.push_back(Token(TokenType::T_EOF, 2, 1));
 
   Parser parser(input);
   FuncCallASTNode *node = static_cast<FuncCallASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -666,6 +687,7 @@ TEST_CASE("Parsing of statement sequences", "[parser]")
   input.push_back(Token(TokenType::T_SEMICOLON, 1, 5));
   input.push_back(Token(TokenType::T_ID, "bar", 2, 1));
   input.push_back(Token(TokenType::T_SEMICOLON, 2, 5));
+  input.push_back(Token(TokenType::T_EOF, 3, 1));
 
   Parser parser(input);
   StmtSeqASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse());

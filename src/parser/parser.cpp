@@ -241,13 +241,13 @@ ASTNode *Parser::parse_factor()
     if (i->type != TokenType::T_RPAREN) throw Error(i->row, i->col, "Unclosed parenthesis.");
     return expr;
   }
-  else if (i == input.end()) return new NullASTNode(input.back().row+1, 1);
+  else if (i->type == TokenType::T_EOF) return new NullASTNode(i->row, i->col);
   else throw Error(i->row, i->col, "Unexpected token: %s", i->str());
 }
 
 bool Parser::check_next(std::vector<TokenType> types)
 {
-  if (i == input.end()) return true;
+  if (i->type == TokenType::T_EOF) return true;
 
   for (auto type : types)
   {
