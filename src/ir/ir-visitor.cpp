@@ -87,12 +87,8 @@ llvm::Value *IRVisitor::visit_decl(UnaryASTNode *node)
   std::string name;
   llvm::Type *type = nullptr;
   llvm::Value *value = visit(node->child);
-  if (node->child->type == NodeType::N_ASSIGN)
-  {
-    name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
-    type = value->getType();
-  }
-  else if (node->child->type == NodeType::N_TYPE_DECL)
+
+  if (node->child->type == NodeType::N_TYPE_DECL)
   {
     BinaryASTNode *tnode = static_cast<BinaryASTNode *>(node->child);
     if (tnode->left->type == NodeType::N_ASSIGN)
