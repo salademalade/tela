@@ -93,11 +93,8 @@ ASTNode *Parser::parse_statement()
     n_type = NodeType::N_DECL_CONST;
     break;
   case TokenType::T_KEY_RETURN:
-  {
-    i++;
-    ASTNode *expr = parse_assignment();
-    return new UnaryASTNode(NodeType::N_RET, expr, row, col);
-  }
+    n_type = NodeType::N_RET;
+    break;
   default:
     return parse_assignment();
   }
@@ -110,9 +107,8 @@ ASTNode *Parser::parse_statement()
 
 ASTNode *Parser::parse_typedecl()
 {
-  LeafASTNode *var = new LeafASTNode(NodeType::N_ID, i->value, i->row, i->col);
-  i++;
-  if (i->type != TokenType::T_COLON) throw Error(i->row, i->col, "Cannot declare variable without type.");
+  ASTNode *ass = parse_assignment();
+  if (i->type != TokenType::T_COLON) return ass;
   unsigned int row = i->row, col = i->col;
   i++;
   LeafASTNode *type = new LeafASTNode(NodeType::N_TYPE, "", i->row, i->col);
@@ -130,7 +126,7 @@ ASTNode *Parser::parse_typedecl()
   }
 
   i++;
-  return new BinaryASTNode(NodeType::N_TYPE_DECL, var, type, row, col);
+  return new BinaryASTNode(NodeType::N_TYPE_DECL, ass, type, row, col);
 }
 
 ASTNode *Parser::parse_assignment()
