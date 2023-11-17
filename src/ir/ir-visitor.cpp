@@ -109,8 +109,7 @@ llvm::Value *IRVisitor::visit_decl(UnaryASTNode *node)
     sym_table[name] = builder->CreateAlloca(type, nullptr, name);
     return sym_table[name];
   }
-
-  return nullptr;
+  else throw Error(node->row, node->col, "Cannot declare untyped variable.");
 }
 
 llvm::Value *IRVisitor::visit_assignment(BinaryASTNode *node)
