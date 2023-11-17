@@ -121,6 +121,44 @@ TEST_CASE("Parsing of identifier", "[parser][id]")
       REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->col == 11);
     }
 
+    SECTION("Declaration of variable with type and value assignment")
+    {
+      std::vector<Token> input;
+      input.push_back(Token(TokenType::T_KEY_LET, 1, 1));
+      input.push_back(Token(TokenType::T_ID, "foo", 1, 5));
+      input.push_back(Token(TokenType::T_COLON, 1, 8));
+      input.push_back(Token(TokenType::T_KEY_INT, 1, 10));
+      input.push_back(Token(TokenType::T_ASSIGN, 1, 14));
+      input.push_back(Token(TokenType::T_INT, "1", 1, 16));
+      input.push_back(Token(TokenType::T_SEMICOLON, 1, 17));
+      input.push_back(Token(TokenType::T_EOF, 2, 1));
+
+      Parser parser(input);
+      UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
+
+      REQUIRE(node->type == NodeType::N_DECL);
+      REQUIRE(node->row == 1);
+      REQUIRE(node->col == 1);
+      REQUIRE(node->child->type == NodeType::N_ASSIGN);
+      REQUIRE(node->child->row == 1);
+      REQUIRE(node->child->col == 14);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_TYPE_DECL);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->left->col == 8);
+      REQUIRE(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->left->type == NodeType::N_ID);
+      REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->left)->value == "foo");
+      REQUIRE(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->left->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->left->col == 5);
+      REQUIRE(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->right->type == NodeType::N_TYPE);
+      REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->right)->value == "int");
+      REQUIRE(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->right->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->right->col == 10);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->type == NodeType::N_INT);
+      REQUIRE(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->right)->value == "1");
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->row == 1);
+      REQUIRE(static_cast<BinaryASTNode *>(node->child)->right->col == 16);
+    }
+
     SECTION("Declaration of constant with value assignment")
     {
       std::vector<Token> input;

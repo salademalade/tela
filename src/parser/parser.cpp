@@ -100,45 +100,21 @@ ASTNode *Parser::parse_statement()
   }
 
   i++;
-  ASTNode *expr = parse_typedecl();
+  ASTNode *expr = parse_assignment();
 
   return new UnaryASTNode(n_type, expr, row, col);
 }
 
-ASTNode *Parser::parse_typedecl()
-{
-  ASTNode *ass = parse_assignment();
-  if (i->type != TokenType::T_COLON) return ass;
-  unsigned int row = i->row, col = i->col;
-  i++;
-  LeafASTNode *type = new LeafASTNode(NodeType::N_TYPE, "", i->row, i->col);
-
-  switch (i->type)
-  {
-  case TokenType::T_KEY_INT:
-    type->value = "int";
-    break;
-  case TokenType::T_KEY_FLOAT:
-    type->value = "float";
-    break;
-  default:
-    throw Error(i->row, i->col, "Invalid type.");
-  }
-
-  i++;
-  return new BinaryASTNode(NodeType::N_TYPE_DECL, ass, type, row, col);
-}
-
 ASTNode *Parser::parse_assignment()
 {
-  ASTNode *expr = parse_expression();
+  ASTNode *expr = parse_typedecl();
   while (true)
   {
     if (i->type == TokenType::T_ASSIGN)
     {
       unsigned int row = i->row, col = i->col;
       i++;
-      if (expr->type != NodeType::N_ID) throw Error(i->row, i->col, "Cannot assign value to expression.");
+      if (expr->type != NodeType::N_ID && expr->type != NodeType::N_TYPE_DECL) throw Error(i->row, i->col, "Cannot assign value to expression.");
       ASTNode *left = expr;
       ASTNode *right = parse_expression();
       expr = new BinaryASTNode(NodeType::N_ASSIGN, left, right, row, col);
@@ -146,6 +122,34 @@ ASTNode *Parser::parse_assignment()
     else if (check_next({TokenType::T_SEMICOLON, TokenType::T_COLON})) return expr;
     else throw Error(i->row, i->col, "Unexpected token: %s", i->str());
   }
+}
+
+ASTNode *Parser::parse_typedecl()
+{
+  if (i->type == TokenType::T_ID && (i+1)->type == TokenType::T_COLON)
+  {
+    LeafASTNode *var = new LeafASTNode(NodeType::N_ID, i->value, i->row, i->col);
+    i++;
+    unsigned int row = i->row, col = i->col;
+    i++;
+    LeafASTNode *type = new LeafASTNode(NodeType::N_TYPE, "", i->row, i->col);
+
+    switch (i->type)
+    {
+    case TokenType::T_KEY_INT:
+      type->value = "int";
+      break;
+    case TokenType::T_KEY_FLOAT:
+      type->value = "float";
+      break;
+    default:
+      throw Error(i->row, i->col, "Invalid type.");
+    }
+
+    i++;
+    return new BinaryASTNode(NodeType::N_TYPE_DECL, var, type, row, col);
+  }
+  else return parse_expression();
 }
 
 ASTNode *Parser::parse_expression()
