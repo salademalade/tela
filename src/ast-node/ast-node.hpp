@@ -16,6 +16,9 @@ public:
     N_MUL,
     N_DIV,
 
+    N_POS,
+    N_NEG,
+
     N_DECL,
     N_DECL_CONST,
     N_TYPE,
