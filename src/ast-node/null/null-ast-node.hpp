@@ -6,7 +6,7 @@
 class NullASTNode: public ASTNode
 {
 public:
-  NullASTNode();
+  NullASTNode(unsigned int row, unsigned int col);
   ~NullASTNode();
 };
 

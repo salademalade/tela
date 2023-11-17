@@ -34,7 +34,6 @@ public:
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> module;
   std::map<std::string, llvm::AllocaInst *> sym_table;
-  std::stack<std::string> fstack;
 
   IRVisitor(std::string mod_name);
 

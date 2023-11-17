@@ -17,7 +17,7 @@ public:
   std::vector<BinaryASTNode *> args;
   ASTNode *body;
 
-  FuncDefASTNode(ASTNode *name);
+  FuncDefASTNode(ASTNode *name, unsigned int row, unsigned int col);
   ~FuncDefASTNode();
 
   void add_arg(BinaryASTNode *node);

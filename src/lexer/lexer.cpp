@@ -1,6 +1,6 @@
 #include "lexer.hpp"
 
-const char WHITESPACES[5] = " \n\t\r";
+const char WHITESPACES[5] = " \t\r";
 const char DIGITS[11] = "0123456789";
 const char LETTERS[53] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -20,126 +20,135 @@ Lexer::Lexer(std::string input)
 
 std::vector<Token> Lexer::tokenize()
 {
+  unsigned int row = 1, col = 1;
+
   std::string::iterator i = input.begin();
   std::vector<Token> output;
 
   while (i != input.end())
   {
-    if (char_is_in(*i, WHITESPACES)) i++;
+    if (*i == '\n')
+    {
+      i++;
+      row++;
+      col = 1;
+    }
+    else if (char_is_in(*i, WHITESPACES))
+    {
+      i++;
+      col++;
+    }
     else if (char_is_in(*i, DIGITS) || *i == '.')
     {
       std::string num("");
+      unsigned int pos = col;
       bool has_p = false;
       while (char_is_in(*i, DIGITS) || *i == '.')
       {
         if (*i == '.')
         {
-          if (has_p) throw Error("Unexpected token: '.'");
+          if (has_p) throw Error(row, col, "Unexpected token: '.'");
           else has_p = true;
         }
         num.push_back(*i++);
+        col++;
       }
-      if (has_p) output.push_back(Token(TokenType::T_FLOAT, num));
-      else output.push_back(Token(TokenType::T_INT, num));
+      if (has_p) output.push_back(Token(TokenType::T_FLOAT, num, row, pos));
+      else output.push_back(Token(TokenType::T_INT, num, row, pos));
     }
     else if (char_is_in(*i, LETTERS) || *i == '_')
     {
       std::string id("");
+      unsigned int pos = col;
       while (char_is_in(*i, LETTERS) || char_is_in(*i, DIGITS) || *i == '_')
       {
         id.push_back(*i++);
+        col++;
       }
-      if (id == "def")
-      {
-        output.push_back(Token(TokenType::T_KEY_DEF));
-      }
-      else if (id == "let")
-      {
-        output.push_back(Token(TokenType::T_KEY_LET));
-      }
-      else if (id == "const")
-      {
-        output.push_back(Token(TokenType::T_KEY_CONST));
-      }
-      else if (id == "int")
-      {
-        output.push_back(Token(TokenType::T_KEY_INT));
-      }
-      else if (id == "float")
-      {
-        output.push_back(Token(TokenType::T_KEY_FLOAT));
-      }
-      else if (id == "return")
-      {
-        output.push_back(Token(TokenType::T_KEY_RETURN));
-      }
-      else
-      {
-        output.push_back(Token(TokenType::T_ID, id));
-      }
+      if (id == "def") output.push_back(Token(TokenType::T_KEY_DEF, row, pos));
+      else if (id == "let") output.push_back(Token(TokenType::T_KEY_LET, row, pos));
+      else if (id == "const") output.push_back(Token(TokenType::T_KEY_CONST, row, pos));
+      else if (id == "int") output.push_back(Token(TokenType::T_KEY_INT, row, pos));
+      else if (id == "float") output.push_back(Token(TokenType::T_KEY_FLOAT, row, pos));
+      else if (id == "return") output.push_back(Token(TokenType::T_KEY_RETURN, row, pos));
+      else output.push_back(Token(TokenType::T_ID, id, row, pos));
     }
     else if (*i == '+')
     {
-      output.push_back(Token(TokenType::T_ADD));
+      output.push_back(Token(TokenType::T_ADD, row, col));
       i++;
+      col++;
     }
     else if (*i == '-')
     {
-      output.push_back(Token(TokenType::T_SUB));
+      output.push_back(Token(TokenType::T_SUB, row, col));
       i++;
+      col++;
     }
     else if (*i == '*')
     {
-      output.push_back(Token(TokenType::T_MUL));
+      output.push_back(Token(TokenType::T_MUL, row, col));
       i++;
+      col++;
     }
     else if (*i == '/')
     {
-      output.push_back(Token(TokenType::T_DIV));
+      output.push_back(Token(TokenType::T_DIV, row, col));
       i++;
+      col++;
     }
     else if (*i == '=')
     {
-      output.push_back(Token(TokenType::T_ASSIGN));
+      output.push_back(Token(TokenType::T_ASSIGN, row, col));
       i++;
+      col++;
     }
     else if (*i == ',')
     {
-      output.push_back(Token(TokenType::T_COMMA));
+      output.push_back(Token(TokenType::T_COMMA, row, col));
       i++;
+      col++;
     }
     else if (*i == ':')
     {
-      output.push_back(Token(TokenType::T_COLON));
+      output.push_back(Token(TokenType::T_COLON, row, col));
       i++;
+      col++;
     }
     else if (*i == ';')
     {
-      output.push_back(Token(TokenType::T_SEMICOLON));
+      output.push_back(Token(TokenType::T_SEMICOLON, row, col));
       i++;
+      col++;
     }
     else if (*i == '(')
     {
-      output.push_back(Token(TokenType::T_LPAREN));
+      output.push_back(Token(TokenType::T_LPAREN, row, col));
       i++;
+      col++;
     }
     else if (*i == ')')
     {
-      output.push_back(Token(TokenType::T_RPAREN));
+      output.push_back(Token(TokenType::T_RPAREN, row, col));
       i++;
+      col++;
     }
     else if (*i == '{')
     {
-      output.push_back(Token(TokenType::T_LCURLY));
+      output.push_back(Token(TokenType::T_LCURLY, row, col));
       i++;
+      col++;
     }
     else if (*i == '}')
     {
-      output.push_back(Token(TokenType::T_RCURLY));
+      output.push_back(Token(TokenType::T_RCURLY, row, col));
       i++;
+      col++;
     }
-    else throw new Error("Unexpected token: %c", *i);
+    else throw Error(row, col, "Unexpected token: %c", *i);
   }
+
+  output.push_back(Token(TokenType::T_EOF, row, col));
 
   return output;
 }

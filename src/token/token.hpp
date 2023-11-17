@@ -33,11 +33,18 @@ public:
     T_RPAREN,     // )
     T_LCURLY,     // {
     T_RCURLY,     // }
+
+    T_EOF,
   } type;
   std::string value;
 
-  Token(Type type);
-  Token(Type type, std::string value);
+  unsigned int row;
+  unsigned int col;
+
+  Token(Type type, unsigned int row, unsigned int col);
+  Token(Type type, std::string value, unsigned int row, unsigned int col);
+
+  const char *str();
 };
 
 typedef Token::Type TokenType;

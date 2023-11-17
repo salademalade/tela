@@ -49,7 +49,7 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
 llvm::Value *IRVisitor::visit_identifier(LeafASTNode *node)
 {
   llvm::AllocaInst *alloca = sym_table[node->value];
-  if (!alloca) throw Error("Undefined reference to variable: %s.", node->value.c_str());
+  if (!alloca) throw Error(node->row, node->col, "Undefined reference to variable: %s.", node->value.c_str());
 
   return builder->CreateLoad(alloca->getAllocatedType(), alloca, node->value.c_str());
 }
@@ -85,45 +85,63 @@ llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
 llvm::Value *IRVisitor::visit_decl(UnaryASTNode *node)
 {
   std::string name;
-  llvm::Type *type = nullptr;
-  llvm::Value *value = visit(node->child);
+  llvm::Type *type;
   if (node->child->type == NodeType::N_ASSIGN)
   {
-    name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
-    type = value->getType();
+    if (static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_ID)
+    {
+      name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
+    }
+    else if (static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_TYPE_DECL)
+    {
+      name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->left)->value;
+    }
+
+    sym_table[name] = nullptr;
+    return visit(node->child);
   }
   else if (node->child->type == NodeType::N_TYPE_DECL)
   {
-    BinaryASTNode *tnode = static_cast<BinaryASTNode *>(node->child);
-    if (tnode->left->type == NodeType::N_ASSIGN)
-    {
-      name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(tnode->left)->left)->value;
-    }
-    else
-    {
-      name = static_cast<LeafASTNode *>(tnode->left)->value;
-    }
-    type = get_type(static_cast<LeafASTNode *>(tnode->right));
+    BinaryASTNode *child = static_cast<BinaryASTNode *>(node->child);
+    name = static_cast<LeafASTNode *>(child->left)->value;
+    type = get_type(static_cast<LeafASTNode *>(child->right));
+
+    sym_table[name] = builder->CreateAlloca(type, nullptr, name);
+    return sym_table[name];
   }
-
-  sym_table[name] = builder->CreateAlloca(type, nullptr, name);
-
-  return sym_table[name];
+  else throw Error(node->row, node->col, "Cannot declare untyped variable.");
 }
 
 llvm::Value *IRVisitor::visit_assignment(BinaryASTNode *node)
 {
+  std::string name;
+  llvm::Type *type;
   llvm::Value *right = visit(node->right);
-  std::string name = static_cast<LeafASTNode *>(node->left)->value;
-
   llvm::AllocaInst *alloca;
 
+  if (node->left->type == NodeType::N_ID)
+  {
+    name = static_cast<LeafASTNode *>(node->left)->value;
+    type = right->getType();
+  }
+  else if (node->left->type == NodeType::N_TYPE_DECL)
+  {
+    name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->left)->value;
+    type = get_type(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->right));
+  }
+
+  if (sym_table.find(name) == sym_table.end()) throw Error(node->row, node->col, "Undefined reference to variable: %s.", name.c_str());
+
   alloca = sym_table[name];
-  if (!alloca) throw Error("Undefined reference to variable: %s.", name.c_str());
+  if (alloca == nullptr)
+  {
+    alloca = builder->CreateAlloca(type, nullptr, name);
+    sym_table[name] = alloca;
+  }
 
   builder->CreateStore(right, alloca);
 
-  return right;
+  return alloca;
 }
 
 llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
@@ -154,9 +172,9 @@ llvm::Value *IRVisitor::visit_fcall(FuncCallASTNode *node)
 {
   std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
   llvm::Function *callee = module->getFunction(f_name);
-  if (!callee) throw Error("Undefined reference to function: %s.", f_name.c_str());
+  if (!callee) throw Error(node->row, node->col, "Undefined reference to function: %s.", f_name.c_str());
 
-  if (callee->arg_size() != node->args.size()) throw Error("Invalid arguments for function: %s", f_name.c_str());
+  if (callee->arg_size() != node->args.size()) throw Error(node->row, node->col, "Invalid arguments for function: %s", f_name.c_str());
 
   std::vector<llvm::Value *> args;
   for (auto i : node->args)

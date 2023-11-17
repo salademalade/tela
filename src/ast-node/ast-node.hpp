@@ -30,7 +30,10 @@ public:
     N_NULL,
   } type;
 
-  ASTNode(Type type);
+  unsigned int row;
+  unsigned int col;
+
+  ASTNode(Type type, unsigned int row, unsigned int col);
   virtual ~ASTNode() = 0;
 };
 

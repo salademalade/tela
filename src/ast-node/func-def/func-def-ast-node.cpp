@@ -1,6 +1,6 @@
 #include "func-def-ast-node.hpp"
 
-FuncDefASTNode::FuncDefASTNode(ASTNode *name): ASTNode(NodeType::N_FUNC_DEF)
+FuncDefASTNode::FuncDefASTNode(ASTNode *name, unsigned int row, unsigned int col): ASTNode(NodeType::N_FUNC_DEF, row, col)
 {
   if (name->type != NodeType::N_ID) throw Error("Invalid function name.");
   this->name = static_cast<LeafASTNode *>(name);

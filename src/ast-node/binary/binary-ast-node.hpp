@@ -9,7 +9,7 @@ public:
   ASTNode *left;
   ASTNode *right;
 
-  BinaryASTNode(Type type, ASTNode *left, ASTNode *right);
+  BinaryASTNode(Type type, ASTNode *left, ASTNode *right, unsigned int row, unsigned int col);
   ~BinaryASTNode();
 };
 

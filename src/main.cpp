@@ -50,6 +50,14 @@ int main(int argc, char **argv)
   }
   catch (Error e)
   {
+    if (e.row && e.col)
+    {
+      std::cerr << argv[1] << ":" << e.row << ":" << e.col << ": ";
+    }
+    else
+    {
+      std::cerr << argv[0] << ": ";
+    }
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }

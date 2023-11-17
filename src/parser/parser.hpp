@@ -24,8 +24,8 @@ public:
 private:
   ASTNode *parse_block();
   ASTNode *parse_statement();
-  ASTNode *parse_typedecl();
   ASTNode *parse_assignment();
+  ASTNode *parse_typedecl();
   ASTNode *parse_expression();
   ASTNode *parse_term();
   ASTNode *parse_factor();
