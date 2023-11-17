@@ -8,8 +8,7 @@ def main(): int
   let x: int;
   x = 2;
 
-  let y: int;
-  y = 3;
+  let y = 3;
 
   add(x, y);
 
