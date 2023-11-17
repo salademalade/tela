@@ -22,6 +22,9 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   case NodeType::N_MUL:
   case NodeType::N_DIV:
     return visit_binary(static_cast<BinaryASTNode *>(node));
+  case NodeType::N_POS:
+  case NodeType::N_NEG:
+    return visit_unary(static_cast<UnaryASTNode *>(node));
   case NodeType::N_DECL:
   case NodeType::N_DECL_CONST:
     return visit_decl(static_cast<UnaryASTNode *>(node));
@@ -37,7 +40,6 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   case NodeType::N_STMT_SEQ:
     visit_seq(static_cast<StmtSeqASTNode *>(node));
     return nullptr;
-
   case NodeType::N_TYPE:
   case NodeType::N_TYPE_DECL:
   case NodeType::N_NULL:
@@ -77,6 +79,29 @@ llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
     else return builder->CreateFMul(left, right, "fmultmp");
   case NodeType::N_DIV:
     return builder->CreateFDiv(left, right, "fdivtmp");
+  default:
+    return nullptr;
+  }
+}
+
+llvm::Value *IRVisitor::visit_unary(UnaryASTNode *node)
+{
+  llvm::Value *zero = llvm::ConstantInt::get(*context, llvm::APInt(32, 0));
+  llvm::Value *child = visit(node->child);
+
+  if (!child) return nullptr;
+
+  bool int_op = false;
+  if (child->getType()->isIntegerTy()) int_op = true;
+
+  switch (node->type)
+  {
+  case NodeType::N_POS:
+    if (int_op) return builder->CreateAdd(zero, child, "postmp");
+    else return builder->CreateFAdd(zero, child, "fpostmp");
+  case NodeType::N_NEG:
+    if (int_op) return builder->CreateSub(zero, child, "negtmp");
+    else return builder->CreateFSub(zero, child, "fnegtmp");
   default:
     return nullptr;
   }

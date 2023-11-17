@@ -41,6 +41,7 @@ public:
 private:
   llvm::Value *visit_identifier(LeafASTNode *node);
   llvm::Value *visit_binary(BinaryASTNode *node);
+  llvm::Value *visit_unary(UnaryASTNode *node);
   llvm::Value *visit_decl(UnaryASTNode *node);
   llvm::Value *visit_assignment(BinaryASTNode *node);
   llvm::Value *visit_fdef(FuncDefASTNode *node);
