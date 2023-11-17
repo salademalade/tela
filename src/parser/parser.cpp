@@ -245,6 +245,20 @@ ASTNode *Parser::parse_factor()
 
     return func;
   }
+  else if (i->type == TokenType::T_ADD)
+  {
+    unsigned int row = i->row, col = i->col;
+    i++;
+    ASTNode *expr = parse_expression();
+    return new UnaryASTNode(NodeType::N_POS, expr, row, col);
+  }
+  else if (i->type == TokenType::T_SUB)
+  {
+    unsigned int row = i->row, col = i->col;
+    i++;
+    ASTNode *expr = parse_expression();
+    return new UnaryASTNode(NodeType::N_NEG, expr, row, col);
+  }
   else if (i->type == TokenType::T_LPAREN)
   {
     i++;
