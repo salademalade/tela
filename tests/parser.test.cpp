@@ -534,6 +534,49 @@ TEST_CASE("Parsing of combination of operators", "[parser][add][sub][mul][div]")
   }
 }
 
+TEST_CASE("Parsing of signed number", "[parser]")
+{
+  SECTION("Positive number")
+  {
+    std::vector<Token> input;
+    input.push_back(Token(TokenType::T_ADD, 1, 1));
+    input.push_back(Token(TokenType::T_INT, "1", 1, 2));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 3));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
+
+    Parser parser(input);
+    UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
+
+    REQUIRE(node->type == NodeType::N_POS);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 1);
+    REQUIRE(node->child->type == NodeType::N_INT);
+    REQUIRE(static_cast<LeafASTNode *>(node->child)->value == "1");
+    REQUIRE(node->child->row == 1);
+    REQUIRE(node->child->col == 2);
+  }
+
+  SECTION("Negative number")
+  {
+    std::vector<Token> input;
+    input.push_back(Token(TokenType::T_SUB, 1, 1));
+    input.push_back(Token(TokenType::T_INT, "1", 1, 2));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 3));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
+
+    Parser parser(input);
+    UnaryASTNode *node = static_cast<UnaryASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
+
+    REQUIRE(node->type == NodeType::N_NEG);
+    REQUIRE(node->row == 1);
+    REQUIRE(node->col == 1);
+    REQUIRE(node->child->type == NodeType::N_INT);
+    REQUIRE(static_cast<LeafASTNode *>(node->child)->value == "1");
+    REQUIRE(node->child->row == 1);
+    REQUIRE(node->child->col == 2);
+  }
+}
+
 TEST_CASE("Parsing of function definition", "[parser][func]")
 {
   SECTION("Function without arguments")
