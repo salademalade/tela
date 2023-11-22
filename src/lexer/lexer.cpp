@@ -38,6 +38,17 @@ std::vector<Token> Lexer::tokenize()
       i++;
       col++;
     }
+    else if (*i == '/' && *(i+1) == '/')
+    {
+      do
+      {
+        i++;
+        col++;
+      }
+      while (*i != '\n');
+      row++;
+      col = 1;
+    }
     else if (char_is_in(*i, DIGITS) || *i == '.')
     {
       std::string num("");
