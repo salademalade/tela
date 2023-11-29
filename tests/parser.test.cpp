@@ -43,6 +43,23 @@ TEST_CASE("Parsing of float", "[parser][float]")
   REQUIRE(node->col == 1);
 }
 
+TEST_CASE("Parsing of character", "[parser][char]")
+{
+  std::vector<Token> input;
+  input.push_back(Token(TokenType::T_CHAR, "a", 1, 1));
+  input.push_back(Token(TokenType::T_SEMICOLON, 1, 4));
+  input.push_back(Token(TokenType::T_EOF, 2, 1));
+
+  Parser parser(input);
+  ASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse())->statements[0];
+
+  REQUIRE(node->type == NodeType::N_CHAR);
+  REQUIRE(static_cast<LeafASTNode *>(node)->value == "a");
+  REQUIRE(node->row == 1);
+  REQUIRE(node->col == 1);
+
+}
+
 TEST_CASE("Parsing of identifier", "[parser][id]")
 {
   SECTION("Single identifier")

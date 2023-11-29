@@ -15,6 +15,8 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
     return llvm::ConstantInt::get(*context, llvm::APInt(32, std::stoi(static_cast<LeafASTNode *>(node)->value)));
   case NodeType::N_FLOAT:
     return llvm::ConstantFP::get(*context, llvm::APFloat(std::stof(static_cast<LeafASTNode *>(node)->value)));
+  case NodeType::N_CHAR:
+    return llvm::ConstantInt::get(*context, llvm:: APInt(8, (int)static_cast<LeafASTNode *>(node)->value[0]));
   case NodeType::N_ID:
     return visit_identifier(static_cast<LeafASTNode *>(node));
   case NodeType::N_ADD:
@@ -254,5 +256,6 @@ llvm::Type *IRVisitor::get_type(LeafASTNode *node)
 {
   if (node->value == "int") return llvm::Type::getInt32Ty(*context);
   else if (node->value == "float") return llvm::Type::getFloatTy(*context);
+  else if (node->value == "char") return llvm::Type::getInt8Ty(*context);
   else return nullptr;
 }

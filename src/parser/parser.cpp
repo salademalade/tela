@@ -53,6 +53,9 @@ ASTNode *Parser::parse_block()
       case TokenType::T_KEY_FLOAT:
         func->ret_type = new LeafASTNode(NodeType::N_TYPE, "float", i->row, i->col);
         break;
+      case TokenType::T_KEY_CHAR:
+        func->ret_type = new LeafASTNode(NodeType::N_TYPE, "char", i->row, i->col);
+        break;
       default:
         throw Error(i->row, i->col, "Expected type specifier.");
       }
@@ -142,6 +145,9 @@ ASTNode *Parser::parse_typedecl()
     case TokenType::T_KEY_FLOAT:
       type->value = "float";
       break;
+    case TokenType::T_KEY_CHAR:
+      type->value = "char";
+      break;
     default:
       throw Error(i->row, i->col, "Invalid type.");
     }
@@ -215,6 +221,12 @@ ASTNode *Parser::parse_factor()
   else if (i->type == TokenType::T_FLOAT)
   {
     LeafASTNode *node = new LeafASTNode(NodeType::N_FLOAT, i->value, i->row, i->col);
+    i++;
+    return node;
+  }
+  else if (i->type == TokenType::T_CHAR)
+  {
+    LeafASTNode *node = new LeafASTNode(NodeType::N_CHAR, i->value, i->row, i->col);
     i++;
     return node;
   }
