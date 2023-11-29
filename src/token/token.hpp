@@ -10,6 +10,8 @@ public:
   {
     T_INT,
     T_FLOAT,
+    T_CHAR,
+    T_STR,
     T_ID,
 
     T_KEY_DEF,    // def
@@ -17,6 +19,7 @@ public:
     T_KEY_CONST,  // const
     T_KEY_INT,    // int
     T_KEY_FLOAT,  // float
+    T_KEY_CHAR,   // char
     T_KEY_RETURN, // return
 
     T_ADD,        // +

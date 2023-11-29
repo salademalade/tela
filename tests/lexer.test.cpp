@@ -61,6 +61,44 @@ TEST_CASE("Tokenization of float", "[lexer][float]")
   }
 }
 
+TEST_CASE("Tokenization of character", "[lexer][char]")
+{
+  SECTION("Valid character")
+  {
+    SECTION("Normal character")
+    {
+      Lexer lexer("\'a\'");
+      std::vector<Token> output = lexer.tokenize();
+
+      REQUIRE(output.size() == 2);
+
+      Token expected(TokenType::T_CHAR, "a", 1, 1);
+      Token out_token = output[0];
+
+      REQUIRE(expected.type == out_token.type);
+      REQUIRE(expected.value == out_token.value);
+      REQUIRE(expected.row == 1);
+      REQUIRE(expected.col == 1);
+    }
+
+    SECTION("Escaped character")
+    {
+      Lexer lexer("\'\n\'");
+      std::vector<Token> output = lexer.tokenize();
+
+      REQUIRE(output.size() == 2);
+
+      Token expected(TokenType::T_CHAR, "\n", 1, 1);
+      Token out_token = output[0];
+
+      REQUIRE(expected.type == out_token.type);
+      REQUIRE(expected.value == out_token.value);
+      REQUIRE(expected.row == 1);
+      REQUIRE(expected.col == 1);
+    }
+  }
+}
+
 TEST_CASE("Tokenization of identifier", "[lexer][id]")
 {
   SECTION("Identifier with letter")
@@ -198,6 +236,21 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     REQUIRE(output.size() == 2);
 
     Token expected(TokenType::T_KEY_FLOAT, 1, 1);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
+  }
+
+  SECTION("char")
+  {
+    Lexer lexer("char");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 2);
+
+    Token expected(TokenType::T_KEY_CHAR, 1, 1);
     Token out_token = output[0];
 
     REQUIRE(expected.type == out_token.type);

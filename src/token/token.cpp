@@ -24,6 +24,8 @@ const char *Token::str()
   {
   case Type::T_INT:
   case Type::T_FLOAT:
+  case Type::T_CHAR:
+  case Type::T_STR:
   case Type::T_ID:
     return this->value.c_str();
   case Type::T_KEY_DEF:
@@ -36,6 +38,8 @@ const char *Token::str()
     return "int";
   case Type::T_KEY_FLOAT:
     return "float";
+  case Type::T_KEY_CHAR:
+    return "char";
   case Type::T_KEY_RETURN:
     return "return";
   case Type::T_ADD:

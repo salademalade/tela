@@ -13,6 +13,46 @@ bool char_is_in(char c, const char *list)
   return false;
 }
 
+char get_char(std::string::iterator &i, unsigned int &col)
+{
+  if (*i == '\\')
+  {
+    i++;
+    col++;
+    switch (*i)
+    {
+    case 'a':
+      return '\a';
+    case 'b':
+      return '\b';
+    case 'e':
+      return '\x1B';
+    case 'f':
+      return '\f';
+    case 'n':
+      return '\n';
+    case 'r':
+      return '\r';
+    case 't':
+      return '\t';
+    case 'v':
+      return '\v';
+    case '\\':
+      return '\\';
+    case '\'':
+      return '\'';
+    case '\"':
+      return '\"';
+    case '\?':
+      return '\?';
+    default:
+      return *i;
+    }
+  }
+
+  return *i;
+}
+
 Lexer::Lexer(std::string input)
 {
   this->input = input;
@@ -81,8 +121,22 @@ std::vector<Token> Lexer::tokenize()
       else if (id == "const") output.push_back(Token(TokenType::T_KEY_CONST, row, pos));
       else if (id == "int") output.push_back(Token(TokenType::T_KEY_INT, row, pos));
       else if (id == "float") output.push_back(Token(TokenType::T_KEY_FLOAT, row, pos));
+      else if (id == "char") output.push_back(Token(TokenType::T_KEY_CHAR, row, pos));
       else if (id == "return") output.push_back(Token(TokenType::T_KEY_RETURN, row, pos));
       else output.push_back(Token(TokenType::T_ID, id, row, pos));
+    }
+    else if (*i == '\'')
+    {
+      unsigned int pos = col;
+      i++;
+      col++;
+      char ch = get_char(i, col);
+      i++;
+      col++;
+      if (*i != '\'') throw Error(row, col, "Invalid character: \'%c%c\'.", ch, *i);
+      output.push_back(Token(TokenType::T_CHAR, std::string(1, ch), row, pos));
+      i++;
+      col++;
     }
     else if (*i == '+')
     {
