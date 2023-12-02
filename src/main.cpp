@@ -1,6 +1,6 @@
-#include <llvm/TargetParser/Host.h>
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/Target/TargetMachine.h>
+#include <llvm/Support/Host.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FileSystem.h>
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     auto features = "";
 
     llvm::TargetOptions opt;
-    auto RM = std::optional<llvm::Reloc::Model>();
+    auto RM = llvm::Optional<llvm::Reloc::Model>();
     auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
 
     ir_visitor.module->setDataLayout(target_machine->createDataLayout());
