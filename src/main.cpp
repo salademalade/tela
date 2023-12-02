@@ -1,3 +1,13 @@
+#include <llvm/TargetParser/Host.h>
+#include <llvm/Target/TargetOptions.h>
+#include <llvm/Target/TargetMachine.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/CodeGen.h>
+#include <llvm/MC/TargetRegistry.h>
+#include <llvm/IR/LegacyPassManager.h>
+#include <optional>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -47,6 +57,48 @@ int main(int argc, char **argv)
     ir_visitor.visit(node);
 
     ir_visitor.module->print(llvm::errs(), nullptr);
+
+    auto target_triple = llvm::sys::getDefaultTargetTriple();
+
+    llvm::InitializeAllTargetInfos();
+    llvm::InitializeAllTargets();
+    llvm::InitializeAllTargetMCs();
+    llvm::InitializeAllAsmParsers();
+    llvm::InitializeAllAsmPrinters();
+
+    std::string err;
+    auto target = llvm::TargetRegistry::lookupTarget(target_triple, err);
+
+    if (!target) throw Error("%s", err.c_str());
+
+    auto CPU = "generic";
+    auto features = "";
+
+    llvm::TargetOptions opt;
+    auto RM = std::optional<llvm::Reloc::Model>();
+    auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
+
+    ir_visitor.module->setDataLayout(target_machine->createDataLayout());
+    ir_visitor.module->setTargetTriple(target_triple);
+
+    char *ofile_name = argv[1];
+    strcat(ofile_name, ".o");
+
+    std::error_code e_code;
+    llvm::raw_fd_ostream dest(ofile_name, e_code, llvm::sys::fs::OpenFlags::OF_None);
+
+    if (e_code) throw Error("Could not open file: %s", e_code.message().c_str());
+
+    llvm::legacy::PassManager pass;
+    auto filetype = llvm::CodeGenFileType::CGFT_ObjectFile;
+
+    if (target_machine->addPassesToEmitFile(pass, dest, nullptr, filetype))
+    {
+      throw Error("Could not emit object file.");
+    }
+
+    pass.run(*ir_visitor.module);
+    dest.flush();
   }
   catch (Error e)
   {
