@@ -7,6 +7,7 @@
 #include <llvm/Support/CodeGen.h>
 #include <llvm/MC/TargetRegistry.h>
 #include <llvm/IR/LegacyPassManager.h>
+#include <llvm/ADT/Optional.h>
 #include <optional>
 #include <iostream>
 #include <fstream>
