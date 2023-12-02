@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     IRVisitor ir_visitor(argv[1]);
     ir_visitor.visit(node);
 
-    ir_visitor.module->print(llvm::errs(), nullptr);
+    // ir_visitor.module->print(llvm::errs(), nullptr);
 
     auto target_triple = llvm::sys::getDefaultTargetTriple();
 
