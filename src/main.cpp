@@ -57,6 +57,16 @@ int main(int argc, char **argv)
     IRVisitor ir_visitor(argv[1]);
     ir_visitor.visit(node);
 
+    const char *sfile_name = ".temp.ll";
+
+    std::error_code s_e_code;
+    llvm::raw_fd_ostream irdest(sfile_name, s_e_code, llvm::sys::fs::OpenFlags::OF_None);
+
+    if (s_e_code) throw Error("Could not open file: %s", s_e_code.message().c_str());
+
+    ir_visitor.module->print(irdest, nullptr);
+    irdest.flush();
+
     auto target_triple = llvm::sys::getDefaultTargetTriple();
 
     llvm::InitializeAllTargetInfos();
@@ -98,17 +108,6 @@ int main(int argc, char **argv)
 
     pass.run(*ir_visitor.module);
     dest.flush();
-
-    char *sfile_name = argv[1];
-    strcat(sfile_name, ".ll");
-
-    std::error_code s_e_code;
-    llvm::raw_fd_ostream irdest(sfile_name, s_e_code, llvm::sys::fs::OpenFlags::OF_None);
-
-    if (s_e_code) throw Error("Could not open file: %s", s_e_code.message().c_str());
-
-    ir_visitor.module->print(irdest, nullptr);
-    irdest.flush();
   }
   catch (Error e)
   {
