@@ -19,6 +19,8 @@ ASTNode *Parser::parse_block()
     if (i->type == TokenType::T_KEY_DEF)
     {
       unsigned int row = i->row, col = i->col;
+      bool has_body = false;
+
       i++;
       ASTNode *name = new LeafASTNode(NodeType::N_ID, i->value, i->row, i->col);
       FuncDefASTNode *func = new FuncDefASTNode(name, row, col);
@@ -61,10 +63,15 @@ ASTNode *Parser::parse_block()
       }
 
       i++;
-      if (i->type != TokenType::T_LCURLY) throw Error(i->row, i->col, "Expected '{'.");
+      if (i->type == TokenType::T_LCURLY) has_body = true;
+      else if (i->type != TokenType::T_SEMICOLON) throw Error(i->row, i->col, "Unexpected token: %s", (i+1)->str());
 
       i++;
-      func->body = parse_block();
+      if (has_body)
+      {
+        func->body = parse_block();
+        i++;
+      }
 
       seq->statements.push_back(func);
     }
@@ -76,8 +83,8 @@ ASTNode *Parser::parse_block()
         throw Error(i->row, i->col, "Expected ';'.");
       }
       seq->statements.push_back(stmt);
+      i++;
     }
-    i++;
   }
 
   return seq;

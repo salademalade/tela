@@ -15,7 +15,7 @@ public:
   LeafASTNode *name;
   LeafASTNode *ret_type;
   std::vector<BinaryASTNode *> args;
-  ASTNode *body;
+  ASTNode *body = nullptr;
 
   FuncDefASTNode(ASTNode *name, unsigned int row, unsigned int col);
   ~FuncDefASTNode();
