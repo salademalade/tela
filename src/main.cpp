@@ -57,8 +57,6 @@ int main(int argc, char **argv)
     IRVisitor ir_visitor(argv[1]);
     ir_visitor.visit(node);
 
-    // ir_visitor.module->print(llvm::errs(), nullptr);
-
     auto target_triple = llvm::sys::getDefaultTargetTriple();
 
     llvm::InitializeAllTargetInfos();
@@ -85,10 +83,10 @@ int main(int argc, char **argv)
     char *ofile_name = argv[1];
     strcat(ofile_name, ".o");
 
-    std::error_code e_code;
-    llvm::raw_fd_ostream dest(ofile_name, e_code, llvm::sys::fs::OpenFlags::OF_None);
+    std::error_code o_e_code;
+    llvm::raw_fd_ostream dest(ofile_name, o_e_code, llvm::sys::fs::OpenFlags::OF_None);
 
-    if (e_code) throw Error("Could not open file: %s", e_code.message().c_str());
+    if (o_e_code) throw Error("Could not open file: %s", o_e_code.message().c_str());
 
     llvm::legacy::PassManager pass;
     auto filetype = llvm::CodeGenFileType::CGFT_ObjectFile;
@@ -100,6 +98,17 @@ int main(int argc, char **argv)
 
     pass.run(*ir_visitor.module);
     dest.flush();
+
+    char *sfile_name = argv[1];
+    strcat(sfile_name, ".ll");
+
+    std::error_code s_e_code;
+    llvm::raw_fd_ostream irdest(sfile_name, s_e_code, llvm::sys::fs::OpenFlags::OF_None);
+
+    if (s_e_code) throw Error("Could not open file: %s", s_e_code.message().c_str());
+
+    ir_visitor.module->print(irdest, nullptr);
+    irdest.flush();
   }
   catch (Error e)
   {
