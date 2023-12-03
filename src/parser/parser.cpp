@@ -66,12 +66,16 @@ ASTNode *Parser::parse_block()
       if (i->type == TokenType::T_LCURLY) has_body = true;
       else if (i->type != TokenType::T_SEMICOLON) throw Error(i->row, i->col, "Unexpected token: %s", (i+1)->str());
 
+      row = i->row;
+      col = i->col;
+
       i++;
       if (has_body)
       {
         func->body = parse_block();
         i++;
       }
+      else func->body = new NullASTNode(row, col);
 
       seq->statements.push_back(func);
     }

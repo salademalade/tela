@@ -594,7 +594,7 @@ TEST_CASE("Parsing of signed number", "[parser]")
   }
 }
 
-TEST_CASE("Parsing of function definition", "[parser][func]")
+TEST_CASE("Parsing of function declaration", "[parser][func]")
 {
   SECTION("Function without arguments")
   {
@@ -605,12 +605,8 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     input.push_back(Token(TokenType::T_RPAREN, 1, 10));
     input.push_back(Token(TokenType::T_COLON, 1, 11));
     input.push_back(Token(TokenType::T_KEY_INT, 1, 13));
-    input.push_back(Token(TokenType::T_LCURLY, 1, 17));
-    input.push_back(Token(TokenType::T_KEY_RETURN, 2, 2));
-    input.push_back(Token(TokenType::T_INT, "0", 2, 9));
-    input.push_back(Token(TokenType::T_SEMICOLON, 2, 10));
-    input.push_back(Token(TokenType::T_RCURLY, 3, 1));
-    input.push_back(Token(TokenType::T_EOF, 4, 1));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -645,12 +641,8 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     input.push_back(Token(TokenType::T_RPAREN, 1, 32));
     input.push_back(Token(TokenType::T_COLON, 1, 33));
     input.push_back(Token(TokenType::T_KEY_INT, 1, 35));
-    input.push_back(Token(TokenType::T_LCURLY, 1, 39));
-    input.push_back(Token(TokenType::T_KEY_RETURN, 2, 2));
-    input.push_back(Token(TokenType::T_INT, "1", 2, 9));
-    input.push_back(Token(TokenType::T_SEMICOLON, 2, 10));
-    input.push_back(Token(TokenType::T_RCURLY, 3, 1));
-    input.push_back(Token(TokenType::T_EOF, 4, 1));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 38));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
 
     Parser parser(input);
     FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
@@ -685,7 +677,27 @@ TEST_CASE("Parsing of function definition", "[parser][func]")
     REQUIRE(node->args[1]->right->col == 27);
   }
 
-  SECTION("Function body")
+  SECTION("Function without body")
+  {
+    std::vector<Token> input;
+    input.push_back(Token(TokenType::T_KEY_DEF, 1, 1));
+    input.push_back(Token(TokenType::T_ID, "func", 1, 5));
+    input.push_back(Token(TokenType::T_LPAREN, 1, 9));
+    input.push_back(Token(TokenType::T_RPAREN, 1, 10));
+    input.push_back(Token(TokenType::T_COLON, 1, 11));
+    input.push_back(Token(TokenType::T_KEY_INT, 1, 13));
+    input.push_back(Token(TokenType::T_SEMICOLON, 1, 16));
+    input.push_back(Token(TokenType::T_EOF, 2, 1));
+
+    Parser parser(input);
+    FuncDefASTNode *node = static_cast<FuncDefASTNode *>(static_cast<StmtSeqASTNode *>(parser.parse())->statements[0]);
+
+    REQUIRE(node->body->type == NodeType::N_NULL);
+    REQUIRE(node->body->row == 1);
+    REQUIRE(node->body->col == 16);
+  }
+
+  SECTION("Function with body")
   {
     std::vector<Token> input;
     input.push_back(Token(TokenType::T_KEY_DEF, 1, 1));

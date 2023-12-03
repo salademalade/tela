@@ -8,6 +8,7 @@
 #include "../ast-node.hpp"
 #include "../leaf/leaf-ast-node.hpp"
 #include "../binary/binary-ast-node.hpp"
+#include "../null/null-ast-node.hpp"
 
 class FuncDefASTNode: public ASTNode
 {
@@ -15,7 +16,7 @@ public:
   LeafASTNode *name;
   LeafASTNode *ret_type;
   std::vector<BinaryASTNode *> args;
-  ASTNode *body = nullptr;
+  ASTNode *body;
 
   FuncDefASTNode(ASTNode *name, unsigned int row, unsigned int col);
   ~FuncDefASTNode();

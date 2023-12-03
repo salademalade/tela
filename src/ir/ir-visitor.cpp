@@ -177,7 +177,7 @@ llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
 
   if (!func) func = create_fproto(node);
 
-  if (node->body)
+  if (node->body->type != NodeType::N_NULL)
   {
     llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
     builder->SetInsertPoint(block);
