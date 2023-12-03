@@ -58,6 +58,9 @@ ASTNode *Parser::parse_block()
       case TokenType::T_KEY_CHAR:
         func->ret_type = new LeafASTNode(NodeType::N_TYPE, "char", i->row, i->col);
         break;
+      case TokenType::T_KEY_VOID:
+        func->ret_type = new LeafASTNode(NodeType::N_TYPE, "void", i->row, i->col);
+        break;
       default:
         throw Error(i->row, i->col, "Expected type specifier.");
       }

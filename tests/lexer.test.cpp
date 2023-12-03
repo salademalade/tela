@@ -258,6 +258,21 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     REQUIRE(expected.col == 1);
   }
 
+  SECTION("void")
+  {
+    Lexer lexer("void");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 2);
+
+    Token expected(TokenType::T_KEY_VOID, 1, 1);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
+  }
+
   SECTION("return")
   {
     Lexer lexer("return");

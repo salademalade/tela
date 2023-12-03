@@ -122,6 +122,7 @@ std::vector<Token> Lexer::tokenize()
       else if (id == "int") output.push_back(Token(TokenType::T_KEY_INT, row, pos));
       else if (id == "float") output.push_back(Token(TokenType::T_KEY_FLOAT, row, pos));
       else if (id == "char") output.push_back(Token(TokenType::T_KEY_CHAR, row, pos));
+      else if (id == "void") output.push_back(Token(TokenType::T_KEY_VOID, row, pos));
       else if (id == "return") output.push_back(Token(TokenType::T_KEY_RETURN, row, pos));
       else output.push_back(Token(TokenType::T_ID, id, row, pos));
     }

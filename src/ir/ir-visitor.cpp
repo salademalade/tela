@@ -260,5 +260,6 @@ llvm::Type *IRVisitor::get_type(LeafASTNode *node)
   if (node->value == "int") return llvm::Type::getInt32Ty(*context);
   else if (node->value == "float") return llvm::Type::getFloatTy(*context);
   else if (node->value == "char") return llvm::Type::getInt8Ty(*context);
+  else if (node->value == "void") return llvm::Type::getVoidTy(*context);
   else return nullptr;
 }

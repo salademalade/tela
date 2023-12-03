@@ -20,6 +20,7 @@ public:
     T_KEY_INT,    // int
     T_KEY_FLOAT,  // float
     T_KEY_CHAR,   // char
+    T_KEY_VOID,   // void
     T_KEY_RETURN, // return
 
     T_ADD,        // +

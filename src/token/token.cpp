@@ -40,6 +40,8 @@ const char *Token::str()
     return "float";
   case Type::T_KEY_CHAR:
     return "char";
+  case Type::T_KEY_VOID:
+    return "void";
   case Type::T_KEY_RETURN:
     return "return";
   case Type::T_ADD:
