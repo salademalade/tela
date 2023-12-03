@@ -57,7 +57,22 @@ TEST_CASE("Parsing of character", "[parser][char]")
   REQUIRE(static_cast<LeafASTNode *>(node)->value == "a");
   REQUIRE(node->row == 1);
   REQUIRE(node->col == 1);
+}
 
+TEST_CASE("Parsing of string", "[parser][str]")
+{
+  std::vector<Token> input;
+  input.push_back(Token(TokenType::T_STRING, "foo", 1, 1));
+  input.push_back(Token(TokenType::T_SEMICOLON, 1, 6));
+  input.push_back(Token(TokenType::T_EOF, 2, 1));
+
+  Parser parser(input);
+  ASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse())->statements[0];
+
+  REQUIRE(node->type == NodeType::N_STRING);
+  REQUIRE(static_cast<LeafASTNode *>(node)->value == "foo");
+  REQUIRE(node->row == 1);
+  REQUIRE(node->col == 1);
 }
 
 TEST_CASE("Parsing of identifier", "[parser][id]")

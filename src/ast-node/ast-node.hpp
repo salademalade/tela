@@ -9,6 +9,7 @@ public:
     N_INT,
     N_FLOAT,
     N_CHAR,
+    N_STRING,
 
     N_ID,
 

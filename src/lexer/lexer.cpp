@@ -122,6 +122,7 @@ std::vector<Token> Lexer::tokenize()
       else if (id == "int") output.push_back(Token(TokenType::T_KEY_INT, row, pos));
       else if (id == "float") output.push_back(Token(TokenType::T_KEY_FLOAT, row, pos));
       else if (id == "char") output.push_back(Token(TokenType::T_KEY_CHAR, row, pos));
+      else if (id == "string") output.push_back(Token(TokenType::T_KEY_STRING, row, pos));
       else if (id == "void") output.push_back(Token(TokenType::T_KEY_VOID, row, pos));
       else if (id == "return") output.push_back(Token(TokenType::T_KEY_RETURN, row, pos));
       else output.push_back(Token(TokenType::T_ID, id, row, pos));
@@ -136,6 +137,15 @@ std::vector<Token> Lexer::tokenize()
       col++;
       if (*i != '\'') throw Error(row, col, "Invalid character: \'%c%c\'.", ch, *i);
       output.push_back(Token(TokenType::T_CHAR, std::string(1, ch), row, pos));
+      i++;
+      col++;
+    }
+    else if (*i == '\"')
+    {
+      unsigned int pos = col;
+      std::string str("");
+      while (col++, *++i != '\"') str.push_back(get_char(i, col));
+      output.push_back(Token(TokenType::T_STRING, str, row, pos));
       i++;
       col++;
     }

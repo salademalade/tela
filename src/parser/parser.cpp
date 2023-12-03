@@ -58,6 +58,9 @@ ASTNode *Parser::parse_block()
       case TokenType::T_KEY_CHAR:
         func->ret_type = new LeafASTNode(NodeType::N_TYPE, "char", i->row, i->col);
         break;
+      case TokenType::T_KEY_STRING:
+        func->ret_type = new LeafASTNode(NodeType::N_TYPE, "string", i->row, i->col);
+        break;
       case TokenType::T_KEY_VOID:
         func->ret_type = new LeafASTNode(NodeType::N_TYPE, "void", i->row, i->col);
         break;
@@ -162,6 +165,9 @@ ASTNode *Parser::parse_typedecl()
     case TokenType::T_KEY_CHAR:
       type->value = "char";
       break;
+    case TokenType::T_KEY_STRING:
+      type->value = "string";
+      break;
     default:
       throw Error(i->row, i->col, "Invalid type.");
     }
@@ -241,6 +247,12 @@ ASTNode *Parser::parse_factor()
   else if (i->type == TokenType::T_CHAR)
   {
     LeafASTNode *node = new LeafASTNode(NodeType::N_CHAR, i->value, i->row, i->col);
+    i++;
+    return node;
+  }
+  else if (i->type == TokenType::T_STRING)
+  {
+    LeafASTNode *node = new LeafASTNode(NodeType::N_STRING, i->value, i->row, i->col);
     i++;
     return node;
   }
