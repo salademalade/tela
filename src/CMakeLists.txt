@@ -13,5 +13,5 @@ TARGET_SOURCES(tela
   ast-node/stmt-seq/stmt-seq-ast-node.cpp
   ast-node/null/null-ast-node.cpp
   parser/parser.cpp
-  ir/ir-visitor.cpp
+  module/module.cpp
 )
