@@ -20,7 +20,7 @@ Module::Module(std::string filename)
   }
   catch(std::ifstream::failure e)
   {
-    throw Error("Error while reading file %s: %s", this->filename, e.what());
+    throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
   }
 
   Lexer lexer(source);
