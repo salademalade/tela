@@ -1,13 +1,40 @@
-#include "ir-visitor.hpp"
+#include "module.hpp"
 
-IRVisitor::IRVisitor(std::string mod_name)
+Module::Module(std::string filename)
 {
+  this->filename = filename;
+  std::string source;
+  std::ifstream file;
+
+  file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+  try
+  {
+    std::stringstream stream;
+
+    file.open(this->filename);
+    stream << file.rdbuf();
+    file.close();
+
+    source = stream.str();
+  }
+  catch(std::ifstream::failure e)
+  {
+    throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
+  }
+
+  Lexer lexer(source);
+  std::vector<Token> toks = lexer.tokenize();
+
+  Parser parser(toks);
+  this->input = parser.parse();
+
   this->context = std::make_unique<llvm::LLVMContext>();
   this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
-  this->module = std::make_unique<llvm::Module>(mod_name, *this->context);
+  this->llvm_module = std::make_unique<llvm::Module>(this->filename, *this->context);
 }
 
-llvm::Value *IRVisitor::visit(ASTNode *node)
+llvm::Value *Module::visit(ASTNode *node)
 {
   switch (node->type)
   {
@@ -52,7 +79,64 @@ llvm::Value *IRVisitor::visit(ASTNode *node)
   }
 }
 
-llvm::Value *IRVisitor::visit_identifier(LeafASTNode *node)
+void Module::gen_ll()
+{
+  std::string out_file = filename + ".ll";
+
+  std::error_code ecode;
+  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
+
+  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
+
+  llvm_module->print(dest, nullptr);
+  dest.flush();
+}
+
+void Module::gen_obj()
+{
+  auto target_triple = llvm::sys::getDefaultTargetTriple();
+
+  llvm::InitializeAllTargetInfos();
+  llvm::InitializeAllTargets();
+  llvm::InitializeAllTargetMCs();
+  llvm::InitializeAllAsmParsers();
+  llvm::InitializeAllAsmPrinters();
+
+  std::string err;
+  auto target = llvm::TargetRegistry::lookupTarget(target_triple, err);
+
+  if (!target) throw Error("%s", err.c_str());
+
+  auto CPU = "generic";
+  auto features = "";
+
+  llvm::TargetOptions opt;
+  auto RM = llvm::Optional<llvm::Reloc::Model>();
+  auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
+
+  llvm_module->setDataLayout(target_machine->createDataLayout());
+  llvm_module->setTargetTriple(target_triple);
+
+  std::string out_file = filename + ".o";
+
+  std::error_code ecode;
+  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
+
+  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
+
+  llvm::legacy::PassManager pass;
+  auto filetype = llvm::CodeGenFileType::CGFT_ObjectFile;
+
+  if (target_machine->addPassesToEmitFile(pass, dest, nullptr, filetype))
+  {
+    throw Error("Could not emit object file.");
+  }
+
+  pass.run(*llvm_module);
+  dest.flush();
+}
+
+llvm::Value *Module::visit_identifier(LeafASTNode *node)
 {
   llvm::AllocaInst *alloca = sym_table[node->value];
   if (!alloca) throw Error(node->row, node->col, "Undefined reference to variable: %s.", node->value.c_str());
@@ -60,7 +144,7 @@ llvm::Value *IRVisitor::visit_identifier(LeafASTNode *node)
   return builder->CreateLoad(alloca->getAllocatedType(), alloca, node->value.c_str());
 }
 
-llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
+llvm::Value *Module::visit_binary(BinaryASTNode *node)
 {
   llvm::Value *left = visit(node->left);
   llvm::Value *right = visit(node->right);
@@ -88,7 +172,7 @@ llvm::Value *IRVisitor::visit_binary(BinaryASTNode *node)
   }
 }
 
-llvm::Value *IRVisitor::visit_unary(UnaryASTNode *node)
+llvm::Value *Module::visit_unary(UnaryASTNode *node)
 {
   llvm::Value *zero = llvm::ConstantInt::get(*context, llvm::APInt(32, 0));
   llvm::Value *child = visit(node->child);
@@ -111,7 +195,7 @@ llvm::Value *IRVisitor::visit_unary(UnaryASTNode *node)
   }
 }
 
-llvm::Value *IRVisitor::visit_decl(UnaryASTNode *node)
+llvm::Value *Module::visit_decl(UnaryASTNode *node)
 {
   std::string name;
   llvm::Type *type;
@@ -141,7 +225,7 @@ llvm::Value *IRVisitor::visit_decl(UnaryASTNode *node)
   else throw Error(node->row, node->col, "Cannot declare untyped variable.");
 }
 
-llvm::Value *IRVisitor::visit_assignment(BinaryASTNode *node)
+llvm::Value *Module::visit_assignment(BinaryASTNode *node)
 {
   std::string name;
   llvm::Type *type;
@@ -173,9 +257,9 @@ llvm::Value *IRVisitor::visit_assignment(BinaryASTNode *node)
   return alloca;
 }
 
-llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
+llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
 {
-  llvm::Function *func = module->getFunction(static_cast<LeafASTNode *>(node->name)->value);
+  llvm::Function *func = llvm_module->getFunction(static_cast<LeafASTNode *>(node->name)->value);
 
   if (!func) func = create_fproto(node);
 
@@ -200,10 +284,10 @@ llvm::Value *IRVisitor::visit_fdef(FuncDefASTNode *node)
   return func;
 }
 
-llvm::Value *IRVisitor::visit_fcall(FuncCallASTNode *node)
+llvm::Value *Module::visit_fcall(FuncCallASTNode *node)
 {
   std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
-  llvm::Function *callee = module->getFunction(f_name);
+  llvm::Function *callee = llvm_module->getFunction(f_name);
   if (!callee) throw Error(node->row, node->col, "Undefined reference to function: %s.", f_name.c_str());
 
   if (callee->arg_size() != node->args.size()) throw Error(node->row, node->col, "Invalid arguments for function: %s", f_name.c_str());
@@ -218,13 +302,13 @@ llvm::Value *IRVisitor::visit_fcall(FuncCallASTNode *node)
   return builder->CreateCall(callee, args, "calltmp");
 }
 
-llvm::Value *IRVisitor::visit_ret(UnaryASTNode *node)
+llvm::Value *Module::visit_ret(UnaryASTNode *node)
 {
   llvm::Value *child = visit(node->child);
   return builder->CreateRet(child);
 }
 
-void IRVisitor::visit_seq(StmtSeqASTNode *node)
+void Module::visit_seq(StmtSeqASTNode *node)
 {
   for (auto i : node->statements)
   {
@@ -232,7 +316,7 @@ void IRVisitor::visit_seq(StmtSeqASTNode *node)
   }
 }
 
-llvm::Function *IRVisitor::create_fproto(FuncDefASTNode *node)
+llvm::Function *Module::create_fproto(FuncDefASTNode *node)
 {
   std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
 
@@ -246,7 +330,7 @@ llvm::Function *IRVisitor::create_fproto(FuncDefASTNode *node)
 
   llvm::FunctionType *f_type = llvm::FunctionType::get(f_ret_type, arg_types, false);
 
-  llvm::Function *func = llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, module.get());
+  llvm::Function *func = llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, llvm_module.get());
 
   unsigned int i = 0;
   for (auto &arg : func->args())
@@ -257,7 +341,7 @@ llvm::Function *IRVisitor::create_fproto(FuncDefASTNode *node)
   return func;
 }
 
-llvm::Type *IRVisitor::get_type(LeafASTNode *node)
+llvm::Type *Module::get_type(LeafASTNode *node)
 {
   if (node->value == "int") return llvm::Type::getInt32Ty(*context);
   else if (node->value == "float") return llvm::Type::getFloatTy(*context);
