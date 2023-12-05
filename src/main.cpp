@@ -1,3 +1,6 @@
+#include <CLI/CLI.hpp>
+#include <vector>
+#include <string>
 #include "error/error.hpp"
 #include "module/module.hpp"
 
@@ -5,13 +8,22 @@ int main(int argc, char **argv)
 {
   try
   {
-    if (argc < 2) throw Error("Invalid usage.");
+    CLI::App app;
 
-    Module module(argv[1]);
-    module.visit(module.input);
+    std::vector<std::string> inputs;
+    bool gen_ir = false;
+    app.add_option("Source", inputs, "Files to compile")->required();
+    app.add_flag("-l,--gen-ir", gen_ir, "Generate LLVM IR");
 
-    module.gen_ll();
-    module.gen_obj();
+    CLI11_PARSE(app, argc, argv);
+
+    for (auto input : inputs)
+    {
+      Module module(input);
+      module.visit(module.input);
+      if (gen_ir) module.gen_ll();
+      module.gen_obj();
+    }
   }
   catch (Error e)
   {
