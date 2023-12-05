@@ -60,7 +60,7 @@ jobs:
         # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         # queries: security-extended,security-and-quality
     - name: Install Dependencies
-      run: sudo apt install -y catch2 llvm llvm-dev
+      run: sudo apt install -y catch2 llvm llvm-dev libcli11-dev
 
     - name: Configure CMake
       run: cmake -B build -DBUILD_TESTING=Off .
