@@ -22,12 +22,10 @@
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Verifier.h>
-#include <optional>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <cstdio>
 #include <utility>
 #include <memory>
 #include <string>
