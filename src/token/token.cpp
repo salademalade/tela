@@ -46,6 +46,8 @@ const char *Token::str()
     return "void";
   case Type::T_KEY_RETURN:
     return "return";
+  case Type::T_KEY_IMPORT:
+    return "import";
   case Type::T_ADD:
     return "+";
   case Type::T_SUB:

@@ -805,6 +805,26 @@ TEST_CASE("Parsing of function call", "[parser][func]")
   REQUIRE(static_cast<BinaryASTNode *>(node->args[1])->right->col == 15);
 }
 
+TEST_CASE("Parsing of import statement", "[parser]")
+{
+  std::vector<Token> input;
+  input.push_back(Token(TokenType::T_KEY_IMPORT, 1, 1));
+  input.push_back(Token(TokenType::T_STRING, "foo", 1, 8));
+  input.push_back(Token(TokenType::T_SEMICOLON, 1, 13));
+  input.push_back(Token(TokenType::T_EOF, 2, 1));
+
+  Parser parser(input);
+  ASTNode *node = static_cast<StmtSeqASTNode *>(parser.parse())->statements[0];
+
+  REQUIRE(node->type == NodeType::N_IMPORT);
+  REQUIRE(node->row == 1);
+  REQUIRE(node->col == 1);
+  REQUIRE(static_cast<UnaryASTNode *>(node)->child->type == NodeType::N_STRING);
+  REQUIRE(static_cast<UnaryASTNode *>(node)->child->row == 1);
+  REQUIRE(static_cast<UnaryASTNode *>(node)->child->col == 8);
+  REQUIRE(static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(node)->child)->value == "foo");
+}
+
 TEST_CASE("Parsing of statement sequences", "[parser]")
 {
   std::vector<Token> input;

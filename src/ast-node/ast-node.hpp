@@ -31,6 +31,8 @@ public:
     N_FUNC_CALL,
     N_RET,
 
+    N_IMPORT,
+
     N_STMT_SEQ,
     N_NULL,
   } type;

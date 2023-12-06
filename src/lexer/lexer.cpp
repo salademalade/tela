@@ -125,6 +125,7 @@ std::vector<Token> Lexer::tokenize()
       else if (id == "string") output.push_back(Token(TokenType::T_KEY_STRING, row, pos));
       else if (id == "void") output.push_back(Token(TokenType::T_KEY_VOID, row, pos));
       else if (id == "return") output.push_back(Token(TokenType::T_KEY_RETURN, row, pos));
+      else if (id == "import") output.push_back(Token(TokenType::T_KEY_IMPORT, row, col));
       else output.push_back(Token(TokenType::T_ID, id, row, pos));
     }
     else if (*i == '\'')

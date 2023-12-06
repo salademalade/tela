@@ -115,6 +115,14 @@ ASTNode *Parser::parse_statement()
   case TokenType::T_KEY_RETURN:
     n_type = NodeType::N_RET;
     break;
+  case TokenType::T_KEY_IMPORT:
+  {
+    i++;
+    if (i->type != TokenType::T_STRING) throw Error("Unexpected token: %s.", i->str());
+    ASTNode *mod = new LeafASTNode(NodeType::N_STRING, i->value, i->row, i->col);
+    i++;
+    return new UnaryASTNode(NodeType::N_IMPORT, mod, row, col);
+  }
   default:
     return parse_assignment();
   }

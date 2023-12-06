@@ -318,6 +318,21 @@ TEST_CASE("Tokenization of keywords", "[lexer]")
     REQUIRE(expected.row == 1);
     REQUIRE(expected.col == 1);
   }
+
+  SECTION("import")
+  {
+    Lexer lexer("import");
+    std::vector<Token> output = lexer.tokenize();
+
+    REQUIRE(output.size() == 2);
+
+    Token expected(TokenType::T_KEY_IMPORT, 1, 1);
+    Token out_token = output[0];
+
+    REQUIRE(expected.type == out_token.type);
+    REQUIRE(expected.row == 1);
+    REQUIRE(expected.col == 1);
+  }
 }
 
 TEST_CASE("Tokenization of addition operator", "[lexer][add]")

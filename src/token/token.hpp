@@ -23,6 +23,7 @@ public:
     T_KEY_STRING, // string
     T_KEY_VOID,   // void
     T_KEY_RETURN, // return
+    T_KEY_IMPORT, // import
 
     T_ADD,        // +
     T_SUB,        // -
