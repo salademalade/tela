@@ -10,20 +10,17 @@ int main(int argc, char **argv)
   {
     CLI::App app;
 
-    std::vector<std::string> inputs;
+    std::string source;
     bool gen_ir = false;
-    app.add_option("Source", inputs, "Files to compile")->required();
+    app.add_option("Source", source, "Source file to compile to compile")->required();
     app.add_flag("-l,--gen-ir", gen_ir, "Generate LLVM IR");
 
     CLI11_PARSE(app, argc, argv);
 
-    for (auto input : inputs)
-    {
-      Module module(input);
-      module.visit(module.input);
-      if (gen_ir) module.gen_ll();
-      module.gen_obj();
-    }
+    Module module(source);
+    module.visit(module.input);
+    if (gen_ir) module.gen_ll();
+    module.gen_obj();
   }
   catch (Error e)
   {
