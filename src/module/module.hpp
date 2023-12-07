@@ -49,12 +49,15 @@ public:
   ASTNode *input;
   std::string filename;
 
-  std::unique_ptr<llvm::LLVMContext> context;
+  llvm::LLVMContext *context;
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> llvm_module;
+
   std::map<std::string, llvm::AllocaInst *> sym_table;
+  std::map<std::string, llvm::FunctionType *> func_table;
 
   Module(std::string mod_name);
+  Module(llvm::LLVMContext *context, std::string mod_name);
 
   llvm::Value *visit(ASTNode *node);
 
@@ -69,6 +72,7 @@ private:
   llvm::Value *visit_fdef(FuncDefASTNode *node);
   llvm::Value *visit_fcall(FuncCallASTNode *node);
   llvm::Value *visit_ret(UnaryASTNode *node);
+  llvm::Value *visit_import(UnaryASTNode *node);
   void visit_seq(StmtSeqASTNode *node);
 
   llvm::Function *create_fproto(FuncDefASTNode *node);

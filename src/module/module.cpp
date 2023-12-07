@@ -29,7 +29,41 @@ Module::Module(std::string filename)
   Parser parser(toks);
   this->input = parser.parse();
 
-  this->context = std::make_unique<llvm::LLVMContext>();
+  this->context = new llvm::LLVMContext();
+  this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
+  this->llvm_module = std::make_unique<llvm::Module>(this->filename, *this->context);
+}
+
+Module::Module(llvm::LLVMContext *context, std::string filename)
+{
+  this->filename = filename;
+  std::string source;
+  std::ifstream file;
+
+  file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+  try
+  {
+    std::stringstream stream;
+
+    file.open(this->filename);
+    stream << file.rdbuf();
+    file.close();
+
+    source = stream.str();
+  }
+  catch(std::ifstream::failure e)
+  {
+    throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
+  }
+
+  Lexer lexer(source);
+  std::vector<Token> toks = lexer.tokenize();
+
+  Parser parser(toks);
+  this->input = parser.parse();
+
+  this->context = context;
   this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
   this->llvm_module = std::make_unique<llvm::Module>(this->filename, *this->context);
 }
@@ -68,6 +102,8 @@ llvm::Value *Module::visit(ASTNode *node)
     return visit_fcall(static_cast<FuncCallASTNode *>(node));
   case NodeType::N_RET:
     return visit_ret(static_cast<UnaryASTNode *>(node));
+  case NodeType::N_IMPORT:
+    return visit_import(static_cast<UnaryASTNode *>(node));
   case NodeType::N_STMT_SEQ:
     visit_seq(static_cast<StmtSeqASTNode *>(node));
     return nullptr;
@@ -77,63 +113,6 @@ llvm::Value *Module::visit(ASTNode *node)
   default:
     return nullptr;
   }
-}
-
-void Module::gen_ll()
-{
-  std::string out_file = filename + ".ll";
-
-  std::error_code ecode;
-  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
-
-  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
-
-  llvm_module->print(dest, nullptr);
-  dest.flush();
-}
-
-void Module::gen_obj()
-{
-  auto target_triple = llvm::sys::getDefaultTargetTriple();
-
-  llvm::InitializeAllTargetInfos();
-  llvm::InitializeAllTargets();
-  llvm::InitializeAllTargetMCs();
-  llvm::InitializeAllAsmParsers();
-  llvm::InitializeAllAsmPrinters();
-
-  std::string err;
-  auto target = llvm::TargetRegistry::lookupTarget(target_triple, err);
-
-  if (!target) throw Error("%s", err.c_str());
-
-  auto CPU = "generic";
-  auto features = "";
-
-  llvm::TargetOptions opt;
-  auto RM = llvm::Optional<llvm::Reloc::Model>();
-  auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
-
-  llvm_module->setDataLayout(target_machine->createDataLayout());
-  llvm_module->setTargetTriple(target_triple);
-
-  std::string out_file = filename + ".o";
-
-  std::error_code ecode;
-  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
-
-  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
-
-  llvm::legacy::PassManager pass;
-  auto filetype = llvm::CodeGenFileType::CGFT_ObjectFile;
-
-  if (target_machine->addPassesToEmitFile(pass, dest, nullptr, filetype))
-  {
-    throw Error("Could not emit object file.");
-  }
-
-  pass.run(*llvm_module);
-  dest.flush();
 }
 
 llvm::Value *Module::visit_identifier(LeafASTNode *node)
@@ -308,12 +287,84 @@ llvm::Value *Module::visit_ret(UnaryASTNode *node)
   return builder->CreateRet(child);
 }
 
+llvm::Value *Module::visit_import(UnaryASTNode *node)
+{
+  std::string filename = static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(node)->child)->value;
+  Module module(filename);
+  module.visit(module.input);
+
+  for (auto i = module.func_table.begin(); i != module.func_table.end(); i++)
+  {
+    llvm::Function::Create(i->second, llvm::Function::ExternalLinkage, i->first, *llvm_module);
+    func_table[i->first] = i->second;
+  }
+
+  return nullptr;
+}
+
 void Module::visit_seq(StmtSeqASTNode *node)
 {
   for (auto i : node->statements)
   {
     visit(i);
   }
+}
+
+void Module::gen_ll()
+{
+  std::string out_file = filename + ".ll";
+
+  std::error_code ecode;
+  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
+
+  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
+
+  llvm_module->print(dest, nullptr);
+  dest.flush();
+}
+
+void Module::gen_obj()
+{
+  auto target_triple = llvm::sys::getDefaultTargetTriple();
+
+  llvm::InitializeAllTargetInfos();
+  llvm::InitializeAllTargets();
+  llvm::InitializeAllTargetMCs();
+  llvm::InitializeAllAsmParsers();
+  llvm::InitializeAllAsmPrinters();
+
+  std::string err;
+  auto target = llvm::TargetRegistry::lookupTarget(target_triple, err);
+
+  if (!target) throw Error("%s", err.c_str());
+
+  auto CPU = "generic";
+  auto features = "";
+
+  llvm::TargetOptions opt;
+  auto RM = llvm::Optional<llvm::Reloc::Model>();
+  auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
+
+  llvm_module->setDataLayout(target_machine->createDataLayout());
+  llvm_module->setTargetTriple(target_triple);
+
+  std::string out_file = filename + ".o";
+
+  std::error_code ecode;
+  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
+
+  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
+
+  llvm::legacy::PassManager pass;
+  auto filetype = llvm::CodeGenFileType::CGFT_ObjectFile;
+
+  if (target_machine->addPassesToEmitFile(pass, dest, nullptr, filetype))
+  {
+    throw Error("Could not emit object file.");
+  }
+
+  pass.run(*llvm_module);
+  dest.flush();
 }
 
 llvm::Function *Module::create_fproto(FuncDefASTNode *node)
@@ -331,6 +382,7 @@ llvm::Function *Module::create_fproto(FuncDefASTNode *node)
   llvm::FunctionType *f_type = llvm::FunctionType::get(f_ret_type, arg_types, false);
 
   llvm::Function *func = llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, llvm_module.get());
+  func_table[f_name] = f_type;
 
   unsigned int i = 0;
   for (auto &arg : func->args())

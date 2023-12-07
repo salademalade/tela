@@ -30,7 +30,6 @@
 *.exe
 *.out
 *.app
-
 tela
 tltests
 
@@ -46,7 +45,9 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
-
 .cmake/*
 DartConfiguration.tcl
 *.cmake
+.ninja_deps
+.ninja_log
+build.ninja
