@@ -29,7 +29,41 @@ Module::Module(std::string filename)
   Parser parser(toks);
   this->input = parser.parse();
 
-  this->context = std::make_unique<llvm::LLVMContext>();
+  this->context = new llvm::LLVMContext();
+  this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
+  this->llvm_module = std::make_unique<llvm::Module>(this->filename, *this->context);
+}
+
+Module::Module(llvm::LLVMContext *context, std::string filename)
+{
+  this->filename = filename;
+  std::string source;
+  std::ifstream file;
+
+  file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+  try
+  {
+    std::stringstream stream;
+
+    file.open(this->filename);
+    stream << file.rdbuf();
+    file.close();
+
+    source = stream.str();
+  }
+  catch(std::ifstream::failure e)
+  {
+    throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
+  }
+
+  Lexer lexer(source);
+  std::vector<Token> toks = lexer.tokenize();
+
+  Parser parser(toks);
+  this->input = parser.parse();
+
+  this->context = context;
   this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
   this->llvm_module = std::make_unique<llvm::Module>(this->filename, *this->context);
 }
@@ -68,6 +102,8 @@ llvm::Value *Module::visit(ASTNode *node)
     return visit_fcall(static_cast<FuncCallASTNode *>(node));
   case NodeType::N_RET:
     return visit_ret(static_cast<UnaryASTNode *>(node));
+  case NodeType::N_IMPORT:
+    return visit_import(static_cast<UnaryASTNode *>(node));
   case NodeType::N_STMT_SEQ:
     visit_seq(static_cast<StmtSeqASTNode *>(node));
     return nullptr;
@@ -306,6 +342,21 @@ llvm::Value *Module::visit_ret(UnaryASTNode *node)
 {
   llvm::Value *child = visit(node->child);
   return builder->CreateRet(child);
+}
+
+llvm::Value *Module::visit_import(UnaryASTNode *node)
+{
+  std::string filename = static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(node)->child)->value;
+  Module module(filename);
+  module.visit(module.input);
+
+  for (auto i = module.func_table.begin(); i != module.func_table.end(); i++)
+  {
+    llvm::Function::Create(i->second, llvm::Function::ExternalLinkage, i->first, *llvm_module);
+    func_table[i->first] = i->second;
+  }
+
+  return nullptr;
 }
 
 void Module::visit_seq(StmtSeqASTNode *node)
