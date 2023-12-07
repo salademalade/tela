@@ -115,63 +115,6 @@ llvm::Value *Module::visit(ASTNode *node)
   }
 }
 
-void Module::gen_ll()
-{
-  std::string out_file = filename + ".ll";
-
-  std::error_code ecode;
-  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
-
-  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
-
-  llvm_module->print(dest, nullptr);
-  dest.flush();
-}
-
-void Module::gen_obj()
-{
-  auto target_triple = llvm::sys::getDefaultTargetTriple();
-
-  llvm::InitializeAllTargetInfos();
-  llvm::InitializeAllTargets();
-  llvm::InitializeAllTargetMCs();
-  llvm::InitializeAllAsmParsers();
-  llvm::InitializeAllAsmPrinters();
-
-  std::string err;
-  auto target = llvm::TargetRegistry::lookupTarget(target_triple, err);
-
-  if (!target) throw Error("%s", err.c_str());
-
-  auto CPU = "generic";
-  auto features = "";
-
-  llvm::TargetOptions opt;
-  auto RM = llvm::Optional<llvm::Reloc::Model>();
-  auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
-
-  llvm_module->setDataLayout(target_machine->createDataLayout());
-  llvm_module->setTargetTriple(target_triple);
-
-  std::string out_file = filename + ".o";
-
-  std::error_code ecode;
-  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
-
-  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
-
-  llvm::legacy::PassManager pass;
-  auto filetype = llvm::CodeGenFileType::CGFT_ObjectFile;
-
-  if (target_machine->addPassesToEmitFile(pass, dest, nullptr, filetype))
-  {
-    throw Error("Could not emit object file.");
-  }
-
-  pass.run(*llvm_module);
-  dest.flush();
-}
-
 llvm::Value *Module::visit_identifier(LeafASTNode *node)
 {
   llvm::AllocaInst *alloca = sym_table[node->value];
@@ -365,6 +308,63 @@ void Module::visit_seq(StmtSeqASTNode *node)
   {
     visit(i);
   }
+}
+
+void Module::gen_ll()
+{
+  std::string out_file = filename + ".ll";
+
+  std::error_code ecode;
+  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
+
+  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
+
+  llvm_module->print(dest, nullptr);
+  dest.flush();
+}
+
+void Module::gen_obj()
+{
+  auto target_triple = llvm::sys::getDefaultTargetTriple();
+
+  llvm::InitializeAllTargetInfos();
+  llvm::InitializeAllTargets();
+  llvm::InitializeAllTargetMCs();
+  llvm::InitializeAllAsmParsers();
+  llvm::InitializeAllAsmPrinters();
+
+  std::string err;
+  auto target = llvm::TargetRegistry::lookupTarget(target_triple, err);
+
+  if (!target) throw Error("%s", err.c_str());
+
+  auto CPU = "generic";
+  auto features = "";
+
+  llvm::TargetOptions opt;
+  auto RM = llvm::Optional<llvm::Reloc::Model>();
+  auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
+
+  llvm_module->setDataLayout(target_machine->createDataLayout());
+  llvm_module->setTargetTriple(target_triple);
+
+  std::string out_file = filename + ".o";
+
+  std::error_code ecode;
+  llvm::raw_fd_ostream dest(out_file, ecode, llvm::sys::fs::OpenFlags::OF_None);
+
+  if (ecode) throw Error("Could not open file: %s", ecode.message().c_str());
+
+  llvm::legacy::PassManager pass;
+  auto filetype = llvm::CodeGenFileType::CGFT_ObjectFile;
+
+  if (target_machine->addPassesToEmitFile(pass, dest, nullptr, filetype))
+  {
+    throw Error("Could not emit object file.");
+  }
+
+  pass.run(*llvm_module);
+  dest.flush();
 }
 
 llvm::Function *Module::create_fproto(FuncDefASTNode *node)
