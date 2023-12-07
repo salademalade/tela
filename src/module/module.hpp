@@ -52,7 +52,9 @@ public:
   std::unique_ptr<llvm::LLVMContext> context;
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> llvm_module;
+
   std::map<std::string, llvm::AllocaInst *> sym_table;
+  std::map<std::string, llvm::FunctionType *> func_table;
 
   Module(std::string mod_name);
 

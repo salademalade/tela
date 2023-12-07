@@ -331,6 +331,7 @@ llvm::Function *Module::create_fproto(FuncDefASTNode *node)
   llvm::FunctionType *f_type = llvm::FunctionType::get(f_ret_type, arg_types, false);
 
   llvm::Function *func = llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, llvm_module.get());
+  func_table[f_name] = f_type;
 
   unsigned int i = 0;
   for (auto &arg : func->args())
