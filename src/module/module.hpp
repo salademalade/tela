@@ -59,11 +59,12 @@ public:
   Module(std::string mod_name);
   Module(llvm::LLVMContext *context, std::string mod_name);
 
-  llvm::Value *visit(ASTNode *node);
+  void gen_ir();
 
   void gen_ll();
   void gen_obj();
 private:
+  llvm::Value *visit(ASTNode *node);
   llvm::Value *visit_identifier(LeafASTNode *node);
   llvm::Value *visit_binary(BinaryASTNode *node);
   llvm::Value *visit_unary(UnaryASTNode *node);

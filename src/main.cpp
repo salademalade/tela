@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     for (auto input : inputs)
     {
       Module module(input);
-      module.visit(module.input);
+      module.gen_ir();
       if (gen_ir) module.gen_ll();
       module.gen_obj();
     }
