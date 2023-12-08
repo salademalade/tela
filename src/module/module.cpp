@@ -1,5 +1,12 @@
 #include "module.hpp"
 
+Module::Symbol::Symbol(llvm::Value *value = nullptr, bool is_const = false, bool is_global = false)
+{
+  this->value = value;
+  this->is_const = is_const;
+  this->is_global = is_global;
+}
+
 Module::Module(std::string filename)
 {
   this->filename = filename;

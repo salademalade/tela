@@ -47,6 +47,15 @@
 class Module
 {
 public:
+  struct Symbol
+  {
+    llvm::Value *value;
+    bool is_const;
+    bool is_global;
+
+    Symbol(llvm::Value *value, bool is_const, bool is_global);
+  };
+
   ASTNode *input;
   std::string filename;
 
@@ -54,8 +63,7 @@ public:
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> llvm_module;
 
-  std::map<std::string, llvm::AllocaInst *> sym_table;
-  std::map<std::string, llvm::GlobalVariable *> global_table;
+  std::map<std::string, Symbol> sym_table;
   std::map<std::string, llvm::FunctionType *> func_table;
 
   std::stack<llvm::Function *> fdef_stack;
