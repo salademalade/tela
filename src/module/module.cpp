@@ -124,7 +124,19 @@ llvm::Value *Module::visit(ASTNode *node)
 
 llvm::Value *Module::visit_identifier(LeafASTNode *node)
 {
-  // stuff
+  Symbol var = sym_table[node->value];
+  if (!var.value) throw Error(node->row, node->col, "Undefined reference to variable: %s.", node->value.c_str());
+
+  if (var.is_global)
+  {
+    llvm::GlobalVariable *global = static_cast<llvm::GlobalVariable *>(var.value);
+    return builder->CreateLoad(global->getType(), global, node->value.c_str());
+  }
+  else
+  {
+    llvm::AllocaInst *alloca = static_cast<llvm::AllocaInst *>(var.value);
+    return builder->CreateLoad(alloca->getAllocatedType(), alloca, node->value.c_str());
+  }
 }
 
 llvm::Value *Module::visit_binary(BinaryASTNode *node)
