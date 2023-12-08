@@ -200,7 +200,9 @@ llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
       sym_table[std::string(arg.getName())] = alloca;
     }
 
+    fdef_stack.push(func);
     visit(node->body);
+    fdef_stack.pop();
   }
 
   llvm::verifyFunction(*func);

@@ -29,6 +29,7 @@
 #include <utility>
 #include <memory>
 #include <string>
+#include <stack>
 #include <map>
 #include "error/error.hpp"
 #include "token/token.hpp"
@@ -54,7 +55,10 @@ public:
   std::unique_ptr<llvm::Module> llvm_module;
 
   std::map<std::string, llvm::AllocaInst *> sym_table;
+  std::map<std::string, llvm::GlobalVariable *> global_table;
   std::map<std::string, llvm::FunctionType *> func_table;
+
+  std::stack<llvm::Function *> fdef_stack;
 
   Module(std::string mod_name);
   Module(llvm::LLVMContext *context, std::string mod_name);
