@@ -117,10 +117,7 @@ llvm::Value *Module::visit(ASTNode *node)
 
 llvm::Value *Module::visit_identifier(LeafASTNode *node)
 {
-  llvm::AllocaInst *alloca = sym_table[node->value];
-  if (!alloca) throw Error(node->row, node->col, "Undefined reference to variable: %s.", node->value.c_str());
-
-  return builder->CreateLoad(alloca->getAllocatedType(), alloca, node->value.c_str());
+  // stuff
 }
 
 llvm::Value *Module::visit_binary(BinaryASTNode *node)
@@ -176,64 +173,12 @@ llvm::Value *Module::visit_unary(UnaryASTNode *node)
 
 llvm::Value *Module::visit_decl(UnaryASTNode *node)
 {
-  std::string name;
-  llvm::Type *type;
-  if (node->child->type == NodeType::N_ASSIGN)
-  {
-    if (static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_ID)
-    {
-      name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
-    }
-    else if (static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_TYPE_DECL)
-    {
-      name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->left)->value;
-    }
-
-    sym_table[name] = nullptr;
-    return visit(node->child);
-  }
-  else if (node->child->type == NodeType::N_TYPE_DECL)
-  {
-    BinaryASTNode *child = static_cast<BinaryASTNode *>(node->child);
-    name = static_cast<LeafASTNode *>(child->left)->value;
-    type = get_type(static_cast<LeafASTNode *>(child->right));
-
-    sym_table[name] = builder->CreateAlloca(type, nullptr, name);
-    return sym_table[name];
-  }
-  else throw Error(node->row, node->col, "Cannot declare untyped variable.");
+  // stuff
 }
 
 llvm::Value *Module::visit_assignment(BinaryASTNode *node)
 {
-  std::string name;
-  llvm::Type *type;
-  llvm::Value *right = visit(node->right);
-  llvm::AllocaInst *alloca;
-
-  if (node->left->type == NodeType::N_ID)
-  {
-    name = static_cast<LeafASTNode *>(node->left)->value;
-    type = right->getType();
-  }
-  else if (node->left->type == NodeType::N_TYPE_DECL)
-  {
-    name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->left)->value;
-    type = get_type(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->right));
-  }
-
-  if (sym_table.find(name) == sym_table.end()) throw Error(node->row, node->col, "Undefined reference to variable: %s.", name.c_str());
-
-  alloca = sym_table[name];
-  if (alloca == nullptr)
-  {
-    alloca = builder->CreateAlloca(type, nullptr, name);
-    sym_table[name] = alloca;
-  }
-
-  builder->CreateStore(right, alloca);
-
-  return alloca;
+  // stuff
 }
 
 llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
