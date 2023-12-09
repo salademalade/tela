@@ -1,6 +1,6 @@
 #include "lexer.hpp"
 
-const char WHITESPACES[5] = " \t\r";
+const char WHITESPACES[4] = " \t\r";
 const char DIGITS[11] = "0123456789";
 const char LETTERS[53] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
