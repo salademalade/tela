@@ -197,7 +197,15 @@ llvm::Value *Module::visit_decl(UnaryASTNode *node)
 
 llvm::Value *Module::visit_assignment(BinaryASTNode *node)
 {
-  // stuff
+  std::string name;
+  llvm::Value *right = visit(node->right);
+  if (node->left->type != NodeType::N_ID) throw Error(node->row, node->col, "Cannot assign value to expression.");
+  if (sym_table.find(name) == sym_table.end()) throw Error(node->row, node->col, "Undefined reference to variable: %s.", name.c_str());
+
+  Symbol symbol = sym_table["name"];
+  if (symbol.is_const) throw Error(node->row, node->col, "Cannot redefine constant.");
+  if (symbol.is_global) return builder->CreateStore(right, static_cast<llvm::AllocaInst *>(symbol.value));
+  else return builder->CreateStore(right, static_cast<llvm::GlobalVariable *>(symbol.value));
 }
 
 llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
