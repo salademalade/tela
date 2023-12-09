@@ -396,7 +396,7 @@ llvm::Value *Module::visit_import(UnaryASTNode *node)
     llvm_module->getOrInsertGlobal(i->first, i->second.value->getType());
     llvm::GlobalVariable *global = llvm_module->getNamedGlobal(i->first);
     global->isExternallyInitialized();
-    sym_table[i->first] = Symbol(global, true, true);
+    sym_table[i->first] = Symbol(global, i->second.is_const, i->second.is_global);
   }
 
   return nullptr;
