@@ -213,7 +213,7 @@ llvm::Value *Module::visit_decl(UnaryASTNode *node)
     bool is_global = fdef_stack.empty();
     bool is_const = node->type == NodeType::N_DECL_CONST;
 
-    Symbol symbol(nullptr, is_global, is_const);
+    Symbol symbol(nullptr, is_const, is_global);
 
     if (is_global)
     {
