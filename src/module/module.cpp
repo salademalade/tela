@@ -1,6 +1,6 @@
 #include "module.hpp"
 
-Module::Symbol::Symbol(llvm::Value *value = nullptr, bool is_const = false, bool is_global = false)
+Module::Symbol::Symbol(llvm::Value *value, bool is_const, bool is_global)
 {
   this->value = value;
   this->is_const = is_const;
@@ -192,20 +192,69 @@ llvm::Value *Module::visit_unary(UnaryASTNode *node)
 
 llvm::Value *Module::visit_decl(UnaryASTNode *node)
 {
-  // stuff
+  std::string name;
+  llvm::Value *right;
+  llvm::Type *type;
+  if (node->child->type == NodeType::N_ASSIGN)
+  {
+    if (static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_ID)
+    {
+      name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
+      right = visit(static_cast<BinaryASTNode *>(node->child)->right);
+      type = right->getType();
+    }
+    else if (static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_TYPE_DECL)
+    {
+      name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->left)->value;
+      right = visit(static_cast<BinaryASTNode *>(node->child)->right);
+      type = get_type(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->right));
+    }
+
+    bool is_global = fdef_stack.empty();
+    bool is_const = node->type == NodeType::N_DECL_CONST;
+
+    Symbol symbol(nullptr, is_global, is_const);
+
+    if (is_global)
+    {
+      // stuff
+    }
+    else
+    {
+      symbol.value = builder->CreateAlloca(type, nullptr, name);
+      builder->CreateStore(right, symbol.value);
+    }
+
+    sym_table[name] = symbol;
+    return sym_table[name].value;
+  }
+  else if (node->child->type == NodeType::N_TYPE_DECL)
+  {
+    name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
+    type = get_type(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->right));
+
+    if (fdef_stack.empty()) throw Error(node->row, node->col, "Cannot define global without value.");
+    if (node->type == NodeType::N_DECL_CONST) throw Error(node->row, node->col, "Cannot define constant without value.");
+
+    Symbol symbol(builder->CreateAlloca(type, nullptr, name));
+
+    sym_table[name] = symbol;
+    return sym_table[name].value;
+  }
+  else return nullptr;
 }
 
 llvm::Value *Module::visit_assignment(BinaryASTNode *node)
 {
-  std::string name;
+  std::string name = static_cast<LeafASTNode *>(node->left)->value;
   llvm::Value *right = visit(node->right);
   if (node->left->type != NodeType::N_ID) throw Error(node->row, node->col, "Cannot assign value to expression.");
   if (sym_table.find(name) == sym_table.end()) throw Error(node->row, node->col, "Undefined reference to variable: %s.", name.c_str());
 
-  Symbol symbol = sym_table["name"];
+  Symbol symbol = sym_table[name];
   if (symbol.is_const) throw Error(node->row, node->col, "Cannot redefine constant.");
-  if (symbol.is_global) return builder->CreateStore(right, static_cast<llvm::AllocaInst *>(symbol.value));
-  else return builder->CreateStore(right, static_cast<llvm::GlobalVariable *>(symbol.value));
+  if (symbol.is_global) return builder->CreateStore(right, static_cast<llvm::GlobalVariable *>(symbol.value));
+  else return builder->CreateStore(right, static_cast<llvm::AllocaInst *>(symbol.value));
 }
 
 llvm::Value *Module::visit_fdef(FuncDefASTNode *node)

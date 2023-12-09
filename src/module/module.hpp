@@ -53,7 +53,7 @@ public:
     bool is_const;
     bool is_global;
 
-    Symbol(llvm::Value *value, bool is_const, bool is_global);
+    Symbol(llvm::Value *value = nullptr, bool is_const = false, bool is_global = false);
   };
 
   ASTNode *input;
