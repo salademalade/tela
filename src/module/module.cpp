@@ -217,7 +217,11 @@ llvm::Value *Module::visit_decl(UnaryASTNode *node)
 
     if (is_global)
     {
-      // stuff
+      llvm_module->getOrInsertGlobal(name, type);
+      llvm::GlobalVariable *global = llvm_module->getNamedGlobal(name);
+      llvm::Constant *right_c = static_cast<llvm::Constant *>(right);
+      global->setInitializer(right_c);
+      symbol.value = global;
     }
     else
     {
@@ -268,7 +272,10 @@ llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
     llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
     builder->SetInsertPoint(block);
 
-    sym_table.clear();
+    for (auto sym : sym_table)
+    {
+      if (!sym.second.is_global) sym_table.erase(sym.first);
+    }
     for (auto &arg : func->args())
     {
       llvm::AllocaInst *alloca = builder->CreateAlloca(arg.getType(), nullptr, arg.getName());
