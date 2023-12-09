@@ -329,6 +329,14 @@ llvm::Value *Module::visit_import(UnaryASTNode *node)
     func_table[i->first] = i->second;
   }
 
+  for (auto i = module.sym_table.begin(); i != module.sym_table.end(); i++)
+  {
+    llvm_module->getOrInsertGlobal(i->first, i->second.value->getType());
+    llvm::GlobalVariable *global = llvm_module->getNamedGlobal(i->first);
+    global->isExternallyInitialized();
+    sym_table[i->first] = Symbol(global, true, true);
+  }
+
   return nullptr;
 }
 
