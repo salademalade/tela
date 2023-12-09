@@ -29,6 +29,7 @@
 #include <utility>
 #include <memory>
 #include <string>
+#include <stack>
 #include <map>
 #include "error/error.hpp"
 #include "token/token.hpp"
@@ -46,6 +47,15 @@
 class Module
 {
 public:
+  struct Symbol
+  {
+    llvm::Value *value;
+    bool is_const;
+    bool is_global;
+
+    Symbol(llvm::Value *value = nullptr, bool is_const = false, bool is_global = false);
+  };
+
   ASTNode *input;
   std::string filename;
 
@@ -53,8 +63,10 @@ public:
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> llvm_module;
 
-  std::map<std::string, llvm::AllocaInst *> sym_table;
+  std::map<std::string, Symbol> sym_table;
   std::map<std::string, llvm::FunctionType *> func_table;
+
+  std::stack<llvm::Function *> fdef_stack;
 
   Module(std::string mod_name);
   Module(llvm::LLVMContext *context, std::string mod_name);

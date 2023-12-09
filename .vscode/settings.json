@@ -79,7 +79,8 @@
     "typeindex": "cpp",
     "csignal": "cpp",
     "hash_set": "cpp",
-    "shared_mutex": "cpp"
+    "shared_mutex": "cpp",
+    "*.def": "cpp"
   },
   "C_Cpp.default.compilerPath": "/usr/bin/g++",
   "cmake.configureOnOpen": false

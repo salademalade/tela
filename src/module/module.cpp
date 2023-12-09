@@ -1,5 +1,12 @@
 #include "module.hpp"
 
+Module::Symbol::Symbol(llvm::Value *value, bool is_const, bool is_global)
+{
+  this->value = value;
+  this->is_const = is_const;
+  this->is_global = is_global;
+}
+
 Module::Module(std::string filename)
 {
   this->filename = filename;
@@ -179,10 +186,19 @@ llvm::Value *Module::visit(ASTNode *node)
 
 llvm::Value *Module::visit_identifier(LeafASTNode *node)
 {
-  llvm::AllocaInst *alloca = sym_table[node->value];
-  if (!alloca) throw Error(node->row, node->col, "Undefined reference to variable: %s.", node->value.c_str());
+  Symbol var = sym_table[node->value];
+  if (!var.value) throw Error(node->row, node->col, "Undefined reference to variable: %s.", node->value.c_str());
 
-  return builder->CreateLoad(alloca->getAllocatedType(), alloca, node->value.c_str());
+  if (var.is_global)
+  {
+    llvm::GlobalVariable *global = static_cast<llvm::GlobalVariable *>(var.value);
+    return builder->CreateLoad(global->getType(), global, node->value.c_str());
+  }
+  else
+  {
+    llvm::AllocaInst *alloca = static_cast<llvm::AllocaInst *>(var.value);
+    return builder->CreateLoad(alloca->getAllocatedType(), alloca, node->value.c_str());
+  }
 }
 
 llvm::Value *Module::visit_binary(BinaryASTNode *node)
@@ -239,63 +255,72 @@ llvm::Value *Module::visit_unary(UnaryASTNode *node)
 llvm::Value *Module::visit_decl(UnaryASTNode *node)
 {
   std::string name;
+  llvm::Value *right;
   llvm::Type *type;
   if (node->child->type == NodeType::N_ASSIGN)
   {
     if (static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_ID)
     {
       name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
+      right = visit(static_cast<BinaryASTNode *>(node->child)->right);
+      type = right->getType();
     }
     else if (static_cast<BinaryASTNode *>(node->child)->left->type == NodeType::N_TYPE_DECL)
     {
       name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->left)->value;
+      right = visit(static_cast<BinaryASTNode *>(node->child)->right);
+      type = get_type(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->right));
     }
 
-    sym_table[name] = nullptr;
-    return visit(node->child);
+    bool is_global = fdef_stack.empty();
+    bool is_const = node->type == NodeType::N_DECL_CONST;
+
+    Symbol symbol(nullptr, is_const, is_global);
+
+    if (is_global)
+    {
+      llvm_module->getOrInsertGlobal(name, type);
+      llvm::GlobalVariable *global = llvm_module->getNamedGlobal(name);
+      llvm::Constant *right_c = static_cast<llvm::Constant *>(right);
+      global->setInitializer(right_c);
+      symbol.value = global;
+    }
+    else
+    {
+      symbol.value = builder->CreateAlloca(type, nullptr, name);
+      builder->CreateStore(right, symbol.value);
+    }
+
+    sym_table[name] = symbol;
+    return sym_table[name].value;
   }
   else if (node->child->type == NodeType::N_TYPE_DECL)
   {
-    BinaryASTNode *child = static_cast<BinaryASTNode *>(node->child);
-    name = static_cast<LeafASTNode *>(child->left)->value;
-    type = get_type(static_cast<LeafASTNode *>(child->right));
+    name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->left)->value;
+    type = get_type(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->child)->right));
 
-    sym_table[name] = builder->CreateAlloca(type, nullptr, name);
-    return sym_table[name];
+    if (fdef_stack.empty()) throw Error(node->row, node->col, "Cannot define global without value.");
+    if (node->type == NodeType::N_DECL_CONST) throw Error(node->row, node->col, "Cannot define constant without value.");
+
+    Symbol symbol(builder->CreateAlloca(type, nullptr, name));
+
+    sym_table[name] = symbol;
+    return sym_table[name].value;
   }
-  else throw Error(node->row, node->col, "Cannot declare untyped variable.");
+  else return nullptr;
 }
 
 llvm::Value *Module::visit_assignment(BinaryASTNode *node)
 {
-  std::string name;
-  llvm::Type *type;
+  std::string name = static_cast<LeafASTNode *>(node->left)->value;
   llvm::Value *right = visit(node->right);
-  llvm::AllocaInst *alloca;
-
-  if (node->left->type == NodeType::N_ID)
-  {
-    name = static_cast<LeafASTNode *>(node->left)->value;
-    type = right->getType();
-  }
-  else if (node->left->type == NodeType::N_TYPE_DECL)
-  {
-    name = static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->left)->value;
-    type = get_type(static_cast<LeafASTNode *>(static_cast<BinaryASTNode *>(node->left)->right));
-  }
-
+  if (node->left->type != NodeType::N_ID) throw Error(node->row, node->col, "Cannot assign value to expression.");
   if (sym_table.find(name) == sym_table.end()) throw Error(node->row, node->col, "Undefined reference to variable: %s.", name.c_str());
 
-  alloca = sym_table[name];
-  if (alloca == nullptr)
-  {
-    alloca = builder->CreateAlloca(type, nullptr, name);
-    sym_table[name] = alloca;
-  }
-
-  builder->CreateStore(right, alloca);
-
-  return alloca;
+  Symbol symbol = sym_table[name];
+  if (symbol.is_const) throw Error(node->row, node->col, "Cannot redefine constant.");
+  if (symbol.is_global) return builder->CreateStore(right, static_cast<llvm::GlobalVariable *>(symbol.value));
+  else return builder->CreateStore(right, static_cast<llvm::AllocaInst *>(symbol.value));
 }
 
 llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
@@ -309,7 +334,10 @@ llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
     llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", func);
     builder->SetInsertPoint(block);
 
-    sym_table.clear();
+    for (auto sym : sym_table)
+    {
+      if (!sym.second.is_global) sym_table.erase(sym.first);
+    }
     for (auto &arg : func->args())
     {
       llvm::AllocaInst *alloca = builder->CreateAlloca(arg.getType(), nullptr, arg.getName());
@@ -317,7 +345,9 @@ llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
       sym_table[std::string(arg.getName())] = alloca;
     }
 
+    fdef_stack.push(func);
     visit(node->body);
+    fdef_stack.pop();
   }
 
   llvm::verifyFunction(*func);
@@ -359,6 +389,14 @@ llvm::Value *Module::visit_import(UnaryASTNode *node)
   {
     llvm::Function::Create(i->second, llvm::Function::ExternalLinkage, i->first, *llvm_module);
     func_table[i->first] = i->second;
+  }
+
+  for (auto i = module.sym_table.begin(); i != module.sym_table.end(); i++)
+  {
+    llvm_module->getOrInsertGlobal(i->first, i->second.value->getType());
+    llvm::GlobalVariable *global = llvm_module->getNamedGlobal(i->first);
+    global->isExternallyInitialized();
+    sym_table[i->first] = Symbol(global, true, true);
   }
 
   return nullptr;
