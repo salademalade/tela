@@ -128,6 +128,7 @@ ASTNode *Parser::parse_statement()
   }
 
   i++;
+  if (n_type == NodeType::N_RET && i->type == TokenType::T_SEMICOLON) return new UnaryASTNode(n_type, nullptr, row, col);
   ASTNode *expr = parse_assignment();
 
   return new UnaryASTNode(n_type, expr, row, col);
