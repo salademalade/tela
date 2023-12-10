@@ -174,8 +174,7 @@ llvm::Value *Module::visit(ASTNode *node)
   case NodeType::N_IMPORT:
     return visit_import(static_cast<UnaryASTNode *>(node));
   case NodeType::N_STMT_SEQ:
-    visit_seq(static_cast<StmtSeqASTNode *>(node));
-    return nullptr;
+    return visit_seq(static_cast<StmtSeqASTNode *>(node));
   case NodeType::N_TYPE:
   case NodeType::N_TYPE_DECL:
   case NodeType::N_NULL:
@@ -346,7 +345,11 @@ llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
     }
 
     fdef_stack.push(func);
-    visit(node->body);
+    if (visit(node->body) == nullptr)
+    {
+      if (node->ret_type->value != "void") throw Error(node->row, node->col, "Function %s has no return value.", node->name->value.c_str());
+      builder->CreateRet(llvm::UndefValue::get(llvm::Type::getVoidTy(*context)));
+    }
     fdef_stack.pop();
   }
 
@@ -375,6 +378,7 @@ llvm::Value *Module::visit_fcall(FuncCallASTNode *node)
 
 llvm::Value *Module::visit_ret(UnaryASTNode *node)
 {
+  if (node->child == nullptr) return builder->CreateRet(llvm::UndefValue::get(llvm::Type::getVoidTy(*context)));
   llvm::Value *child = visit(node->child);
   return builder->CreateRet(child);
 }
@@ -402,12 +406,15 @@ llvm::Value *Module::visit_import(UnaryASTNode *node)
   return nullptr;
 }
 
-void Module::visit_seq(StmtSeqASTNode *node)
+llvm::Value *Module::visit_seq(StmtSeqASTNode *node)
 {
+  llvm::Value *ret_val = nullptr;
   for (auto i : node->statements)
   {
-    visit(i);
+    llvm::Value *temp = visit(i);
+    if (i->type == NodeType::N_RET) ret_val = temp;
   }
+  return ret_val;
 }
 
 llvm::Function *Module::create_fproto(FuncDefASTNode *node)

@@ -86,7 +86,7 @@ private:
   llvm::Value *visit_fcall(FuncCallASTNode *node);
   llvm::Value *visit_ret(UnaryASTNode *node);
   llvm::Value *visit_import(UnaryASTNode *node);
-  void visit_seq(StmtSeqASTNode *node);
+  llvm::Value *visit_seq(StmtSeqASTNode *node);
 
   llvm::Function *create_fproto(FuncDefASTNode *node);
   llvm::Type *get_type(LeafASTNode *node);
