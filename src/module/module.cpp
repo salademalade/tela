@@ -9,7 +9,7 @@ Module::Symbol::Symbol(llvm::Value *value, bool is_const, bool is_global)
 
 Module::Module(std::string filename)
 {
-  this->filename = filename;
+  this->filename = std::filesystem::path(filename).filename().string();
   std::ifstream file;
 
   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -18,7 +18,7 @@ Module::Module(std::string filename)
   {
     std::stringstream stream;
 
-    file.open(this->filename);
+    file.open(filename);
     stream << file.rdbuf();
     file.close();
 
@@ -42,7 +42,7 @@ Module::Module(std::string filename)
 
 Module::Module(llvm::LLVMContext *context, std::string filename)
 {
-  this->filename = filename;
+  this->filename = std::filesystem::path(filename).filename().string();
   std::ifstream file;
 
   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -51,7 +51,7 @@ Module::Module(llvm::LLVMContext *context, std::string filename)
   {
     std::stringstream stream;
 
-    file.open(this->filename);
+    file.open(filename);
     stream << file.rdbuf();
     file.close();
 
@@ -379,7 +379,7 @@ llvm::Value *Module::visit_ret(UnaryASTNode *node)
 
 llvm::Value *Module::visit_import(UnaryASTNode *node)
 {
-  std::string filename = static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(node)->child)->value;
+  std::string filename = get_mod_path(static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(node)->child)->value);
   Module module(filename);
   module.gen_ir();
 
@@ -442,4 +442,21 @@ llvm::Type *Module::get_type(LeafASTNode *node)
   else if (node->value == "string") return llvm::Type::getInt8PtrTy(*context);
   else if (node->value == "void") return llvm::Type::getVoidTy(*context);
   else return nullptr;
+}
+
+std::string Module::get_mod_path(std::string filename)
+{
+  std::string stdstr(LIB_PREFIX);
+  stdstr.append("/lib/tela/modules/");
+  stdstr.append(filename);
+
+  std::string cwdstr(std::filesystem::current_path().string());
+  cwdstr.append(filename);
+
+  std::filesystem::path std_path = stdstr;
+  std::filesystem::path cwd_path = cwdstr;
+
+  if (std::filesystem::exists(cwd_path)) return cwd_path.string();
+  else if (std::filesystem::exists(std_path)) return std_path.string();
+  else throw Error("Module %s does not exist.", filename.c_str());
 }

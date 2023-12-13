@@ -22,6 +22,7 @@
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Verifier.h>
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -91,6 +92,8 @@ private:
 
   llvm::Function *create_fproto(FuncDefASTNode *node);
   llvm::Type *get_type(LeafASTNode *node);
+
+  static std::string get_mod_path(std::string filename);
 };
 
 #endif
