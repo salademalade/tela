@@ -10,7 +10,6 @@ Module::Symbol::Symbol(llvm::Value *value, bool is_const, bool is_global)
 Module::Module(std::string filename)
 {
   this->filename = filename;
-  std::string source;
   std::ifstream file;
 
   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -23,18 +22,18 @@ Module::Module(std::string filename)
     stream << file.rdbuf();
     file.close();
 
-    source = stream.str();
+    this->input_src = stream.str();
   }
   catch(std::ifstream::failure e)
   {
     throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
   }
 
-  Lexer lexer(source);
+  Lexer lexer(this->input_src);
   std::vector<Token> toks = lexer.tokenize();
 
   Parser parser(toks);
-  this->input = parser.parse();
+  this->input_node = parser.parse();
 
   this->context = new llvm::LLVMContext();
   this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
@@ -44,7 +43,6 @@ Module::Module(std::string filename)
 Module::Module(llvm::LLVMContext *context, std::string filename)
 {
   this->filename = filename;
-  std::string source;
   std::ifstream file;
 
   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -57,18 +55,18 @@ Module::Module(llvm::LLVMContext *context, std::string filename)
     stream << file.rdbuf();
     file.close();
 
-    source = stream.str();
+    input_src = stream.str();
   }
   catch(std::ifstream::failure e)
   {
     throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
   }
 
-  Lexer lexer(source);
+  Lexer lexer(this->input_src);
   std::vector<Token> toks = lexer.tokenize();
 
   Parser parser(toks);
-  this->input = parser.parse();
+  this->input_node = parser.parse();
 
   this->context = context;
   this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
@@ -77,7 +75,7 @@ Module::Module(llvm::LLVMContext *context, std::string filename)
 
 void Module::gen_ir()
 {
-  visit(input);
+  visit(input_node);
 }
 
 void Module::gen_ll()

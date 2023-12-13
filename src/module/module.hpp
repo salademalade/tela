@@ -56,8 +56,9 @@ public:
     Symbol(llvm::Value *value = nullptr, bool is_const = false, bool is_global = false);
   };
 
-  ASTNode *input;
+  ASTNode *input_node;
   std::string filename;
+  std::string input_src;
 
   llvm::LLVMContext *context;
   std::unique_ptr<llvm::IRBuilder<>> builder;
