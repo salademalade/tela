@@ -35,7 +35,7 @@ IF(BUILD_TESTING)
 
   FIND_PACKAGE(Catch2 REQUIRED)
   ADD_EXECUTABLE(tltests "")
-  TARGET_LINK_LIBRARIES(tltests Catch2::Catch2)
+  TARGET_LINK_LIBRARIES(tltests Catch2::Catch2WithMain)
 
   INCLUDE(Catch)
   CATCH_DISCOVER_TESTS(tltests)

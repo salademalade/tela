@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "lexer/lexer.hpp"
 
 TEST_CASE("Tokenization of integer", "[lexer][int]")

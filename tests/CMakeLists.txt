@@ -12,7 +12,6 @@ TARGET_SOURCES(tltests
   ../src/ast-node/stmt-seq/stmt-seq-ast-node.cpp
   ../src/ast-node/null/null-ast-node.cpp
   ../src/parser/parser.cpp
-  main.test.cpp
   error.test.cpp
   token.test.cpp
   lexer.test.cpp
