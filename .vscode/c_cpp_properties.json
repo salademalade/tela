@@ -6,7 +6,9 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/src/**"
             ],
-            "defines": [],
+            "defines": [
+                "LIB_CONFIG=\"/usr/local\""
+            ],
             "cStandard": "c17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-x64"

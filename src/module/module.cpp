@@ -24,7 +24,7 @@ Module::Module(std::string filename)
 
     this->input_src = stream.str();
   }
-  catch(std::ifstream::failure e)
+  catch(std::ifstream::failure &e)
   {
     throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
   }
@@ -57,7 +57,7 @@ Module::Module(llvm::LLVMContext *context, std::string filename)
 
     input_src = stream.str();
   }
-  catch(std::ifstream::failure e)
+  catch(std::ifstream::failure &e)
   {
     throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
   }

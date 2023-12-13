@@ -49,7 +49,6 @@ TEST_CASE("Function Definition Node tests", "[ast][func]")
 {
   ASTNode *name = new LeafASTNode(NodeType::N_ID, "func", 1, 5);
   ASTNode *body = new LeafASTNode(NodeType::N_INT, "1", 1, 37);
-  ASTNode *ret_type = new LeafASTNode(NodeType::N_TYPE, "int", 1, 33);
   FuncDefASTNode *func = new FuncDefASTNode(name, 1, 1);
 
   func->body = body;
