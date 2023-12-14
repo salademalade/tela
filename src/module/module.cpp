@@ -457,6 +457,7 @@ std::string Module::get_mod_path(std::string filename)
   stdstr.append(filename);
 
   std::string cwdstr(std::filesystem::current_path().string());
+  cwdstr.append("/");
   cwdstr.append(filename);
 
   std::filesystem::path std_path = stdstr;
