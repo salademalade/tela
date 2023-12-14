@@ -1,6 +1,6 @@
 #include "module.hpp"
 
-Module::Symbol::Symbol(llvm::Value *value, bool is_const, bool is_global)
+Module::Variable::Variable(llvm::Value *value, bool is_const, bool is_global)
 {
   this->value = value;
   this->is_const = is_const;
@@ -184,7 +184,7 @@ llvm::Value *Module::visit(ASTNode *node)
 
 llvm::Value *Module::visit_identifier(LeafASTNode *node)
 {
-  Symbol var = sym_table[node->value];
+  Variable var = sym_table[node->value];
   if (!var.value) throw Error(node->row, node->col, "Undefined reference to variable: %s.", node->value.c_str());
 
   if (var.is_global)
@@ -273,7 +273,7 @@ llvm::Value *Module::visit_decl(UnaryASTNode *node)
     bool is_global = fdef_stack.empty();
     bool is_const = node->type == NodeType::N_DECL_CONST;
 
-    Symbol symbol(nullptr, is_const, is_global);
+    Variable symbol(nullptr, is_const, is_global);
 
     if (is_global)
     {
@@ -300,7 +300,7 @@ llvm::Value *Module::visit_decl(UnaryASTNode *node)
     if (fdef_stack.empty()) throw Error(node->row, node->col, "Cannot define global without value.");
     if (node->type == NodeType::N_DECL_CONST) throw Error(node->row, node->col, "Cannot define constant without value.");
 
-    Symbol symbol(builder->CreateAlloca(type, nullptr, name));
+    Variable symbol(builder->CreateAlloca(type, nullptr, name));
 
     sym_table[name] = symbol;
     return sym_table[name].value;
@@ -315,7 +315,7 @@ llvm::Value *Module::visit_assignment(BinaryASTNode *node)
   if (node->left->type != NodeType::N_ID) throw Error(node->row, node->col, "Cannot assign value to expression.");
   if (sym_table.find(name) == sym_table.end()) throw Error(node->row, node->col, "Undefined reference to variable: %s.", name.c_str());
 
-  Symbol symbol = sym_table[name];
+  Variable symbol = sym_table[name];
   if (symbol.is_const) throw Error(node->row, node->col, "Cannot redefine constant.");
   if (symbol.is_global) return builder->CreateStore(right, static_cast<llvm::GlobalVariable *>(symbol.value));
   else return builder->CreateStore(right, static_cast<llvm::AllocaInst *>(symbol.value));
@@ -394,7 +394,7 @@ llvm::Value *Module::visit_import(UnaryASTNode *node)
     llvm_module->getOrInsertGlobal(i->first, i->second.value->getType());
     llvm::GlobalVariable *global = llvm_module->getNamedGlobal(i->first);
     global->isExternallyInitialized();
-    sym_table[i->first] = Symbol(global, i->second.is_const, i->second.is_global);
+    sym_table[i->first] = Variable(global, i->second.is_const, i->second.is_global);
   }
 
   return nullptr;
