@@ -74,7 +74,7 @@ public:
   std::unique_ptr<llvm::Module> llvm_module;
 
   std::map<std::string, Variable> sym_table;
-  std::map<std::string, llvm::FunctionType *> func_table;
+  std::map<std::string, Function> func_table;
 
   std::stack<llvm::Function *> fdef_stack;
 
@@ -102,6 +102,7 @@ private:
   llvm::Type *get_type(LeafASTNode *node);
 
   static std::string get_mod_path(std::string filename);
+  static bool is_library(std::string filename);
 };
 
 #endif

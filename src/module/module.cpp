@@ -362,7 +362,11 @@ llvm::Value *Module::visit_fdef(FuncDefASTNode *node)
 llvm::Value *Module::visit_fcall(FuncCallASTNode *node)
 {
   std::string f_name = static_cast<LeafASTNode *>(node->name)->value;
-  llvm::Function *callee = llvm_module->getFunction(f_name);
+  llvm::Function *callee;
+
+  if (func_table[f_name].is_lib) callee = llvm_module->getFunction((std::string)"tela_" + f_name);
+  else callee = llvm_module->getFunction(f_name);
+
   if (!callee) throw Error(node->row, node->col, "Undefined reference to function: %s.", f_name.c_str());
 
   if (callee->arg_size() != node->args.size()) throw Error(node->row, node->col, "Invalid arguments for function: %s", f_name.c_str());
@@ -389,10 +393,22 @@ llvm::Value *Module::visit_import(UnaryASTNode *node)
   Module module(filename);
   module.gen_ir();
 
-  for (auto i = module.func_table.begin(); i != module.func_table.end(); i++)
+  if (is_library(static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(node)->child)->value))
   {
-    llvm::Function::Create(i->second, llvm::Function::ExternalLinkage, i->first, *llvm_module);
-    func_table[i->first] = i->second;
+    for (auto i = module.func_table.begin(); i != module.func_table.end(); i++)
+    {
+      llvm::Function::Create(i->second.func, llvm::Function::ExternalLinkage, i->first, *llvm_module);
+      if (i->first.compare(0, 5, "tela_") == 0) func_table[i->first.substr(5, i->first.length() - 5)] = Function(i->second.func, true);
+      else throw Error("Invalid library function.");
+    }
+  }
+  else
+  {
+    for (auto i = module.func_table.begin(); i != module.func_table.end(); i++)
+    {
+      llvm::Function::Create(i->second.func, llvm::Function::ExternalLinkage, i->first, *llvm_module);
+      func_table[i->first] = Function(i->second.func);
+    }
   }
 
   for (auto i = module.sym_table.begin(); i != module.sym_table.end(); i++)
@@ -429,7 +445,7 @@ llvm::Function *Module::create_fproto(FuncDefASTNode *node)
   llvm::FunctionType *f_type = llvm::FunctionType::get(f_ret_type, arg_types, false);
 
   llvm::Function *func = llvm::Function::Create(f_type, llvm::Function::ExternalLinkage, f_name, llvm_module.get());
-  func_table[f_name] = f_type;
+  func_table[f_name] = Function(f_type);
 
   unsigned int i = 0;
   for (auto &arg : func->args())
@@ -465,5 +481,23 @@ std::string Module::get_mod_path(std::string filename)
 
   if (std::filesystem::exists(cwd_path)) return cwd_path.string();
   else if (std::filesystem::exists(std_path)) return std_path.string();
+  else throw Error("Module %s does not exist.", filename.c_str());
+}
+
+bool Module::is_library(std::string filename)
+{
+  std::string stdstr(LIB_PREFIX);
+  stdstr.append("/lib/tela/modules/");
+  stdstr.append(filename);
+
+  std::string cwdstr(std::filesystem::current_path().string());
+  cwdstr.append("/");
+  cwdstr.append(filename);
+
+  std::filesystem::path std_path = stdstr;
+  std::filesystem::path cwd_path = cwdstr;
+
+  if (std::filesystem::exists(cwd_path)) return false;
+  else if (std::filesystem::exists(std_path)) return true;
   else throw Error("Module %s does not exist.", filename.c_str());
 }
