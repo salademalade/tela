@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void print(char *str)
+void tela_print(char *str)
 {
   fprintf(stdout, "%s", str);
 }
