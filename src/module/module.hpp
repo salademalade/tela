@@ -57,6 +57,14 @@ public:
     Variable(llvm::Value *value = nullptr, bool is_const = false, bool is_global = false);
   };
 
+  struct Function
+  {
+    llvm::FunctionType *func;
+    bool is_lib;
+
+    Function(llvm::FunctionType *func = nullptr, bool is_lib = false);
+  };
+
   ASTNode *input_node;
   std::string filename;
   std::string input_src;

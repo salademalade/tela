@@ -7,6 +7,12 @@ Module::Variable::Variable(llvm::Value *value, bool is_const, bool is_global)
   this->is_global = is_global;
 }
 
+Module::Function::Function(llvm::FunctionType *func, bool is_lib)
+{
+  this->func = func;
+  this->is_lib = is_lib;
+}
+
 Module::Module(std::string filename)
 {
   this->filename = std::filesystem::path(filename).filename().string();
