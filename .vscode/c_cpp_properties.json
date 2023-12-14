@@ -7,7 +7,7 @@
                 "${workspaceFolder}/src/**"
             ],
             "defines": [
-                "LIB_CONFIG=\"/usr/local\""
+                "LIB_PREFIX=\"/usr/local\""
             ],
             "cStandard": "c17",
             "cppStandard": "gnu++17",
