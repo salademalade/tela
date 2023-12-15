@@ -17,4 +17,5 @@ TARGET_SOURCES(tltests
   lexer.test.cpp
   node.test.cpp
   parser.test.cpp
+  stl.test.cpp
 )

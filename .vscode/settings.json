@@ -80,7 +80,8 @@
     "csignal": "cpp",
     "hash_set": "cpp",
     "shared_mutex": "cpp",
-    "*.def": "cpp"
+    "*.def": "cpp",
+    "stdio.h": "c"
   },
   "C_Cpp.default.compilerPath": "/usr/bin/g++",
   "cmake.configureOnOpen": false
