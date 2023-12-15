@@ -1,1 +1,7 @@
 def tela_print(str: string): void;
+
+def tela_pint(i: int): void;
+
+def tela_pfloat(f: float): void;
+
+def tela_pchar(c: char): void;

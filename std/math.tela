@@ -1,0 +1,13 @@
+def tela_cos(x: float): float;
+
+def tela_sin(x: float): float;
+
+def tela_tan(x: float): float;
+
+def tela_acos(x: float): float;
+
+def tela_asin(x: float): float;
+
+def tela_atan(x: float): float;
+
+def tela_atan2(x: float, y: float): float;
