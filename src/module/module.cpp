@@ -110,7 +110,11 @@ void Module::gen_obj()
   auto features = "";
 
   llvm::TargetOptions opt;
+#if LLVM_VERSION_17
+  auto RM = std::optional<llvm::Reloc::Model>();
+#else
   auto RM = llvm::Optional<llvm::Reloc::Model>();
+#endif
   auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
 
   llvm_module->setDataLayout(target_machine->createDataLayout());

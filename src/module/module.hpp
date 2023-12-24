@@ -9,7 +9,6 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/MC/TargetRegistry.h>
-#include <llvm/ADT/Optional.h>
 #include <llvm/ADT/APInt.h>
 #include <llvm/ADT/APFloat.h>
 #include <llvm/IR/LegacyPassManager.h>
@@ -44,6 +43,12 @@
 #include "ast-node/stmt-seq/stmt-seq-ast-node.hpp"
 #include "ast-node/null/null-ast-node.hpp"
 #include "parser/parser.hpp"
+
+#if LLVM_VERSION_17
+#include <optional>
+#else
+#include <llvm/ADT/Optional.h>
+#endif
 
 class Module
 {
