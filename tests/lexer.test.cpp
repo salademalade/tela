@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "lexer/lexer.hpp"
 
 TEST_CASE("Tokenization of integer", "[lexer][int]")
@@ -545,7 +545,7 @@ TEST_CASE("General lexer tests", "[lexer]")
     Token(TokenType::T_SEMICOLON, 1, 34),
   };
 
-  for (int i = 0; i < output.size() - 1; i++)
+  for (unsigned int i = 0; i < output.size() - 1; i++)
   {
     CHECK(expected[i].type == output[i].type);
     CHECK(expected[i].value == output[i].value);

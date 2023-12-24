@@ -6,7 +6,7 @@ const char LETTERS[53] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 bool char_is_in(char c, const char *list)
 {
-  for (int i = 0; i < strlen(list); i++)
+  for (unsigned int i = 0; i < strlen(list); i++)
   {
     if (c == list[i]) return true;
   }

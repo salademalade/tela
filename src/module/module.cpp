@@ -9,8 +9,7 @@ Module::Symbol::Symbol(llvm::Value *value, bool is_const, bool is_global)
 
 Module::Module(std::string filename)
 {
-  this->filename = filename;
-  std::string source;
+  this->filename = std::filesystem::path(filename).filename().string();
   std::ifstream file;
 
   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -19,22 +18,22 @@ Module::Module(std::string filename)
   {
     std::stringstream stream;
 
-    file.open(this->filename);
+    file.open(filename);
     stream << file.rdbuf();
     file.close();
 
-    source = stream.str();
+    this->input_src = stream.str();
   }
-  catch(std::ifstream::failure e)
+  catch(std::ifstream::failure &e)
   {
     throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
   }
 
-  Lexer lexer(source);
+  Lexer lexer(this->input_src);
   std::vector<Token> toks = lexer.tokenize();
 
   Parser parser(toks);
-  this->input = parser.parse();
+  this->input_node = parser.parse();
 
   this->context = new llvm::LLVMContext();
   this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
@@ -43,8 +42,7 @@ Module::Module(std::string filename)
 
 Module::Module(llvm::LLVMContext *context, std::string filename)
 {
-  this->filename = filename;
-  std::string source;
+  this->filename = std::filesystem::path(filename).filename().string();
   std::ifstream file;
 
   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -53,22 +51,22 @@ Module::Module(llvm::LLVMContext *context, std::string filename)
   {
     std::stringstream stream;
 
-    file.open(this->filename);
+    file.open(filename);
     stream << file.rdbuf();
     file.close();
 
-    source = stream.str();
+    input_src = stream.str();
   }
-  catch(std::ifstream::failure e)
+  catch(std::ifstream::failure &e)
   {
     throw Error("Error while reading file %s: %s", this->filename.c_str(), e.what());
   }
 
-  Lexer lexer(source);
+  Lexer lexer(this->input_src);
   std::vector<Token> toks = lexer.tokenize();
 
   Parser parser(toks);
-  this->input = parser.parse();
+  this->input_node = parser.parse();
 
   this->context = context;
   this->builder = std::make_unique<llvm::IRBuilder<>>(*this->context);
@@ -77,7 +75,7 @@ Module::Module(llvm::LLVMContext *context, std::string filename)
 
 void Module::gen_ir()
 {
-  visit(input);
+  visit(input_node);
 }
 
 void Module::gen_ll()
@@ -112,7 +110,11 @@ void Module::gen_obj()
   auto features = "";
 
   llvm::TargetOptions opt;
+#if LLVM_VERSION_17
+  auto RM = std::optional<llvm::Reloc::Model>();
+#else
   auto RM = llvm::Optional<llvm::Reloc::Model>();
+#endif
   auto target_machine = target->createTargetMachine(target_triple, CPU, features, opt, RM);
 
   llvm_module->setDataLayout(target_machine->createDataLayout());
@@ -385,7 +387,7 @@ llvm::Value *Module::visit_ret(UnaryASTNode *node)
 
 llvm::Value *Module::visit_import(UnaryASTNode *node)
 {
-  std::string filename = static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(node)->child)->value;
+  std::string filename = get_mod_path(static_cast<LeafASTNode *>(static_cast<UnaryASTNode *>(node)->child)->value);
   Module module(filename);
   module.gen_ir();
 
@@ -451,4 +453,21 @@ llvm::Type *Module::get_type(LeafASTNode *node)
   else if (node->value == "string") return llvm::Type::getInt8PtrTy(*context);
   else if (node->value == "void") return llvm::Type::getVoidTy(*context);
   else return nullptr;
+}
+
+std::string Module::get_mod_path(std::string filename)
+{
+  std::string stdstr(LIB_PREFIX);
+  stdstr.append("/lib/tela/modules/");
+  stdstr.append(filename);
+
+  std::string cwdstr(std::filesystem::current_path().string());
+  cwdstr.append(filename);
+
+  std::filesystem::path std_path = stdstr;
+  std::filesystem::path cwd_path = cwdstr;
+
+  if (std::filesystem::exists(cwd_path)) return cwd_path.string();
+  else if (std::filesystem::exists(std_path)) return std_path.string();
+  else throw Error("Module %s does not exist.", filename.c_str());
 }

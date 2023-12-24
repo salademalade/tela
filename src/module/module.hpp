@@ -9,7 +9,6 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/MC/TargetRegistry.h>
-#include <llvm/ADT/Optional.h>
 #include <llvm/ADT/APInt.h>
 #include <llvm/ADT/APFloat.h>
 #include <llvm/IR/LegacyPassManager.h>
@@ -22,6 +21,7 @@
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Verifier.h>
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -44,6 +44,12 @@
 #include "ast-node/null/null-ast-node.hpp"
 #include "parser/parser.hpp"
 
+#if LLVM_VERSION_17
+#include <optional>
+#else
+#include <llvm/ADT/Optional.h>
+#endif
+
 class Module
 {
 public:
@@ -56,8 +62,9 @@ public:
     Symbol(llvm::Value *value = nullptr, bool is_const = false, bool is_global = false);
   };
 
-  ASTNode *input;
+  ASTNode *input_node;
   std::string filename;
+  std::string input_src;
 
   llvm::LLVMContext *context;
   std::unique_ptr<llvm::IRBuilder<>> builder;
@@ -90,6 +97,8 @@ private:
 
   llvm::Function *create_fproto(FuncDefASTNode *node);
   llvm::Type *get_type(LeafASTNode *node);
+
+  static std::string get_mod_path(std::string filename);
 };
 
 #endif
