@@ -6,3 +6,10 @@ Language: Cpp
 DerivePointerAlignment: false
 PointerAlignment: Right
 ColumnLimit: 100
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 2
