@@ -1,0 +1,8 @@
+---
+BasedOnStyle: Webkit
+IndentWidth: 2
+---
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Right
+ColumnLimit: 100
