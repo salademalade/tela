@@ -16,9 +16,9 @@ TEST_CASE("Token class tests", "[token]")
 
   SECTION("Token initialization with value")
   {
-    Token tok(TokenType::T_INT, "1", 1, 1);
+    Token tok(TokenType::T_NUMBER, "1", 1, 1);
 
-    REQUIRE(tok.type == TokenType::T_INT);
+    REQUIRE(tok.type == TokenType::T_NUMBER);
     REQUIRE(tok.value == "1");
     REQUIRE(tok.row == 1);
     REQUIRE(tok.col == 1);

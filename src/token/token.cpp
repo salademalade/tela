@@ -21,8 +21,7 @@ Token::Token(Type type, std::string value, unsigned int row, unsigned int col)
 const char *Token::str()
 {
   switch (this->type) {
-  case Type::T_INT:
-  case Type::T_FLOAT:
+  case Type::T_NUMBER:
   case Type::T_CHAR:
   case Type::T_STRING:
   case Type::T_ID:
