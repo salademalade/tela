@@ -98,6 +98,8 @@ const char *Token::str()
     return ":";
   case Type::T_SEMICOLON:
     return ";";
+  case Type::T_ELLIPSIS:
+    return "...";
 
   case Type::T_LPAREN:
     return "(";
