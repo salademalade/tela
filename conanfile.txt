@@ -1,0 +1,6 @@
+[requires]
+catch2/3.5.1
+
+[generators]
+CMakeDeps
+CMakeToolchain
