@@ -40,13 +40,13 @@ const char *Token::str()
 
   case Type::T_ASSIGN:
     return "=";
-  case Type::T_PASSIGN:
+  case Type::T_ADDASSIGN:
     return "+=";
-  case Type::T_SASSIGN:
+  case Type::T_SUBASSIGN:
     return "-=";
-  case Type::T_MASSIGN:
+  case Type::T_MULASSIGN:
     return "*=";
-  case Type::T_DASSIGN:
+  case Type::T_DIVASSIGN:
     return "/=";
   case Type::T_MODASSIGN:
     return "%=";
