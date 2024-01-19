@@ -5,7 +5,7 @@
 
 class Token {
   public:
-  enum class Type : long {
+  enum class Type : long long {
     T_NUMBER    = 0x0000000000000001,
     T_CHAR      = 0x0000000000000002,
     T_STRING    = 0x0000000000000004,
