@@ -28,6 +28,8 @@ const char *Error::msg_sprintf(const char *format, std::va_list args)
     format++;
   } while (*format != '\0');
 
+  out[length] = '\0';
+
   return out;
 }
 
