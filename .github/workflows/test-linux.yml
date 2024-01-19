@@ -18,6 +18,9 @@ jobs:
 
     - uses: turtlebrowser/get-conan@v1.2
 
+    - name: Prepare conan
+      run: conan profile detect --force
+
     - name: Install Dependencies
       run: conan install . --output-folder=${{github.workspace}}/build --build=missing -s build_type=${{env.BUILD_TYPE}}
 
