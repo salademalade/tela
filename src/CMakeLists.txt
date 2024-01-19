@@ -3,6 +3,8 @@ ADD_LIBRARY(tela-lib
   error/error.cpp
   token/token.hpp
   token/token.cpp
+  lexer/lexer.hpp
+  lexer/lexer.cpp
 )
 
 ADD_EXECUTABLE(tela main.cpp)
