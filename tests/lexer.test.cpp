@@ -490,6 +490,21 @@ TEST_CASE("Tokenization of bitwise xor operator", "[lexer]")
   REQUIRE(tokens[1].col == 2);
 }
 
+TEST_CASE("Tokenization of bitwise not operator", "[lexer]")
+{
+  Lexer lexer("test.tl", "~");
+  auto tokens = lexer.tokenize();
+
+  REQUIRE(tokens.size() == 2);
+  REQUIRE(tokens[0].type == TokenType::T_BNOT);
+  REQUIRE(tokens[0].row == 1);
+  REQUIRE(tokens[0].col == 1);
+
+  REQUIRE(tokens[1].type == TokenType::T_EOF);
+  REQUIRE(tokens[1].row == 1);
+  REQUIRE(tokens[1].col == 2);
+}
+
 TEST_CASE("Tokenization of bitwise and assignment operator", "[lexer]")
 {
   Lexer lexer("test.tl", "&=");
@@ -773,6 +788,21 @@ TEST_CASE("Tokenization of ellipsis", "[lexer]")
   REQUIRE(tokens[1].type == TokenType::T_EOF);
   REQUIRE(tokens[1].row == 1);
   REQUIRE(tokens[1].col == 4);
+}
+
+TEST_CASE("Tokenization of question mark", "[lexer]")
+{
+  Lexer lexer("test.tl", "?");
+  auto tokens = lexer.tokenize();
+
+  REQUIRE(tokens.size() == 2);
+  REQUIRE(tokens[0].type == TokenType::T_QMARK);
+  REQUIRE(tokens[0].row == 1);
+  REQUIRE(tokens[0].col == 1);
+
+  REQUIRE(tokens[1].type == TokenType::T_EOF);
+  REQUIRE(tokens[1].row == 1);
+  REQUIRE(tokens[1].col == 2);
 }
 
 TEST_CASE("Tokenization of left parenthesis", "[lexer]")

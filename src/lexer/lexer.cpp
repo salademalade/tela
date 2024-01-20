@@ -165,6 +165,9 @@ std::vector<Token> Lexer::tokenize()
         output.push_back(Token(TokenType::T_BXOR, this->row, this->col++));
         this->i++;
       }
+    } else if (*this->i == '~') {
+      output.push_back(Token(TokenType::T_BNOT, this->row, this->col++));
+      this->i++;
     } else if (*this->i == '=') {
       if (*(this->i + 1) == '=') {
         output.push_back(Token(TokenType::T_EQ, this->row, this->col));
@@ -218,6 +221,9 @@ std::vector<Token> Lexer::tokenize()
       this->i++;
     } else if (*this->i == ';') {
       output.push_back(Token(TokenType::T_SEMICOLON, this->row, this->col++));
+      this->i++;
+    } else if (*this->i == '?') {
+      output.push_back(Token(TokenType::T_QMARK, this->row, this->col++));
       this->i++;
     } else if (*this->i == '(') {
       output.push_back(Token(TokenType::T_LPAREN, this->row, this->col++));

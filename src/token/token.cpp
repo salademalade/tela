@@ -57,6 +57,8 @@ const char *Token::str()
     return "|";
   case Type::T_BXOR:
     return "^";
+  case Type::T_BNOT:
+    return "~";
 
   case Type::T_ANDASSIGN:
     return "&=";
@@ -100,6 +102,8 @@ const char *Token::str()
     return ";";
   case Type::T_ELLIPSIS:
     return "...";
+  case Type::T_QMARK:
+    return "?";
 
   case Type::T_LPAREN:
     return "(";
