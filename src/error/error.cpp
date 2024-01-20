@@ -4,29 +4,31 @@ const char *Error::msg_sprintf(const char *format, std::va_list args)
 {
   char *out = nullptr;
   unsigned int length = 0;
+  const char *fmt_copy = format;
+  std::va_list copy;
+  va_copy(copy, args);
 
   do {
-    if (*format == '%') {
-      format++;
+    if (*fmt_copy == '%') {
+      fmt_copy++;
 
-      if (*format == 'c') {
-        out = (char *)std::realloc(out, ++length * sizeof(char));
-        out[length - 1] = (char)va_arg(args, int);
-      } else if (*format == 's') {
+      if (*fmt_copy == 'c') {
+        va_arg(args, int);
+        length++;
+      } else if (*fmt_copy == 's') {
         char *str = va_arg(args, char *);
 
-        for (unsigned int i = 0; i < std::strlen(str); i++) {
-          out = (char *)std::realloc(out, ++length * sizeof(char));
-          out[length - 1] = str[i];
-        }
+        length += strlen(str);
       }
     } else {
-      out = (char *)std::realloc(out, ++length * sizeof(char));
-      out[length - 1] = *format;
+      length++;
     }
 
-    format++;
-  } while (*format != '\0');
+    fmt_copy++;
+  } while (*fmt_copy != '\0');
+
+  out = (char *)std::calloc(length, sizeof(char));
+  std::vsprintf(out, format, copy);
 
   return out;
 }
